@@ -73,7 +73,7 @@ ejecutada). RNF-08 y RNF-09 provienen del Spike/ADR. RNF-10 y RNF-11 se agregan 
 
 Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 1,49 s por el costo deliberado de scrypt
 (≈ 230 ms por verificación aislada); compromiso aceptado entre seguridad y rendimiento. En el despliegue gratuito de
-Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,4 s), porque el plan entrega solo una fracción de CPU.
+Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,1 s), porque el plan entrega solo una fracción de CPU.
 
 ## 5. Riesgos iniciales
 

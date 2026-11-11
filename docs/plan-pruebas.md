@@ -188,13 +188,13 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 
 ## 6.1 Pruebas de aceptación sobre el despliegue (Render)
 
-Ejecutadas el 11-11-2026 a las 02:57 (hora de Chile) contra https://campusreserva.onrender.com (commit bed0265) con
+Ejecutadas el 11-11-2026 a las 03:09 (hora de Chile) contra https://campusreserva.onrender.com (commit e33250f) con
 `npm run pruebas:despliegue`. Evidencia: `docs/evidencias/despliegue/resultado-despliegue.md` y `.json`, y 5 capturas.
 Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pruebas con usuarios.
 
 | ID | Verifica | Resultado esperado | Obtenido | Estado |
 |---|---|---|---|---|
-| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 217 ms | Aprobado |
+| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 268 ms | Aprobado |
 | DEP-02 | Redirección de HTTP a HTTPS | 3xx hacia https:// | 301 → https://campusreserva.onrender.com/login | Aprobado |
 | DEP-03 | Cabeceras en producción | HSTS, CSP `default-src 'self'`, nosniff, DENY, no-store, sin X-Powered-By | Todas presentes; HSTS `max-age=31536000; includeSubDomains` | Aprobado |
 | DEP-04 | RF-02 inicio de sesión y cookie | 303 a /disponibilidad; cookie `__Host-cr_sesion` con Secure, HttpOnly, SameSite=Lax, Path=/ y sin Domain | Igual | Aprobado |
@@ -208,12 +208,13 @@ Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pru
 | DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000007 cancelada | Aprobado |
 | DEP-13 | OWASP A01 CSRF | Formulario sin token: 403 | 403 | Aprobado |
 | DEP-14 | RF-06 / OWASP A01 roles | Estudiante en /admin/espacios: 403 | 403 | Aprobado |
-| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0256" registrado | Aprobado |
+| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0308" registrado | Aprobado |
 | DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `nuevo.estudiante@campus.test` activada | Aprobado |
 | DEP-17 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
 
 Resumen: **17/17 aprobadas**, 98 solicitudes HTTP y 0 respuestas 5xx. Esta ejecución final se hizo sobre datos recién
-restablecidos por el despliegue del commit bed0265, que quitó las cuentas de demostración de la página de inicio de sesión.
+restablecidos por el despliegue del commit e33250f, que quitó los textos de demostración de la página de inicio de sesión
+y del pie de página.
 
 ## 7. Matriz de trazabilidad RF → criterio de aceptación → prueba
 
@@ -315,13 +316,13 @@ Las solicitudes son secuenciales, salvo las 10 simultáneas de DEP-10 incluidas 
 
 | Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) |
 |---|---|---|---|---|
-| `GET /login` | 27 | 204,7 | 229,8 | 241,5 |
-| `GET /disponibilidad` (consulta) | 24 | 145,9 | 248,3 | 250,9 |
-| `POST /reservas` (confirmación) | 13 | 170,8 | 511,2 | 511,2 |
-| `POST /login` (inicio de sesión) | 12 | 2786,1 | 5427,4 | 5427,4 |
+| `GET /login` | 27 | 199,4 | 307,4 | 407,2 |
+| `GET /disponibilidad` (consulta) | 24 | 149,6 | 232,2 | 261,1 |
+| `POST /reservas` (confirmación) | 13 | 207,9 | 255,9 | 255,9 |
+| `POST /login` (inicio de sesión) | 12 | 2764,9 | 5120,4 | 5120,4 |
 
 La consulta y la confirmación de reserva quedan bajo los umbrales de RNF-08 (500 ms y 800 ms), aunque con otra
-carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,4 s) porque el plan gratuito entrega una
+carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,1 s) porque el plan gratuito entrega una
 fracción de CPU y scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
 
 ## 9. Defectos y hallazgos registrados durante las pruebas
