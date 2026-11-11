@@ -55,7 +55,9 @@ function cargarConfig(env = process.env, sobrescribir = {}) {
     entorno: env.NODE_ENV || 'development',
     esProduccion,
     puerto,
-    urlBase: (env.BASE_URL || `http://localhost:${puerto}`).replace(/\/$/, ''),
+    // URL pública para los enlaces de confirmación. En Render se usa RENDER_EXTERNAL_URL
+    // (la define el propio PaaS) si no se indicó BASE_URL.
+    urlBase: (env.BASE_URL || env.RENDER_EXTERNAL_URL || `http://localhost:${puerto}`).replace(/\/$/, ''),
     rutaBaseDatos: env.DB_PATH || path.join(__dirname, '..', 'data', 'campusreserva.db'),
     secretoSesion,
     minutosInactividadSesion: aEntero(env.SESSION_IDLE_MINUTES, 30),

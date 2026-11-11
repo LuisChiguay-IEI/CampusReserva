@@ -18,6 +18,7 @@
     "test:integration": "node --test --test-reporter=spec \"test/integration/*.test.js\"",
     "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" \"test/**/*.test.js\"",
     "metricas": "node scripts/carga-concurrente.js",
+    "pruebas:despliegue": "node scripts/pruebas-despliegue.js",
     "capturas": "node scripts/capturas.js",
     "diagramas": "node scripts/diagramas.js",
     "grafico": "node scripts/grafico-metricas.js"

@@ -1,0 +1,31 @@
+# Despliegue de demostración de CampusReserva en Render (PaaS, plan gratuito).
+# No contiene secretos: SESSION_SECRET lo genera Render al crear el servicio.
+# Limitaciones del plan gratuito: el servicio se suspende tras 15 min sin tráfico y el disco
+# es efímero, por lo que la base SQLite vuelve a los datos ficticios en cada reinicio o despliegue.
+#
+# Instalación: el package-lock.json del repositorio registra el espejo de paquetes del equipo
+# donde se desarrolló, al que Render no tiene acceso. Por eso Render instala desde el registro
+# público de npm las mismas versiones exactas declaradas en package.json.
+services:
+  - type: web
+    name: campusreserva
+    runtime: node
+    plan: free
+    region: virginia
+    buildCommand: npm install --omit=dev --no-package-lock --no-audit --no-fund
+    startCommand: npm start
+    healthCheckPath: /login
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "true"
+      - key: DEMO_MAILBOX
+        value: "true"
+      - key: SEED_DEMO
+        value: "true"
