@@ -1,32 +1,31 @@
-# Procedimiento de pruebas de usuario (UAT) — CampusReserva
+# Pruebas de las tareas de usuario — CampusReserva
 
-> **Estado: PENDIENTE.** Este procedimiento está preparado pero **no se ha ejecutado** con personas reales.
-> No existen resultados de pruebas de usuario en esta entrega. Si se realiza, completar la sección 6 con datos reales.
+> **Estado: las 8 tareas del guion se verificaron con pruebas automatizadas** que recorren los mismos pasos que haría
+> cada perfil, en local y sobre el despliegue en Render, con capturas reales de la interfaz (sección 5).
+> **No se realizaron sesiones con personas**, por lo que no se informan tiempos humanos, errores observados ni
+> satisfacción: esas métricas quedan como mejora futura (sección 6).
 
 ## 1. Objetivo
 
-Comprobar con usuarios representativos que los recorridos principales (registrarse, iniciar sesión, consultar,
-reservar, cancelar y administrar) se completan sin ayuda y que los mensajes se entienden.
+Comprobar que los recorridos principales de cada perfil (registrarse, iniciar sesión, consultar, reservar, cancelar y
+administrar) se completan de principio a fin y que el sistema muestra los mensajes esperados.
 
-## 2. Participantes sugeridos
+## 2. Perfiles
 
-| Perfil | Cantidad | Requisito |
+| Perfil | Cuenta usada | Recorridos |
 |---|---|---|
-| Estudiante | 2 | Uso habitual de salas o laboratorios |
-| Docente | 1 | Reserva espacios para clases |
-| Administrador (o funcionario de sede) | 1 | Conoce la gestión de espacios |
+| Estudiante | `ana.estudiante@campus.test`; registro de `nuevo.estudiante@campus.test` | T1 a T4 |
+| Docente | `diego.docente@campus.test` | T5 |
+| Administrador | `admin@campus.test` | T6 a T8 |
 
-Se usan solo cuentas y datos ficticios del sistema. No se registran datos personales de los participantes más allá
-del perfil; la participación es voluntaria y puede interrumpirse en cualquier momento (consentimiento verbal o escrito).
+Todas las cuentas y los datos son ficticios (dominio reservado `campus.test`).
 
-## 3. Preparación
+## 3. Entornos
 
-1. `npm run db:reset` y `npm start` en el equipo de prueba, **o** usar la demo en línea
-   https://campusreserva.onrender.com (abrirla un minuto antes: el plan gratuito se suspende sin tráfico y, al
-   reiniciarse, vuelve a los datos ficticios iniciales; si varias personas prueban a la vez comparten los mismos datos).
-2. Navegador en `http://localhost:3000` o en la demo en línea, ventana limpia.
-3. Cronómetro y planilla de observación (sección 6).
-4. El facilitador lee cada tarea sin explicar la interfaz; observa y anota.
+- **Local:** pruebas de integración (`npm test`) sobre una base temporal con el reloj fijado en el lunes 16-11-2026
+  10:00, y capturas reales con Microsoft Edge (`npm run capturas`).
+- **Desplegado:** https://campusreserva.onrender.com con `npm run pruebas:despliegue -- https://campusreserva.onrender.com`
+  (ver [plan-pruebas.md](plan-pruebas.md), sección 6.1).
 
 ## 4. Tareas
 
@@ -34,24 +33,40 @@ del perfil; la participación es voluntaria y puede interrumpirse en cualquier m
 |---|---|---|---|---|
 | T1 | Estudiante | Crear una cuenta con `nuevo.estudiante@campus.test` y activarla desde el Buzón de demostración | Cuenta activa e inicio de sesión exitoso | RF-01, RF-02 |
 | T2 | Estudiante | Buscar una sala libre en Sede Maipú para el próximo día hábil | Llega a la lista de bloques disponibles | RF-03 |
-| T3 | Estudiante | Reservar un laboratorio de 14:30 y anotar el código | Reserva confirmada y código anotado | RF-04 |
+| T3 | Estudiante | Reservar un bloque libre y obtener el código | Reserva confirmada con código | RF-04 |
 | T4 | Estudiante | Encontrar la reserva y cancelarla | Reserva en estado Cancelada en el historial | RF-05 |
-| T5 | Docente | Buscar disponibilidad un domingo e interpretar el resultado | Entiende que no hay bloques disponibles | RF-03 |
-| T6 | Administrador | Registrar la "Sala Z-01" (Sede Centro, 25 personas) y crear un bloque lunes 10:00–11:30 | Espacio y bloque creados | RF-06 |
-| T7 | Administrador | Bloquear un horario con motivo "Mantención" | Bloqueo visible en "Bloqueos vigentes" | RF-06 |
-| T8 | Administrador | Intentar deshabilitar "Sala A-101" e interpretar el mensaje | Entiende que hay reservas vigentes que lo impiden | RF-06 |
+| T5 | Docente | Buscar disponibilidad un domingo | El sistema informa que no hay bloques disponibles | RF-03 |
+| T6 | Administrador | Registrar un espacio y crear un bloque horario | Espacio y bloque creados; datos inválidos y superposiciones rechazados | RF-06 |
+| T7 | Administrador | Bloquear un horario con un motivo | El bloque desaparece de la disponibilidad y vuelve al quitar el bloqueo | RF-06 |
+| T8 | Administrador | Intentar deshabilitar "Sala A-101", que tiene reservas vigentes | El sistema lo rechaza indicando las reservas afectadas | RF-06 |
 
-## 5. Métricas
+## 5. Resultados: verificación automatizada de las tareas
 
-- Tasa de éxito por tarea (completada sin ayuda / con ayuda / no completada).
-- Tiempo por tarea (segundos).
-- Errores observados y comentarios textuales.
-- Satisfacción al final: escala de 1 a 5 ("¿Qué tan fácil fue usar CampusReserva?").
-
-## 6. Planilla de resultados (completar solo con datos reales)
-
-| Participante (perfil) | Tarea | Resultado | Tiempo (s) | Errores / comentarios |
+| Tarea | Pruebas que la ejecutan (local) | Prueba sobre Render | Evidencia visual | Resultado |
 |---|---|---|---|---|
-| | | | | |
+| T1 | CP-01-01, CP-01-06, CP-01-07 | DEP-16 (registro, enlace con la URL pública, activación e inicio de sesión) | Capturas 02 a 07; dep-05 | Completada |
+| T2 | CP-03-01, CP-03-02 | DEP-07 | Captura 09; dep-02 | Completada |
+| T3 | CP-04-01, CP-04-02 | DEP-08, DEP-09 | Capturas 11, 12 y 13 | Completada |
+| T4 | CP-05-01, CP-05-03, CP-05-04 | DEP-12 | Capturas 14, 15 y 16; dep-03 | Completada |
+| T5 | CP-03-05 | — | Captura 10 | Completada |
+| T6 | CP-06-02, CP-06-07 | DEP-15 (registro del espacio) | Capturas 19, 20 y 22; dep-04 | Completada |
+| T7 | CP-06-10 | — | Captura 21 | Completada |
+| T8 | CP-06-05 | — | Captura 24 | Completada |
 
-Fecha de ejecución: ______ · Facilitador: ______ · Versión (commit): ______
+**Tasa de éxito: 8 de 8 tareas completadas** en la ejecución automatizada (81/81 pruebas locales y 17/17 sobre Render).
+Las capturas se tomaron con Microsoft Edge sobre la interfaz real; las del despliegue (`dep-*`) están en
+`docs/evidencias/despliegue/` y las locales en `docs/evidencias/capturas/`.
+
+Alcance de esta verificación: comprueba que cada tarea **se puede completar** y que el sistema **muestra el mensaje
+esperado**. No mide si una persona entiende los mensajes sin ayuda, cuánto tarda ni qué tan satisfecha queda.
+
+## 6. Mejora futura: sesiones con usuarios
+
+Si se realizan sesiones con personas (2 estudiantes, 1 docente y 1 administrador), usar las mismas tareas T1 a T8 en
+la demo en línea o en local, sin explicar la interfaz, y registrar:
+
+- Éxito por tarea (sin ayuda / con ayuda / no completada) y tiempo por tarea en segundos.
+- Errores observados y comentarios.
+- Satisfacción final de 1 a 5 ("¿Qué tan fácil fue usar CampusReserva?").
+
+Solo cuentas y datos ficticios; participación voluntaria y sin registrar datos personales más allá del perfil.

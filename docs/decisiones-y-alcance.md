@@ -33,7 +33,7 @@ destinó a la implementación (ver `docs/jira-actualizaciones.md`).
 | Inhabilitación de espacios con reservas futuras | **Propuesta**: se rechaza la operación e informa las reservas afectadas; no hay cancelación automática | CP-06-05 |
 | Actividad y filtro opcional | El filtro por sala o laboratorio es opcional en la interfaz y en el servidor | CP-03-04, captura 09 |
 | Concurrencia e historial | Transacción `BEGIN IMMEDIATE` + índice único parcial (solo reservas CONFIRMADAS): impide duplicados y conserva el historial de canceladas | CP-04-03, CP-04-07, CP-04-08 |
-| Cliente y usuarios: revisión guiada | **Pendiente**: procedimiento preparado en `docs/pruebas-usuario.md` | — |
+| Cliente y usuarios: revisión guiada | Las 8 tareas de usuario se verificaron con pruebas automatizadas (`docs/pruebas-usuario.md`); la revisión con personas y con la institución queda como mejora | T1 a T8 |
 | Planificación y estimación | Plan reorientado a la implementación en Jira (KAN-36) | `docs/jira-actualizaciones.md` |
 
 Refinamiento del modelo de clases: en la ES2 la clase *Horario* tenía `fecha`. En el MVP el horario es un **bloque semanal
@@ -64,7 +64,7 @@ ejecutada). RNF-08 y RNF-09 provienen del Spike/ADR. RNF-10 y RNF-11 se agregan 
 | RNF-03 | ES2 | Privacidad de reservas | Consulta y cancelación limitadas a la identidad autenticada; un identificador enviado por el cliente no da acceso a reservas ajenas | CP-05-01, CP-05-02 | Cumple |
 | RNF-04 | ES2 | Integridad de reservas | La comprobación final y el guardado impiden reservas confirmadas superpuestas aun ante solicitudes simultáneas | CP-04-03, CP-04-07, CP-04-08, `npm run metricas` | Cumple: 0 duplicados en 250 solicitudes |
 | RNF-05 | ES2 | Consistencia | Las modificaciones se completan o revierten sin estados parciales | CP-U-28 (fallo simulado), CP-04-07 | Cumple |
-| RNF-06 | ES2 | Claridad de interfaz | Distingue obligatorios y opcionales, errores de campo, ausencia de resultados y fallos técnicos; muestra resumen antes de reservar o cancelar; usable en 390 px | CP-03-05, CP-05-03; capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (verificación visual, sin UAT) |
+| RNF-06 | ES2 | Claridad de interfaz | Distingue obligatorios y opcionales, errores de campo, ausencia de resultados y fallos técnicos; muestra resumen antes de reservar o cancelar; usable en 390 px | CP-03-05, CP-05-03; capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (verificación visual y tareas de usuario automatizadas; sin sesiones con personas) |
 | RNF-07 | ES2 | Mantenibilidad | Presentación, negocio y persistencia separadas; la interfaz no accede a la base; cobertura de líneas ≥ 80 % | Estructura `src/`; `npm run test:coverage` | Cumple: 96,79 % |
 | RNF-08 | Spike RNF1 + nuevo | Rendimiento | Confirmación de reserva: p95 ≤ 800 ms con 50 solicitudes simultáneas y errores técnicos < 1 %. Consulta de disponibilidad: p95 ≤ 500 ms con 20 concurrentes | `npm run metricas` | Cumple: 119,2 ms y 0 %; 164,4 ms |
 | RNF-09 | Spike RNF2 | Disponibilidad | ≥ 99,5 % durante el período académico | Requiere monitoreo continuo en un plan sin suspensión | **No verificado**: el despliegue de demostración usa el plan gratuito, que se suspende tras 15 min sin tráfico |
@@ -73,7 +73,7 @@ ejecutada). RNF-08 y RNF-09 provienen del Spike/ADR. RNF-10 y RNF-11 se agregan 
 
 Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 1,49 s por el costo deliberado de scrypt
 (≈ 230 ms por verificación aislada); compromiso aceptado entre seguridad y rendimiento. En el despliegue gratuito de
-Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,1 s), porque el plan entrega solo una fracción de CPU.
+Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el plan entrega solo una fracción de CPU.
 
 ## 5. Riesgos iniciales
 
@@ -131,5 +131,6 @@ y un despliegue de demostración en Render (https://campusreserva.onrender.com) 
 **Fuera de alcance / limitaciones:** envío real de correos; despliegue productivo (el de demostración usa el plan gratuito:
 se suspende tras 15 min sin tráfico, tarda en despertar y pierde los cambios al reiniciar) y por lo tanto disponibilidad
 no medida (RNF-09); notificaciones; reportes; gestión de sedes y del
-listado institucional desde la interfaz; recuperación de contraseña; verificación contra contraseñas filtradas; pruebas de
-usuario con personas reales (pendientes); validación institucional de las reglas propuestas (pendiente desde la ES2).
+listado institucional desde la interfaz; recuperación de contraseña; verificación contra contraseñas filtradas; sesiones
+con personas reales (las tareas de usuario se verificaron con pruebas automatizadas); validación institucional de las
+reglas propuestas (pendiente desde la ES2).

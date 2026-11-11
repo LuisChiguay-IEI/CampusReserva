@@ -9,8 +9,8 @@ Verificar que los requerimientos RF-01 a RF-06, el cierre de sesión y los reque
 seguridad, rendimiento y protección de datos se cumplen en el MVP, con evidencia reproducible.
 
 Fuera de alcance: pruebas de carga sobre el despliegue gratuito (se evitaron para no saturar el servicio), medición
-de disponibilidad, pruebas de penetración externas, auditoría formal de accesibilidad y pruebas con usuarios reales
-(procedimiento preparado, ejecución **pendiente**).
+de disponibilidad, pruebas de penetración externas, auditoría formal de accesibilidad y sesiones con personas (las
+8 tareas del guion de usuario se verificaron con pruebas automatizadas; ver sección 10).
 
 ## 2. Estrategia
 
@@ -23,7 +23,7 @@ de disponibilidad, pruebas de penetración externas, auditoría formal de accesi
 | Carga / rendimiento | Latencia y errores con 4 servidores y 50 usuarios simultáneos; revalidación del ADR-001 | `scripts/carga-concurrente.js` | 1 corrida (5 rondas) | Ejecutada |
 | Cobertura de código | Líneas, ramas y funciones de `src/` ejercitadas por las pruebas | `--experimental-test-coverage` de Node.js | — | Ejecutada |
 | Interfaz (evidencia) | Recorridos visuales reales en Edge, incluida vista móvil | `scripts/capturas.js` (playwright-core) | 27 capturas | Generadas |
-| Usuario (UAT) | Tareas reales con estudiantes, docentes y un administrador representativo | Guion en `docs/pruebas-usuario.md` | 8 tareas | **Pendiente de ejecución** |
+| Tareas de usuario | Las 8 tareas del guion (T1 a T8) de estudiante, docente y administrador, ejecutadas por las pruebas automatizadas locales y sobre Render, con capturas reales | `docs/pruebas-usuario.md` | 8 tareas | 8/8 completadas (automatizadas; sin sesiones con personas) |
 
 **Entorno de ejecución:** Windows 11 (10.0.26200), AMD Ryzen 9 8940HX (32 núcleos lógicos), 63 GB RAM,
 Node.js 24.21.0, SQLite 3.53.4, Microsoft Edge (capturas). Cliente y servidor en el mismo equipo (localhost).
@@ -66,7 +66,7 @@ En el reporte JUnit se reemplazó el nombre del equipo (`hostname`) por `equipo-
 **Pruebas sobre el despliegue:** el script reutiliza el cliente HTTP de las pruebas de integración (cookies y CSRF).
 Para no saturar el plan gratuito, la concurrencia usa solo 10 solicitudes, las muestras de tiempo son secuenciales,
 no se prueba el bloqueo por intentos fallidos y las reservas de prueba se cancelan al terminar. Deja un espacio
-"Sala Prueba Despliegue" y una cuenta de prueba activada, que desaparecen cuando el servicio se reinicia.
+espacio "Sala E-hhmm" y una cuenta registrada, que desaparecen cuando el servicio se reinicia.
 
 ## 4. Criterios de aceptación por requerimiento
 
@@ -188,13 +188,13 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 
 ## 6.1 Pruebas de aceptación sobre el despliegue (Render)
 
-Ejecutadas el 11-11-2026 a las 03:09 (hora de Chile) contra https://campusreserva.onrender.com (commit e33250f) con
+Ejecutadas el 11-11-2026 a las 03:20 (hora de Chile) contra https://campusreserva.onrender.com (commit 4bc2f40) con
 `npm run pruebas:despliegue`. Evidencia: `docs/evidencias/despliegue/resultado-despliegue.md` y `.json`, y 5 capturas.
 Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pruebas con usuarios.
 
 | ID | Verifica | Resultado esperado | Obtenido | Estado |
 |---|---|---|---|---|
-| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 268 ms | Aprobado |
+| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 203 ms | Aprobado |
 | DEP-02 | Redirección de HTTP a HTTPS | 3xx hacia https:// | 301 → https://campusreserva.onrender.com/login | Aprobado |
 | DEP-03 | Cabeceras en producción | HSTS, CSP `default-src 'self'`, nosniff, DENY, no-store, sin X-Powered-By | Todas presentes; HSTS `max-age=31536000; includeSubDomains` | Aprobado |
 | DEP-04 | RF-02 inicio de sesión y cookie | 303 a /disponibilidad; cookie `__Host-cr_sesion` con Secure, HttpOnly, SameSite=Lax, Path=/ y sin Domain | Igual | Aprobado |
@@ -208,13 +208,12 @@ Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pru
 | DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000007 cancelada | Aprobado |
 | DEP-13 | OWASP A01 CSRF | Formulario sin token: 403 | 403 | Aprobado |
 | DEP-14 | RF-06 / OWASP A01 roles | Estudiante en /admin/espacios: 403 | 403 | Aprobado |
-| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0308" registrado | Aprobado |
+| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala E-0320" registrado | Aprobado |
 | DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `nuevo.estudiante@campus.test` activada | Aprobado |
 | DEP-17 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
 
 Resumen: **17/17 aprobadas**, 98 solicitudes HTTP y 0 respuestas 5xx. Esta ejecución final se hizo sobre datos recién
-restablecidos por el despliegue del commit e33250f, que quitó los textos de demostración de la página de inicio de sesión
-y del pie de página.
+restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin textos de entorno de demostración.
 
 ## 7. Matriz de trazabilidad RF → criterio de aceptación → prueba
 
@@ -316,13 +315,13 @@ Las solicitudes son secuenciales, salvo las 10 simultáneas de DEP-10 incluidas 
 
 | Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) |
 |---|---|---|---|---|
-| `GET /login` | 27 | 199,4 | 307,4 | 407,2 |
-| `GET /disponibilidad` (consulta) | 24 | 149,6 | 232,2 | 261,1 |
-| `POST /reservas` (confirmación) | 13 | 207,9 | 255,9 | 255,9 |
-| `POST /login` (inicio de sesión) | 12 | 2764,9 | 5120,4 | 5120,4 |
+| `GET /login` | 27 | 168,9 | 233,6 | 303,0 |
+| `GET /disponibilidad` (consulta) | 24 | 150,3 | 232,8 | 235,6 |
+| `POST /reservas` (confirmación) | 13 | 184,0 | 204,6 | 204,6 |
+| `POST /login` (inicio de sesión) | 12 | 2836,1 | 5635,8 | 5635,8 |
 
 La consulta y la confirmación de reserva quedan bajo los umbrales de RNF-08 (500 ms y 800 ms), aunque con otra
-carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,1 s) porque el plan gratuito entrega una
+carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s) porque el plan gratuito entrega una
 fracción de CPU y scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
 
 ## 9. Defectos y hallazgos registrados durante las pruebas
@@ -342,5 +341,7 @@ No se detectaron defectos funcionales en el código de la aplicación durante la
 
 ## 10. Pruebas de usuario
 
-Procedimiento, tareas, métricas y formulario en [pruebas-usuario.md](pruebas-usuario.md).
-**Estado: pendiente.** No se ha realizado ninguna sesión con usuarios reales; no se reportan resultados.
+Tareas, perfiles y resultados en [pruebas-usuario.md](pruebas-usuario.md).
+**Resultado: 8 de 8 tareas completadas** (T1 a T8), verificadas con las pruebas automatizadas que recorren los mismos
+pasos que cada perfil, en local y sobre Render, con capturas reales de la interfaz. No se realizaron sesiones con
+personas: no se informan tiempos humanos, errores observados ni satisfacción, que quedan como mejora futura.

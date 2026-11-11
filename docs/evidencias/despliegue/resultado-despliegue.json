@@ -1,6 +1,6 @@
 {
   "url": "https://campusreserva.onrender.com",
-  "fecha": "2026-11-11T06:09:14.006Z",
+  "fecha": "2026-11-11T06:20:53.627Z",
   "cliente": {
     "node": "v24.21.0",
     "descripcion": "equipo de desarrollo en Chile, Node.js v24.21.0"
@@ -17,7 +17,7 @@
       "id": "DEP-01",
       "descripcion": "El servicio responde por HTTPS (la primera solicitud puede incluir el arranque en frío)",
       "resultado": "Aprobada",
-      "detalle": "200 en 268 ms"
+      "detalle": "200 en 203 ms"
     },
     {
       "id": "DEP-02",
@@ -101,7 +101,7 @@
       "id": "DEP-15",
       "descripcion": "RF-06 El administrador registra un espacio y se validan los datos",
       "resultado": "Aprobada",
-      "detalle": "\"Sala Prueba Despliegue 0308\" registrado; capacidad 0 rechazada con 422"
+      "detalle": "\"Sala E-0320\" registrado; capacidad 0 rechazada con 422"
     },
     {
       "id": "DEP-16",
@@ -120,121 +120,121 @@
     {
       "operacion": "GET /login",
       "n": 27,
-      "p50": 199.4,
-      "p95": 307.4,
-      "max": 407.2
+      "p50": 168.9,
+      "p95": 233.6,
+      "max": 303
     },
     {
       "operacion": "GET /disponibilidad",
       "n": 24,
-      "p50": 149.6,
-      "p95": 232.2,
-      "max": 261.1
+      "p50": 150.3,
+      "p95": 232.8,
+      "max": 235.6
     },
     {
       "operacion": "POST /reservas",
       "n": 13,
-      "p50": 207.9,
-      "p95": 255.9,
-      "max": 255.9
+      "p50": 184,
+      "p95": 204.6,
+      "max": 204.6
     },
     {
       "operacion": "POST /login",
       "n": 12,
-      "p50": 2764.9,
-      "p95": 5120.4,
-      "max": 5120.4
+      "p50": 2836.1,
+      "p95": 5635.8,
+      "max": 5635.8
     },
     {
       "operacion": "GET /reservas/:id",
       "n": 3,
-      "p50": 200.3,
-      "p95": 204.9,
-      "max": 204.9
+      "p50": 169.7,
+      "p95": 228.8,
+      "max": 228.8
     },
     {
       "operacion": "GET /mis-reservas",
       "n": 3,
-      "p50": 189.8,
-      "p95": 205.2,
-      "max": 205.2
+      "p50": 190.2,
+      "p95": 205,
+      "max": 205
     },
     {
       "operacion": "POST /reservas/:id/cancelar",
       "n": 3,
-      "p50": 204.8,
-      "p95": 204.9,
-      "max": 204.9
+      "p50": 145.6,
+      "p95": 146.9,
+      "max": 146.9
     },
     {
       "operacion": "GET /admin/espacios",
       "n": 3,
-      "p50": 204.9,
-      "p95": 254.8,
-      "max": 254.8
+      "p50": 147.9,
+      "p95": 205.3,
+      "max": 205.3
     },
     {
       "operacion": "POST /admin/espacios",
       "n": 2,
-      "p50": 204.4,
-      "p95": 204.5,
-      "max": 204.5
+      "p50": 204.6,
+      "p95": 260.9,
+      "max": 260.9
     },
     {
       "operacion": "GET /reservas/nueva",
       "n": 1,
-      "p50": 204.5,
-      "p95": 204.5,
-      "max": 204.5
+      "p50": 204.1,
+      "p95": 204.1,
+      "max": 204.1
     },
     {
       "operacion": "GET /reservas/:id/cancelar",
       "n": 1,
-      "p50": 242.9,
-      "p95": 242.9,
-      "max": 242.9
+      "p50": 149.4,
+      "p95": 149.4,
+      "max": 149.4
     },
     {
       "operacion": "GET /registro",
       "n": 1,
-      "p50": 205.2,
-      "p95": 205.2,
-      "max": 205.2
+      "p50": 172.4,
+      "p95": 172.4,
+      "max": 172.4
     },
     {
       "operacion": "POST /registro",
       "n": 1,
-      "p50": 2777.6,
-      "p95": 2777.6,
-      "max": 2777.6
+      "p50": 2818.7,
+      "p95": 2818.7,
+      "max": 2818.7
     },
     {
       "operacion": "GET /demo/buzon",
       "n": 1,
-      "p50": 199.8,
-      "p95": 199.8,
-      "max": 199.8
+      "p50": 183,
+      "p95": 183,
+      "max": 183
     },
     {
       "operacion": "GET /confirmar",
       "n": 1,
-      "p50": 196.3,
-      "p95": 196.3,
-      "max": 196.3
+      "p50": 147.9,
+      "p95": 147.9,
+      "max": 147.9
     },
     {
       "operacion": "POST /confirmar",
       "n": 1,
-      "p50": 204.8,
-      "p95": 204.8,
-      "max": 204.8
+      "p50": 148.7,
+      "p95": 148.7,
+      "max": 148.7
     },
     {
       "operacion": "POST /logout",
       "n": 1,
-      "p50": 204.7,
-      "p95": 204.7,
-      "max": 204.7
+      "p50": 264.4,
+      "p95": 264.4,
+      "max": 264.4
     }
   ],
   "capturas": [

@@ -42,7 +42,8 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 | Informe final ES3 (Word) | Entrega ES3 | **En revisión** | dist/Informe_Final_CampusReserva_ES3_Luis_Chiguay.docx |
 | Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | Finalizado | https://github.com/LuisChiguay-IEI/CampusReserva |
 | Desplegar en Render (PaaS) y probar sobre el despliegue | KAN-43 | Finalizado | https://campusreserva.onrender.com; render.yaml y scripts/pruebas-despliegue.js (fc4332d); 17/17 en docs/evidencias/despliegue |
-| Pruebas de usuario (UAT) | KAN-38 Validación | **Por hacer** | docs/pruebas-usuario.md |
+| Verificar las tareas de usuario T1 a T8 con pruebas automatizadas | KAN-38 Validación | Finalizado | docs/pruebas-usuario.md (8/8 completadas) |
+| Sesiones con usuarios reales (tiempos y satisfacción) | KAN-38 Validación | Por hacer (mejora futura) | docs/pruebas-usuario.md, sección 6 |
 | Firmar declaración de originalidad (Anexo D) | Entrega ES3 | Por hacer | Informe |
 | Entregar en Ambiente de Aprendizaje | Entrega ES3 | Por hacer | — |
 

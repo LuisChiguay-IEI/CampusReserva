@@ -165,6 +165,7 @@ mensajes de error sin detalles internos. Mapeo a OWASP Top 10:2025 en el informe
   reiniciar y no ofrece la disponibilidad de RNF-09 (no medida). Para producción se requiere un plan pagado y
   PostgreSQL o disco persistente.
 - SQLite es adecuado para el MVP; con varias instancias en distintos servidores se recomienda migrar a PostgreSQL.
-- Las pruebas de usuario con personas reales están **pendientes** (procedimiento en [docs/pruebas-usuario.md](docs/pruebas-usuario.md)).
+- Las 8 tareas de usuario se verificaron con pruebas automatizadas (local y Render); no se realizaron sesiones con
+  personas, por lo que no hay mediciones de tiempo ni de satisfacción ([docs/pruebas-usuario.md](docs/pruebas-usuario.md)).
 - Las dependencias se instalaron desde el registro corporativo de paquetes aprobados; por eso sesión, cabeceras y
   CSRF están implementados en el propio proyecto en lugar de `express-session`/`helmet`.
