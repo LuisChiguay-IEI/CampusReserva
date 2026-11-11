@@ -1,0 +1,29 @@
+<%- include('../partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <h1>Cancelar reserva <%= reserva.codigo %></h1>
+    <dl class="resumen">
+      <div><dt>Espacio</dt><dd><%= reserva.espacio_nombre %> · <%= reserva.sede_nombre %></dd></div>
+      <div><dt>Fecha</dt><dd><%= formatearFecha(reserva.fecha) %></dd></div>
+      <div><dt>Horario</dt><dd><%= reserva.hora_inicio %> – <%= reserva.hora_fin %></dd></div>
+    </dl>
+
+    <% if (reserva.cancelable) { %>
+      <div class="alerta alerta-aviso" role="note">
+        ¿Confirmas la cancelación? El horario quedará disponible para otras personas.
+        La reserva se conservará en tu historial como <strong>Cancelada</strong>.
+      </div>
+      <form method="post" action="/reservas/<%= reserva.id %>/cancelar" class="acciones" data-un-envio>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="boton boton-peligro">Sí, cancelar reserva</button>
+        <a class="boton boton-secundario" href="/mis-reservas">No, volver</a>
+      </form>
+    <% } else { %>
+      <div class="alerta alerta-error" role="alert">
+        Esta reserva no se puede cancelar: <%= reserva.estado === 'CANCELADA' ? 'ya fue cancelada.' : 'el bloque ya comenzó o terminó.' %>
+      </div>
+      <a class="boton boton-secundario" href="/mis-reservas">Volver a mis reservas</a>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/fin') %>

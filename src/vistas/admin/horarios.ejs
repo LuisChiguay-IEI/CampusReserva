@@ -1,0 +1,127 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1><%= espacio.nombre %></h1>
+    <p class="subtitulo">
+      <%= espacio.sede_nombre %> · <%= espacio.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %> · <%= espacio.capacidad %> personas ·
+      <span class="insignia <%= espacio.habilitado ? 'insignia-ok' : 'insignia-cancelada' %>"><%= espacio.habilitado ? 'Habilitado' : 'Deshabilitado' %></span>
+    </p>
+  </div>
+  <a class="boton boton-secundario" href="/admin/espacios">Volver a espacios</a>
+</div>
+
+<div class="dos-columnas">
+  <section>
+    <h2 class="titulo-seccion">Bloques horarios semanales</h2>
+    <% if (horarios.length === 0) { %>
+      <div class="tarjeta estado-vacio"><h3>Sin bloques</h3><p>Crea el primer bloque horario para que el espacio pueda reservarse.</p></div>
+    <% } else { %>
+      <div class="tabla-envoltura tarjeta sin-relleno">
+        <table class="tabla">
+          <thead><tr><th>Día</th><th>Horario</th><th>Estado</th><th><span class="solo-lector">Acciones</span></th></tr></thead>
+          <tbody>
+            <% horarios.forEach((h) => { %>
+              <tr class="<%= h.activo ? '' : 'fila-inactiva' %>">
+                <td data-etiqueta="Día"><%= dias[h.dia_semana] %></td>
+                <td data-etiqueta="Horario"><%= h.hora_inicio %> – <%= h.hora_fin %></td>
+                <td data-etiqueta="Estado"><span class="insignia <%= h.activo ? 'insignia-ok' : 'insignia-cancelada' %>"><%= h.activo ? 'Activo' : 'Inactivo' %></span></td>
+                <td class="celda-acciones">
+                  <a class="boton boton-secundario boton-pequeno" href="/admin/horarios/<%= h.id %>/editar">Modificar</a>
+                  <form method="post" action="/admin/horarios/<%= h.id %>/estado" class="en-linea">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="accion" value="<%= h.activo ? 'desactivar' : 'activar' %>">
+                    <button type="submit" class="boton boton-pequeno <%= h.activo ? 'boton-peligro-suave' : 'boton-exito-suave' %>"><%= h.activo ? 'Desactivar' : 'Activar' %></button>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </section>
+
+  <aside class="columna-formularios">
+    <section class="tarjeta">
+      <h2 class="titulo-tarjeta">Nuevo bloque horario</h2>
+      <% if (formHorario.mensaje) { %><div class="alerta alerta-error" role="alert"><%= formHorario.mensaje %></div><% } %>
+      <form method="post" action="/admin/espacios/<%= espacio.id %>/horarios" class="formulario" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="campo <%= formHorario.errores.dia ? 'con-error' : '' %>">
+          <label for="dia">Día</label>
+          <select id="dia" name="dia" required>
+            <% for (let d = 1; d <= 7; d += 1) { %>
+              <option value="<%= d %>" <%= String(formHorario.valores.dia) === String(d) ? 'selected' : '' %>><%= dias[d] %></option>
+            <% } %>
+          </select>
+          <% if (formHorario.errores.dia) { %><p class="texto-error"><%= formHorario.errores.dia %></p><% } %>
+        </div>
+        <div class="fila-campos">
+          <div class="campo <%= formHorario.errores.inicio ? 'con-error' : '' %>">
+            <label for="inicio">Inicio</label>
+            <input id="inicio" name="inicio" type="time" required value="<%= formHorario.valores.inicio || '' %>">
+            <% if (formHorario.errores.inicio) { %><p class="texto-error"><%= formHorario.errores.inicio %></p><% } %>
+          </div>
+          <div class="campo <%= formHorario.errores.fin ? 'con-error' : '' %>">
+            <label for="fin">Término</label>
+            <input id="fin" name="fin" type="time" required value="<%= formHorario.valores.fin || '' %>">
+            <% if (formHorario.errores.fin) { %><p class="texto-error"><%= formHorario.errores.fin %></p><% } %>
+          </div>
+        </div>
+        <p class="texto-ayuda">Entre 07:00 y 23:00, de 30 a 240 minutos y sin superponerse con otro bloque activo del mismo día.</p>
+        <button type="submit" class="boton boton-primario boton-bloque">Crear bloque</button>
+      </form>
+    </section>
+
+    <section class="tarjeta">
+      <h2 class="titulo-tarjeta">Bloquear un horario en una fecha</h2>
+      <% if (formBloqueo.mensaje) { %><div class="alerta alerta-error" role="alert"><%= formBloqueo.mensaje %></div><% } %>
+      <form method="post" action="/admin/espacios/<%= espacio.id %>/bloqueos" class="formulario" novalidate>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="campo <%= formBloqueo.errores.fecha ? 'con-error' : '' %>">
+          <label for="fecha-bloqueo">Fecha</label>
+          <input id="fecha-bloqueo" name="fecha" type="date" min="<%= hoy %>" required value="<%= formBloqueo.valores.fecha || '' %>">
+          <% if (formBloqueo.errores.fecha) { %><p class="texto-error"><%= formBloqueo.errores.fecha %></p><% } %>
+        </div>
+        <div class="campo <%= formBloqueo.errores.horario ? 'con-error' : '' %>">
+          <label for="horario-bloqueo">Bloque horario</label>
+          <select id="horario-bloqueo" name="horario" required>
+            <option value="">Selecciona un bloque</option>
+            <% horarios.filter((h) => h.activo).forEach((h) => { %>
+              <option value="<%= h.id %>" <%= String(formBloqueo.valores.horario) === String(h.id) ? 'selected' : '' %>><%= dias[h.dia_semana] %> <%= h.hora_inicio %>–<%= h.hora_fin %></option>
+            <% }) %>
+          </select>
+          <% if (formBloqueo.errores.horario) { %><p class="texto-error"><%= formBloqueo.errores.horario %></p><% } %>
+        </div>
+        <div class="campo <%= formBloqueo.errores.motivo ? 'con-error' : '' %>">
+          <label for="motivo">Motivo</label>
+          <input id="motivo" name="motivo" type="text" maxlength="120" required value="<%= formBloqueo.valores.motivo || '' %>" placeholder="Ej.: Mantención de equipos">
+          <% if (formBloqueo.errores.motivo) { %><p class="texto-error"><%= formBloqueo.errores.motivo %></p><% } %>
+        </div>
+        <p class="texto-ayuda">Si el bloque ya tiene una reserva confirmada en esa fecha, el bloqueo se rechaza.</p>
+        <button type="submit" class="boton boton-primario boton-bloque">Bloquear horario</button>
+      </form>
+
+      <h3 class="subtitulo-tarjeta">Bloqueos vigentes</h3>
+      <% if (bloqueos.length === 0) { %>
+        <p class="texto-suave">No hay bloqueos desde hoy en adelante.</p>
+      <% } else { %>
+        <ul class="lista-bloqueos">
+          <% bloqueos.forEach((b) => { %>
+            <li>
+              <div>
+                <strong><%= formatearFecha(b.fecha) %></strong> · <%= b.hora_inicio %>–<%= b.hora_fin %>
+                <p class="texto-suave"><%= b.motivo %></p>
+              </div>
+              <form method="post" action="/admin/bloqueos/<%= b.id %>/eliminar" class="en-linea">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="boton boton-secundario boton-pequeno">Quitar</button>
+              </form>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </section>
+  </aside>
+</div>
+<%- include('../partials/fin') %>

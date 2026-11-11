@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CampusReserva: consulta y reserva de salas y laboratorios académicos.">
+  <title><%= titulo %> · CampusReserva</title>
+  <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/estilos.css">
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+  <% if (buzonDemo) { %>
+    <div class="franja-demo" role="note">
+      <div class="contenedor">
+        Entorno de demostración con datos ficticios. Los correos <strong>no se envían</strong>: se muestran en el
+        <a href="/demo/buzon">Buzón de demostración</a>.
+      </div>
+    </div>
+  <% } %>
+  <header class="cabecera">
+    <div class="contenedor cabecera-interior">
+      <a class="marca" href="/">
+        <img src="/img/logo.svg" alt="" width="30" height="30">
+        <span>CampusReserva</span>
+      </a>
+      <nav class="navegacion" aria-label="Navegación principal">
+        <% if (!usuario) { %>
+          <a href="/login" class="<%= rutaActual === '/login' ? 'activo' : '' %>">Iniciar sesión</a>
+          <a href="/registro" class="<%= rutaActual.startsWith('/registro') ? 'activo' : '' %>">Crear cuenta</a>
+        <% } else if (usuario.rol === 'ADMINISTRADOR') { %>
+          <a href="/admin/espacios" class="<%= rutaActual.startsWith('/admin/espacios') || rutaActual.startsWith('/admin/horarios') ? 'activo' : '' %>">Espacios y horarios</a>
+          <a href="/admin/auditoria" class="<%= rutaActual === '/admin/auditoria' ? 'activo' : '' %>">Auditoría</a>
+        <% } else { %>
+          <a href="/disponibilidad" class="<%= rutaActual === '/disponibilidad' || rutaActual === '/reservas/nueva' ? 'activo' : '' %>">Disponibilidad</a>
+          <a href="/mis-reservas" class="<%= rutaActual === '/mis-reservas' || /^\/reservas\/\d+/.test(rutaActual) ? 'activo' : '' %>">Mis reservas</a>
+        <% } %>
+      </nav>
+      <% if (usuario) { %>
+        <div class="sesion-usuario">
+          <span class="usuario-datos">
+            <span class="usuario-nombre"><%= usuario.nombre %></span>
+            <span class="insignia insignia-rol"><%= rolLegible(usuario.rol) %></span>
+          </span>
+          <form method="post" action="/logout" class="en-linea">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="boton boton-claro boton-pequeno">Cerrar sesión</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+  </header>
+  <main id="contenido" class="contenedor principal">
+    <% for (const m of tomarMensajes()) { %>
+      <div class="alerta alerta-<%= m.tipo %>" role="<%= m.tipo === 'error' ? 'alert' : 'status' %>"><%= m.texto %></div>
+    <% } %>

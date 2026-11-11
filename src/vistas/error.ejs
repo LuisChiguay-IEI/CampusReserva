@@ -1,0 +1,15 @@
+<%- include('partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <p class="codigo-error"><%= estado %></p>
+    <h1><%= titulo %></h1>
+    <div class="alerta <%= estado >= 500 ? 'alerta-error' : 'alerta-aviso' %>" role="alert"><%= mensaje %></div>
+    <div class="acciones">
+      <% if (volverA) { %>
+        <a class="boton boton-primario" href="<%= volverA %>">Volver</a>
+      <% } %>
+      <a class="boton boton-secundario" href="/">Ir al inicio</a>
+    </div>
+  </div>
+</section>
+<%- include('partials/fin') %>

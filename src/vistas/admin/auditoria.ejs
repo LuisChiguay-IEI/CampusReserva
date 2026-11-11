@@ -1,0 +1,24 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Registro de auditoría</h1>
+    <p class="subtitulo">Últimos 150 eventos de seguridad y operación. No se registran contraseñas, tokens ni direcciones IP.</p>
+  </div>
+</div>
+
+<div class="tabla-envoltura tarjeta sin-relleno">
+  <table class="tabla tabla-compacta">
+    <thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Evento</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <% eventos.forEach((e) => { %>
+        <tr>
+          <td data-etiqueta="Fecha y hora"><%= formatearInstante(e.fecha) %></td>
+          <td data-etiqueta="Usuario"><%= e.usuario_correo || '—' %></td>
+          <td data-etiqueta="Evento"><span class="insignia <%= /FALLIDO|DENEGADO|ERROR/.test(e.accion) ? 'insignia-cancelada' : 'insignia-neutra' %>"><%= e.accion %></span></td>
+          <td data-etiqueta="Detalle"><%= e.detalle || '' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+<%- include('../partials/fin') %>

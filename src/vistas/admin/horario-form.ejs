@@ -1,0 +1,44 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Modificar bloque horario</h1>
+    <p class="subtitulo"><%= espacio.nombre %> · <%= espacio.sede_nombre %></p>
+  </div>
+  <a class="boton boton-secundario" href="/admin/espacios/<%= espacio.id %>/horarios">Volver</a>
+</div>
+
+<div class="tarjeta tarjeta-angosta">
+  <% if (mensaje) { %><div class="alerta alerta-error" role="alert"><%= mensaje %></div><% } %>
+  <p class="texto-ayuda">
+    Un bloque con reservas confirmadas vigentes no puede modificarse: el sistema no altera reservas en silencio.
+  </p>
+  <form method="post" action="/admin/horarios/<%= horario.id %>" class="formulario" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="campo <%= errores.dia ? 'con-error' : '' %>">
+      <label for="dia">Día</label>
+      <select id="dia" name="dia" required>
+        <% for (let d = 1; d <= 7; d += 1) { %>
+          <option value="<%= d %>" <%= String(valores.dia) === String(d) ? 'selected' : '' %>><%= dias[d] %></option>
+        <% } %>
+      </select>
+      <% if (errores.dia) { %><p class="texto-error"><%= errores.dia %></p><% } %>
+    </div>
+    <div class="fila-campos">
+      <div class="campo <%= errores.inicio ? 'con-error' : '' %>">
+        <label for="inicio">Inicio</label>
+        <input id="inicio" name="inicio" type="time" required value="<%= valores.inicio || '' %>">
+        <% if (errores.inicio) { %><p class="texto-error"><%= errores.inicio %></p><% } %>
+      </div>
+      <div class="campo <%= errores.fin ? 'con-error' : '' %>">
+        <label for="fin">Término</label>
+        <input id="fin" name="fin" type="time" required value="<%= valores.fin || '' %>">
+        <% if (errores.fin) { %><p class="texto-error"><%= errores.fin %></p><% } %>
+      </div>
+    </div>
+    <div class="acciones">
+      <button type="submit" class="boton boton-primario">Guardar cambios</button>
+      <a class="boton boton-secundario" href="/admin/espacios/<%= espacio.id %>/horarios">Cancelar</a>
+    </div>
+  </form>
+</div>
+<%- include('../partials/fin') %>

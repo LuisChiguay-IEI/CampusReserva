@@ -1,0 +1,92 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Consultar disponibilidad</h1>
+    <p class="subtitulo">Elige sede y fecha. Si buscas una sala o laboratorio en particular, selecciónalo (opcional).</p>
+  </div>
+</div>
+
+<form method="get" action="/disponibilidad" class="tarjeta filtros" novalidate>
+  <div class="grilla-filtros">
+    <div class="campo <%= errores.sede ? 'con-error' : '' %>">
+      <label for="sede">Sede <span class="requerido" aria-hidden="true">*</span></label>
+      <select id="sede" name="sede" required data-filtra="espacio">
+        <option value="">Selecciona una sede</option>
+        <% sedes.forEach((s) => { %>
+          <option value="<%= s.id %>" <%= String(s.id) === filtros.sede ? 'selected' : '' %>><%= s.nombre %></option>
+        <% }) %>
+      </select>
+      <% if (errores.sede) { %><p class="texto-error"><%= errores.sede %></p><% } %>
+    </div>
+
+    <div class="campo <%= errores.fecha ? 'con-error' : '' %>">
+      <label for="fecha">Fecha <span class="requerido" aria-hidden="true">*</span></label>
+      <input id="fecha" name="fecha" type="date" required value="<%= filtros.fecha %>" min="<%= hoy %>">
+      <% if (errores.fecha) { %><p class="texto-error"><%= errores.fecha %></p><% } %>
+    </div>
+
+    <div class="campo <%= errores.espacio ? 'con-error' : '' %>">
+      <label for="espacio">Sala o laboratorio (opcional)</label>
+      <select id="espacio" name="espacio">
+        <option value="">Todos los espacios</option>
+        <% espaciosPorSede.forEach((g) => { %>
+          <optgroup label="<%= g.sede.nombre %>" data-sede="<%= g.sede.id %>">
+            <% g.espacios.forEach((e) => { %>
+              <option value="<%= e.id %>" <%= String(e.id) === filtros.espacio ? 'selected' : '' %>><%= e.nombre %></option>
+            <% }) %>
+          </optgroup>
+        <% }) %>
+      </select>
+      <% if (errores.espacio) { %><p class="texto-error"><%= errores.espacio %></p><% } %>
+    </div>
+
+    <div class="campo campo-accion">
+      <button type="submit" class="boton boton-primario boton-bloque">Consultar</button>
+    </div>
+  </div>
+</form>
+
+<% if (consulta) { %>
+  <section aria-live="polite" class="resultados">
+    <h2 class="titulo-seccion">
+      <%= consulta.sede.nombre %> · <%= formatearFecha(consulta.fecha) %>
+    </h2>
+
+    <% if (consulta.resultados.length === 0) { %>
+      <div class="tarjeta estado-vacio">
+        <h3>No hay espacios disponibles</h3>
+        <p>No encontramos bloques libres con los filtros seleccionados. Prueba otra fecha, otra sede o quita el filtro de espacio.</p>
+      </div>
+    <% } else { %>
+      <p class="texto-suave">
+        <%= consulta.totalBloques %> bloque(s) disponible(s) en <%= consulta.resultados.length %> espacio(s).
+        Selecciona un horario para revisar y confirmar tu reserva.
+      </p>
+      <div class="grilla-espacios">
+        <% consulta.resultados.forEach((r) => { %>
+          <article class="tarjeta tarjeta-espacio">
+            <header class="tarjeta-espacio-cabecera">
+              <h3><%= r.espacio.nombre %></h3>
+              <span class="insignia <%= r.espacio.tipo === 'SALA' ? 'insignia-sala' : 'insignia-lab' %>">
+                <%= r.espacio.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %>
+              </span>
+            </header>
+            <p class="texto-suave">Capacidad: <%= r.espacio.capacidad %> personas</p>
+            <ul class="lista-bloques">
+              <% r.bloques.forEach((b) => { %>
+                <li>
+                  <a class="bloque" href="/reservas/nueva?<%= new URLSearchParams({ espacio: r.espacio.id, horario: b.id, fecha: consulta.fecha, sede: consulta.sede.id }).toString() %>"
+                     aria-label="Reservar <%= r.espacio.nombre %> de <%= b.hora_inicio %> a <%= b.hora_fin %>">
+                    <span class="bloque-hora"><%= b.hora_inicio %> – <%= b.hora_fin %></span>
+                    <span class="bloque-accion">Reservar</span>
+                  </a>
+                </li>
+              <% }) %>
+            </ul>
+          </article>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+<% } %>
+<%- include('../partials/fin') %>

@@ -1,0 +1,45 @@
+<%- include('../partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <h1>Iniciar sesión</h1>
+    <p class="subtitulo">Ingresa con tu correo institucional para consultar y reservar espacios.</p>
+
+    <% if (error) { %>
+      <div class="alerta <%= pendiente ? 'alerta-aviso' : 'alerta-error' %>" role="alert">
+        <%= error %>
+        <% if (pendiente && buzonDemo) { %>
+          <br><a href="/demo/buzon">Abrir el Buzón de demostración</a>
+        <% } %>
+      </div>
+    <% } %>
+
+    <form method="post" action="/login" class="formulario" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="campo">
+        <label for="correo">Correo institucional</label>
+        <input id="correo" name="correo" type="email" autocomplete="username" required maxlength="254"
+               value="<%= valores.correo || '' %>" placeholder="nombre@<%= dominioInstitucional %>">
+      </div>
+      <div class="campo">
+        <label for="contrasena">Contraseña</label>
+        <input id="contrasena" name="contrasena" type="password" autocomplete="current-password" required maxlength="128">
+      </div>
+      <button type="submit" class="boton boton-primario boton-bloque">Ingresar</button>
+    </form>
+    <p class="texto-centrado texto-suave">¿Aún no tienes cuenta? <a href="/registro">Crea tu cuenta</a></p>
+  </div>
+
+  <% if (buzonDemo) { %>
+    <aside class="tarjeta tarjeta-ayuda" aria-label="Cuentas de demostración">
+      <h2>Cuentas ficticias de demostración</h2>
+      <ul class="lista-simple">
+        <li><strong>Estudiante:</strong> ana.estudiante@<%= dominioInstitucional %></li>
+        <li><strong>Docente:</strong> diego.docente@<%= dominioInstitucional %></li>
+        <li><strong>Administrador:</strong> admin@<%= dominioInstitucional %></li>
+        <li><strong>Cuenta pendiente:</strong> pedro.pendiente@<%= dominioInstitucional %></li>
+      </ul>
+      <p class="texto-suave">La contraseña de demostración está indicada en el README del proyecto.</p>
+    </aside>
+  <% } %>
+</section>
+<%- include('../partials/fin') %>

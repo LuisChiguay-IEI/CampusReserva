@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Configuración local con secretos (usar .env.example como guía)
+.env
+.env.*
+!.env.example
+
+# Base de datos local y archivos temporales de SQLite
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# Resultados temporales de pruebas
+.tmp/
+coverage/
+
+# Material institucional entregado por el docente (no se publica)
+docs/insumos/
+
+# Paquete de entrega generado
+dist/
+
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/

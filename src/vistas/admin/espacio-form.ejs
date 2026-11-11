@@ -1,0 +1,63 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1><%= espacio ? 'Editar espacio' : 'Registrar espacio' %></h1>
+    <p class="subtitulo">Todos los campos son obligatorios. El nombre no puede repetirse dentro de la misma sede.</p>
+  </div>
+  <a class="boton boton-secundario" href="/admin/espacios">Volver</a>
+</div>
+
+<div class="tarjeta tarjeta-angosta">
+  <% if (Object.keys(errores).length) { %>
+    <div class="alerta alerta-error" role="alert">Revisa los campos marcados.</div>
+  <% } %>
+  <form method="post" action="<%= espacio ? '/admin/espacios/' + espacio.id : '/admin/espacios' %>" class="formulario" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <% if (espacio) { %>
+      <div class="campo">
+        <span class="etiqueta">Sede</span>
+        <p class="valor-fijo"><%= espacio.sede_nombre %> <span class="texto-suave">(la sede no se modifica para no afectar reservas existentes)</span></p>
+      </div>
+    <% } else { %>
+      <div class="campo <%= errores.sede ? 'con-error' : '' %>">
+        <label for="sede">Sede</label>
+        <select id="sede" name="sede" required>
+          <option value="">Selecciona una sede</option>
+          <% sedes.forEach((s) => { %>
+            <option value="<%= s.id %>" <%= String(s.id) === String(valores.sede || '') ? 'selected' : '' %>><%= s.nombre %></option>
+          <% }) %>
+        </select>
+        <% if (errores.sede) { %><p class="texto-error"><%= errores.sede %></p><% } %>
+      </div>
+    <% } %>
+
+    <div class="campo <%= errores.nombre ? 'con-error' : '' %>">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" type="text" required maxlength="60" value="<%= valores.nombre || '' %>" placeholder="Ej.: Sala A-201">
+      <% if (errores.nombre) { %><p class="texto-error"><%= errores.nombre %></p><% } %>
+    </div>
+
+    <div class="campo <%= errores.tipo ? 'con-error' : '' %>">
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" required>
+        <option value="">Selecciona el tipo</option>
+        <option value="SALA" <%= valores.tipo === 'SALA' ? 'selected' : '' %>>Sala</option>
+        <option value="LABORATORIO" <%= valores.tipo === 'LABORATORIO' ? 'selected' : '' %>>Laboratorio</option>
+      </select>
+      <% if (errores.tipo) { %><p class="texto-error"><%= errores.tipo %></p><% } %>
+    </div>
+
+    <div class="campo <%= errores.capacidad ? 'con-error' : '' %>">
+      <label for="capacidad">Capacidad (personas)</label>
+      <input id="capacidad" name="capacidad" type="number" inputmode="numeric" min="1" max="200" required value="<%= valores.capacidad || '' %>">
+      <% if (errores.capacidad) { %><p class="texto-error"><%= errores.capacidad %></p><% } %>
+    </div>
+
+    <div class="acciones">
+      <button type="submit" class="boton boton-primario"><%= espacio ? 'Guardar cambios' : 'Registrar espacio' %></button>
+      <a class="boton boton-secundario" href="/admin/espacios">Cancelar</a>
+    </div>
+  </form>
+</div>
+<%- include('../partials/fin') %>

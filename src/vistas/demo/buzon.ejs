@@ -1,0 +1,35 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Buzón de demostración</h1>
+    <p class="subtitulo">Simula la casilla de correo de los usuarios porque el MVP no tiene un servicio de correo.</p>
+  </div>
+</div>
+
+<div class="alerta alerta-aviso" role="note">
+  <strong>Ningún correo se envía a una casilla real.</strong> Esta página solo existe cuando
+  <code>DEMO_MAILBOX=true</code> y debe deshabilitarse en producción.
+</div>
+
+<% if (correos.length === 0) { %>
+  <div class="tarjeta estado-vacio"><h2>No hay correos</h2><p>Registra una cuenta para generar un correo de confirmación.</p></div>
+<% } else { %>
+  <div class="lista-correos">
+    <% correos.forEach((c) => { %>
+      <article class="tarjeta correo">
+        <header class="correo-cabecera">
+          <div>
+            <p class="correo-asunto"><%= c.asunto %></p>
+            <p class="texto-suave">Para: <%= c.destinatario %></p>
+          </div>
+          <span class="texto-suave"><%= formatearInstante(c.creado_en) %></span>
+        </header>
+        <p><%= c.cuerpo %></p>
+        <% if (c.enlace) { %>
+          <a class="boton boton-primario boton-pequeno" href="<%= c.enlace %>">Abrir enlace de confirmación</a>
+        <% } %>
+      </article>
+    <% }) %>
+  </div>
+<% } %>
+<%- include('../partials/fin') %>

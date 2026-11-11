@@ -1,0 +1,28 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Reserva <%= reserva.codigo %></h1>
+    <p class="subtitulo">Identificador único de tu reserva. Guárdalo si necesitas consultarla.</p>
+  </div>
+  <a class="boton boton-secundario" href="/mis-reservas">Volver a mis reservas</a>
+</div>
+
+<div class="tarjeta tarjeta-angosta">
+  <dl class="resumen">
+    <div><dt>Estado</dt><dd><strong><%= reserva.estadoVisible %></strong></dd></div>
+    <div><dt>Sede</dt><dd><%= reserva.sede_nombre %></dd></div>
+    <div><dt>Espacio</dt><dd><%= reserva.espacio_nombre %> (<%= reserva.espacio_tipo === 'SALA' ? 'Sala' : 'Laboratorio' %>)</dd></div>
+    <div><dt>Fecha</dt><dd><%= formatearFecha(reserva.fecha) %></dd></div>
+    <div><dt>Horario</dt><dd><%= reserva.hora_inicio %> – <%= reserva.hora_fin %></dd></div>
+    <div><dt>Registrada</dt><dd><%= formatearInstante(reserva.creado_en) %></dd></div>
+    <% if (reserva.cancelado_en) { %>
+      <div><dt>Cancelada</dt><dd><%= formatearInstante(reserva.cancelado_en) %></dd></div>
+    <% } %>
+  </dl>
+  <% if (reserva.cancelable) { %>
+    <div class="acciones">
+      <a class="boton boton-peligro-suave" href="/reservas/<%= reserva.id %>/cancelar">Cancelar esta reserva</a>
+    </div>
+  <% } %>
+</div>
+<%- include('../partials/fin') %>

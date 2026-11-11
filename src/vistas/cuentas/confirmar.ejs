@@ -1,0 +1,22 @@
+<%- include('../partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <h1>Confirmar cuenta</h1>
+    <% if (error) { %>
+      <div class="alerta alerta-error" role="alert"><%= error %></div>
+      <p class="texto-suave">Si tu enlace expiró, inicia sesión con tu correo y contraseña: te enviaremos uno nuevo.</p>
+      <a class="boton boton-secundario boton-bloque" href="/login">Ir a iniciar sesión</a>
+    <% } else if (!token) { %>
+      <div class="alerta alerta-error" role="alert">El enlace de confirmación está incompleto.</div>
+      <a class="boton boton-secundario boton-bloque" href="/login">Ir a iniciar sesión</a>
+    <% } else { %>
+      <p>Presiona el botón para activar tu cuenta de CampusReserva.</p>
+      <form method="post" action="/confirmar" class="formulario">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="token" value="<%= token %>">
+        <button type="submit" class="boton boton-primario boton-bloque">Confirmar mi correo</button>
+      </form>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/fin') %>

@@ -1,0 +1,55 @@
+<%- include('../partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <h1>Crear cuenta</h1>
+    <p class="subtitulo">
+      Disponible para estudiantes y docentes que figuran en el listado institucional.
+      Tu rol se asigna automáticamente según ese listado.
+    </p>
+
+    <% if (Object.keys(errores).length) { %>
+      <div class="alerta alerta-error" role="alert">Revisa los campos marcados.</div>
+    <% } %>
+
+    <form method="post" action="/registro" class="formulario" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <div class="campo <%= errores.nombre ? 'con-error' : '' %>">
+        <label for="nombre">Nombre completo</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="name" required maxlength="80"
+               value="<%= valores.nombre || '' %>" aria-describedby="error-nombre">
+        <% if (errores.nombre) { %><p class="texto-error" id="error-nombre"><%= errores.nombre %></p><% } %>
+      </div>
+
+      <div class="campo <%= errores.correo ? 'con-error' : '' %>">
+        <label for="correo">Correo institucional</label>
+        <input id="correo" name="correo" type="email" autocomplete="email" required maxlength="254"
+               value="<%= valores.correo || '' %>" placeholder="nombre@<%= dominioInstitucional %>" aria-describedby="error-correo">
+        <% if (errores.correo) { %><p class="texto-error" id="error-correo"><%= errores.correo %></p><% } %>
+      </div>
+
+      <div class="campo <%= errores.contrasena ? 'con-error' : '' %>">
+        <label for="contrasena">Contraseña</label>
+        <input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="12" maxlength="128"
+               aria-describedby="ayuda-contrasena error-contrasena">
+        <p class="texto-ayuda" id="ayuda-contrasena">Mínimo 12 caracteres. Puedes usar una frase fácil de recordar.</p>
+        <% if (errores.contrasena) { %><p class="texto-error" id="error-contrasena"><%= errores.contrasena %></p><% } %>
+      </div>
+
+      <div class="campo <%= errores.confirmacion ? 'con-error' : '' %>">
+        <label for="confirmacion">Repite la contraseña</label>
+        <input id="confirmacion" name="confirmacion" type="password" autocomplete="new-password" required maxlength="128"
+               aria-describedby="error-confirmacion">
+        <% if (errores.confirmacion) { %><p class="texto-error" id="error-confirmacion"><%= errores.confirmacion %></p><% } %>
+      </div>
+
+      <p class="texto-ayuda">
+        Tus datos (nombre, correo y rol) se usan solo para gestionar tus reservas en CampusReserva.
+        La contraseña se guarda protegida con un algoritmo de hash; nadie puede leerla.
+      </p>
+      <button type="submit" class="boton boton-primario boton-bloque">Crear cuenta</button>
+    </form>
+    <p class="texto-centrado texto-suave">¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
+  </div>
+</section>
+<%- include('../partials/fin') %>

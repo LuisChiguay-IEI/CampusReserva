@@ -1,0 +1,74 @@
+<%- include('../partials/inicio') %>
+<%
+  const claseEstado = (r) => ({ Confirmada: 'insignia-ok', 'En curso': 'insignia-aviso', Finalizada: 'insignia-neutra', Cancelada: 'insignia-cancelada' }[r.estadoVisible]);
+%>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Mis reservas</h1>
+    <p class="subtitulo">Solo ves las reservas asociadas a tu cuenta. Las canceladas se conservan en el historial.</p>
+  </div>
+  <a class="boton boton-primario" href="/disponibilidad">Nueva reserva</a>
+</div>
+
+<section>
+  <h2 class="titulo-seccion">Próximas</h2>
+  <% if (proximas.length === 0) { %>
+    <div class="tarjeta estado-vacio">
+      <h3>No tienes reservas próximas</h3>
+      <p><a href="/disponibilidad">Consulta la disponibilidad</a> para reservar una sala o laboratorio.</p>
+    </div>
+  <% } else { %>
+    <div class="tabla-envoltura tarjeta sin-relleno">
+      <table class="tabla">
+        <thead>
+          <tr><th>Código</th><th>Espacio</th><th>Sede</th><th>Fecha</th><th>Horario</th><th>Estado</th><th><span class="solo-lector">Acciones</span></th></tr>
+        </thead>
+        <tbody>
+          <% proximas.forEach((r) => { %>
+            <tr>
+              <td data-etiqueta="Código"><a href="/reservas/<%= r.id %>"><%= r.codigo %></a></td>
+              <td data-etiqueta="Espacio"><%= r.espacio_nombre %></td>
+              <td data-etiqueta="Sede"><%= r.sede_nombre %></td>
+              <td data-etiqueta="Fecha"><%= formatearFecha(r.fecha) %></td>
+              <td data-etiqueta="Horario"><%= r.hora_inicio %> – <%= r.hora_fin %></td>
+              <td data-etiqueta="Estado"><span class="insignia <%= claseEstado(r) %>"><%= r.estadoVisible %></span></td>
+              <td class="celda-acciones">
+                <% if (r.cancelable) { %>
+                  <a class="boton boton-peligro-suave boton-pequeno" href="/reservas/<%= r.id %>/cancelar">Cancelar</a>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<section>
+  <h2 class="titulo-seccion">Historial</h2>
+  <% if (historial.length === 0) { %>
+    <p class="texto-suave">Aún no hay reservas finalizadas o canceladas.</p>
+  <% } else { %>
+    <div class="tabla-envoltura tarjeta sin-relleno">
+      <table class="tabla">
+        <thead>
+          <tr><th>Código</th><th>Espacio</th><th>Sede</th><th>Fecha</th><th>Horario</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <% historial.forEach((r) => { %>
+            <tr>
+              <td data-etiqueta="Código"><a href="/reservas/<%= r.id %>"><%= r.codigo %></a></td>
+              <td data-etiqueta="Espacio"><%= r.espacio_nombre %></td>
+              <td data-etiqueta="Sede"><%= r.sede_nombre %></td>
+              <td data-etiqueta="Fecha"><%= formatearFecha(r.fecha) %></td>
+              <td data-etiqueta="Horario"><%= r.hora_inicio %> – <%= r.hora_fin %></td>
+              <td data-etiqueta="Estado"><span class="insignia <%= claseEstado(r) %>"><%= r.estadoVisible %></span></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+<%- include('../partials/fin') %>

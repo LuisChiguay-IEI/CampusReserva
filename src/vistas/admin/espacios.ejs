@@ -1,0 +1,59 @@
+<%- include('../partials/inicio') %>
+<div class="encabezado-pagina">
+  <div>
+    <h1>Espacios y horarios</h1>
+    <p class="subtitulo">Registra y edita salas y laboratorios, habilítalos o deshabilítalos y configura sus horarios.</p>
+  </div>
+  <a class="boton boton-primario" href="/admin/espacios/nuevo<%= sedeFiltro ? '?sede=' + encodeURIComponent(sedeFiltro) : '' %>">Registrar espacio</a>
+</div>
+
+<form method="get" action="/admin/espacios" class="tarjeta filtros filtros-compactos">
+  <div class="campo">
+    <label for="sede">Filtrar por sede</label>
+    <select id="sede" name="sede" data-autoenvio>
+      <option value="">Todas las sedes</option>
+      <% sedes.forEach((s) => { %>
+        <option value="<%= s.id %>" <%= String(s.id) === sedeFiltro ? 'selected' : '' %>><%= s.nombre %></option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="boton boton-secundario">Filtrar</button>
+</form>
+
+<% if (espacios.length === 0) { %>
+  <div class="tarjeta estado-vacio"><h2>No hay espacios registrados</h2><p>Registra la primera sala o laboratorio de la sede.</p></div>
+<% } else { %>
+  <div class="tabla-envoltura tarjeta sin-relleno">
+    <table class="tabla">
+      <thead>
+        <tr><th>Espacio</th><th>Sede</th><th>Tipo</th><th>Capacidad</th><th>Bloques activos</th><th>Estado</th><th><span class="solo-lector">Acciones</span></th></tr>
+      </thead>
+      <tbody>
+        <% espacios.forEach((e) => { %>
+          <tr class="<%= e.habilitado ? '' : 'fila-inactiva' %>">
+            <td data-etiqueta="Espacio"><strong><%= e.nombre %></strong></td>
+            <td data-etiqueta="Sede"><%= e.sede_nombre %></td>
+            <td data-etiqueta="Tipo"><%= e.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %></td>
+            <td data-etiqueta="Capacidad"><%= e.capacidad %></td>
+            <td data-etiqueta="Bloques activos"><%= e.bloques_activos %></td>
+            <td data-etiqueta="Estado">
+              <span class="insignia <%= e.habilitado ? 'insignia-ok' : 'insignia-cancelada' %>"><%= e.habilitado ? 'Habilitado' : 'Deshabilitado' %></span>
+            </td>
+            <td class="celda-acciones">
+              <a class="boton boton-secundario boton-pequeno" href="/admin/espacios/<%= e.id %>/horarios">Horarios</a>
+              <a class="boton boton-secundario boton-pequeno" href="/admin/espacios/<%= e.id %>/editar">Editar</a>
+              <form method="post" action="/admin/espacios/<%= e.id %>/estado" class="en-linea">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="accion" value="<%= e.habilitado ? 'deshabilitar' : 'habilitar' %>">
+                <button type="submit" class="boton boton-pequeno <%= e.habilitado ? 'boton-peligro-suave' : 'boton-exito-suave' %>">
+                  <%= e.habilitado ? 'Deshabilitar' : 'Habilitar' %>
+                </button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+<%- include('../partials/fin') %>

@@ -1,0 +1,19 @@
+<%- include('../partials/inicio') %>
+<section class="auth">
+  <div class="tarjeta tarjeta-auth">
+    <div class="icono-estado icono-exito" aria-hidden="true">✓</div>
+    <h1>Revisa tu correo</h1>
+    <p>
+      Creamos tu cuenta para <strong><%= correo %></strong>. Quedará <strong>pendiente</strong> hasta que
+      abras el enlace de confirmación (válido por 24 horas y de un solo uso).
+    </p>
+    <% if (buzonDemo) { %>
+      <div class="alerta alerta-aviso" role="note">
+        Modo demostración: el correo no se envió a una casilla real. Puedes abrirlo en el
+        <a href="/demo/buzon">Buzón de demostración</a>.
+      </div>
+    <% } %>
+    <a class="boton boton-secundario boton-bloque" href="/login">Ir a iniciar sesión</a>
+  </div>
+</section>
+<%- include('../partials/fin') %>

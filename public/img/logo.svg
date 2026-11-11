@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="CampusReserva">
+  <rect x="2" y="5" width="28" height="25" rx="5" fill="#ffffff"/>
+  <rect x="2" y="5" width="28" height="8" rx="5" fill="#5eead4"/>
+  <rect x="2" y="10" width="28" height="3" fill="#5eead4"/>
+  <rect x="8" y="2" width="3" height="7" rx="1.5" fill="#1e3a8a"/>
+  <rect x="21" y="2" width="3" height="7" rx="1.5" fill="#1e3a8a"/>
+  <path d="M10 21.5l4 4 8-8.5" fill="none" stroke="#1e3a8a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
