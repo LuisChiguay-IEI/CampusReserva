@@ -188,32 +188,32 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 
 ## 6.1 Pruebas de aceptación sobre el despliegue (Render)
 
-Ejecutadas el 11-11-2026 a las 02:17 (hora de Chile) contra https://campusreserva.onrender.com con
+Ejecutadas el 11-11-2026 a las 02:57 (hora de Chile) contra https://campusreserva.onrender.com (commit bed0265) con
 `npm run pruebas:despliegue`. Evidencia: `docs/evidencias/despliegue/resultado-despliegue.md` y `.json`, y 5 capturas.
 Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pruebas con usuarios.
 
 | ID | Verifica | Resultado esperado | Obtenido | Estado |
 |---|---|---|---|---|
-| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 257 ms | Aprobado |
+| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 217 ms | Aprobado |
 | DEP-02 | Redirección de HTTP a HTTPS | 3xx hacia https:// | 301 → https://campusreserva.onrender.com/login | Aprobado |
 | DEP-03 | Cabeceras en producción | HSTS, CSP `default-src 'self'`, nosniff, DENY, no-store, sin X-Powered-By | Todas presentes; HSTS `max-age=31536000; includeSubDomains` | Aprobado |
 | DEP-04 | RF-02 inicio de sesión y cookie | 303 a /disponibilidad; cookie `__Host-cr_sesion` con Secure, HttpOnly, SameSite=Lax, Path=/ y sin Domain | Igual | Aprobado |
 | DEP-05 | RF-02 credenciales inválidas | Mismo mensaje genérico para contraseña errónea y correo inexistente | 401 y 401 con el mismo mensaje | Aprobado |
 | DEP-06 | RF-01 cuenta pendiente | No inicia sesión; "pendiente de confirmación" | 401 | Aprobado |
-| DEP-07 | RF-03 consulta por sede y fecha | 200 con bloques disponibles | 23 bloques (12-11-2026, Sede Maipú) | Aprobado |
-| DEP-08 | RF-04 reserva | Revisión 200; confirmación 303 con código; aparece en Mis reservas | CR-000009 | Aprobado |
+| DEP-07 | RF-03 consulta por sede y fecha | 200 con bloques disponibles | 24 bloques (12-11-2026, Sede Maipú) | Aprobado |
+| DEP-08 | RF-04 reserva | Revisión 200; confirmación 303 con código; aparece en Mis reservas | CR-000007 | Aprobado |
 | DEP-09 | RF-04 bloque ocupado | 409 "acaba de ser reservado" | 409 | Aprobado |
 | DEP-10 | RF-04 / ADR-001 concurrencia | 10 solicitudes simultáneas de 2 usuarios: 1 confirmada y 9 con 409 | 1 y 9 | Aprobado |
 | DEP-11 | RF-05 reservas ajenas | 404 al ver y al cancelar; sin cambios | 404 y 404 | Aprobado |
-| DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000009 cancelada | Aprobado |
+| DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000007 cancelada | Aprobado |
 | DEP-13 | OWASP A01 CSRF | Formulario sin token: 403 | 403 | Aprobado |
 | DEP-14 | RF-06 / OWASP A01 roles | Estudiante en /admin/espacios: 403 | 403 | Aprobado |
-| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0216" registrado | Aprobado |
-| DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `camila.estudiante@campus.test` activada | Aprobado |
+| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0256" registrado | Aprobado |
+| DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `nuevo.estudiante@campus.test` activada | Aprobado |
 | DEP-17 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
 
-Resumen: **17/17 aprobadas**, 99 solicitudes HTTP y 0 respuestas 5xx. DEP-07 mostró 23 bloques y no 24 porque
-quedó activa una reserva de una ejecución anterior (ver H-07).
+Resumen: **17/17 aprobadas**, 98 solicitudes HTTP y 0 respuestas 5xx. Esta ejecución final se hizo sobre datos recién
+restablecidos por el despliegue del commit bed0265, que quitó las cuentas de demostración de la página de inicio de sesión.
 
 ## 7. Matriz de trazabilidad RF → criterio de aceptación → prueba
 
@@ -315,14 +315,14 @@ Las solicitudes son secuenciales, salvo las 10 simultáneas de DEP-10 incluidas 
 
 | Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) |
 |---|---|---|---|---|
-| `GET /login` | 27 | 169,9 | 224,2 | 257,4 |
-| `GET /disponibilidad` (consulta) | 24 | 145,8 | 205,2 | 205,2 |
-| `POST /reservas` (confirmación) | 13 | 185,4 | 409,6 | 409,6 |
-| `POST /login` (inicio de sesión) | 12 | 2879,8 | 3074,8 | 3074,8 |
+| `GET /login` | 27 | 204,7 | 229,8 | 241,5 |
+| `GET /disponibilidad` (consulta) | 24 | 145,9 | 248,3 | 250,9 |
+| `POST /reservas` (confirmación) | 13 | 170,8 | 511,2 | 511,2 |
+| `POST /login` (inicio de sesión) | 12 | 2786,1 | 5427,4 | 5427,4 |
 
 La consulta y la confirmación de reserva quedan bajo los umbrales de RNF-08 (500 ms y 800 ms), aunque con otra
-carga que la del umbral. El inicio de sesión tarda ≈ 3 s porque el plan gratuito entrega una fracción de CPU y
-scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
+carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,4 s) porque el plan gratuito entrega una
+fracción de CPU y scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
 
 ## 9. Defectos y hallazgos registrados durante las pruebas
 
@@ -334,7 +334,7 @@ scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resu
 | H-04 | Ramas de error interno sin cubrir | Brecha de cobertura | Requieren simular fallas internas | La configuración de producción quedó cubierta por CP-U-30 y por las pruebas sobre el despliegue; el resto se registra como mejora | Abierto |
 | H-05 | La regla de contraseña implementada (12 caracteres) no coincidía con la HU-01 de la Sumativa 2 (15 a 128 caracteres y rechazo de comunes) | Inconsistencia de requisitos | Se tomó como base un borrador anterior del informe | Se alineó el código con la HU-01, se agregó CP-U-27 y se regeneraron las capturas | Cerrado |
 | H-06 | Render no podía instalar las dependencias desde `package-lock.json` | Problema de despliegue | El archivo registra el espejo de paquetes del equipo de desarrollo, al que Render no tiene acceso | Render instala desde el registro público de npm las mismas versiones exactas fijadas en `package.json` (`render.yaml`) | Cerrado |
-| H-07 | En la primera ejecución sobre el despliegue quedó activa una reserva de prueba | Defecto del script de pruebas | La reserva ganada en DEP-10 se cancelaba después de cerrar la sesión | La limpieza se movió antes del cierre de sesión y se repitió la ejecución completa (17/17); la reserva restante desaparece al reiniciarse el servicio | Cerrado |
+| H-07 | En la primera ejecución sobre el despliegue quedó activa una reserva de prueba | Defecto del script de pruebas | La reserva ganada en DEP-10 se cancelaba después de cerrar la sesión | La limpieza se movió antes del cierre de sesión y se repitió la ejecución completa (17/17); la reserva restante desapareció con el siguiente despliegue | Cerrado |
 | H-08 | Inicio de sesión de ≈ 3 s en el despliegue | Observación de rendimiento | El plan gratuito entrega una fracción de CPU y scrypt (N=2^17) es costoso a propósito | Aceptado para la demostración; en producción, instancia con CPU dedicada | Aceptado |
 
 No se detectaron defectos funcionales en el código de la aplicación durante la ejecución final.
