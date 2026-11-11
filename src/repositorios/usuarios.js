@@ -22,6 +22,9 @@ function crearRepositorioUsuarios(db) {
     insertarToken: db.prepare(
       'INSERT INTO token_confirmacion (usuario_id, token_hash, expira_en) VALUES (?, ?, ?)',
     ),
+    invalidarTokens: db.prepare(
+      'UPDATE token_confirmacion SET usado_en = ? WHERE usuario_id = ? AND usado_en IS NULL',
+    ),
     buscarToken: db.prepare('SELECT * FROM token_confirmacion WHERE token_hash = ?'),
     marcarTokenUsado: db.prepare(
       'UPDATE token_confirmacion SET usado_en = ? WHERE id = ? AND usado_en IS NULL',
@@ -53,6 +56,8 @@ function crearRepositorioUsuarios(db) {
     /** @returns {string|undefined} Rol definido en el listado institucional para ese correo. */
     rolAutorizado: (correo) => sql.rolAutorizado.get(correo)?.rol,
     insertarToken: (usuarioId, tokenHash, expiraEn) => sql.insertarToken.run(usuarioId, tokenHash, expiraEn),
+    /** Invalida los enlaces anteriores no usados (una nueva emisión reemplaza a la anterior). */
+    invalidarTokens: (usuarioId, fecha) => sql.invalidarTokens.run(fecha, usuarioId),
     buscarToken: (tokenHash) => sql.buscarToken.get(tokenHash),
     /** @returns {boolean} true si el token se marcó como usado (evita doble uso). */
     marcarTokenUsado: (id, fecha) => sql.marcarTokenUsado.run(fecha, id).changes === 1,

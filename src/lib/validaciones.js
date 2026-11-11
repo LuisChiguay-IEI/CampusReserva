@@ -14,8 +14,35 @@ const { esFechaValida, esHoraValida, aMinutos, sumarDias } = require('./fechas')
 const ROLES_RESERVA = Object.freeze(['ESTUDIANTE', 'DOCENTE']);
 const TIPOS_ESPACIO = Object.freeze(['SALA', 'LABORATORIO']);
 
-const LARGO_MIN_CONTRASENA = 12;
+// HU-01 (Sumativa 2): contraseña de 15 a 128 caracteres, con espacios permitidos y
+// rechazo de contraseñas comunes o predecibles.
+const LARGO_MIN_CONTRASENA = 15;
 const LARGO_MAX_CONTRASENA = 128;
+
+/**
+ * Lista local de contraseñas comunes (normalizadas: minúsculas y sin espacios).
+ * Es una protección básica; la verificación contra bases de contraseñas filtradas
+ * queda pendiente (requiere un servicio externo).
+ */
+const CONTRASENAS_COMUNES = new Set([
+  '123456789012345', '1234567890123456', '123456789123456', '012345678901234',
+  'contraseña12345', 'contrasena12345', 'contraseñasegura', 'contrasenasegura',
+  'password1234567', 'passwordpassword', 'password12345678', 'qwertyuiopasdfg',
+  'qwerty123456789', 'abcdefghijklmno', 'abc123abc123abc', 'iloveyou1234567',
+  'administrador123', 'estudiante12345', 'docente12345678', 'inacap123456789',
+  'inacap2026inacap', 'campusreserva2026', 'campusreserva123', 'bienvenido12345',
+]);
+
+/**
+ * Indica si una contraseña es común o predecible (lista local, un solo carácter repetido
+ * o solo dígitos).
+ * @param {string} contrasena
+ * @returns {boolean}
+ */
+function esContrasenaComun(contrasena) {
+  const normalizada = contrasena.toLowerCase().replace(/\s+/g, '');
+  return CONTRASENAS_COMUNES.has(normalizada) || /^(.)\1+$/.test(normalizada) || /^\d+$/.test(normalizada);
+}
 const CAPACIDAD_MAXIMA = 200;
 const HORA_APERTURA = '07:00';
 const HORA_CIERRE = '23:00';
@@ -88,6 +115,8 @@ function validarRegistro(entrada, { dominioInstitucional }) {
     errores.contrasena = `La contraseña debe tener entre ${LARGO_MIN_CONTRASENA} y ${LARGO_MAX_CONTRASENA} caracteres.`;
   } else if (contrasena.toLowerCase() === correo || contrasena.toLowerCase() === correo.split('@')[0]) {
     errores.contrasena = 'La contraseña no puede ser igual a tu correo.';
+  } else if (esContrasenaComun(contrasena)) {
+    errores.contrasena = 'Esa contraseña es demasiado común o predecible. Usa una frase propia.';
   }
 
   if (!errores.contrasena && confirmacion !== contrasena) {
@@ -233,6 +262,7 @@ module.exports = {
   TIPOS_ESPACIO,
   LARGO_MIN_CONTRASENA,
   CAPACIDAD_MAXIMA,
+  esContrasenaComun,
   texto,
   enteroPositivo,
   normalizarCorreo,

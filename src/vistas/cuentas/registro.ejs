@@ -30,9 +30,9 @@
 
       <div class="campo <%= errores.contrasena ? 'con-error' : '' %>">
         <label for="contrasena">Contraseña</label>
-        <input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="12" maxlength="128"
+        <input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="15" maxlength="128"
                aria-describedby="ayuda-contrasena error-contrasena">
-        <p class="texto-ayuda" id="ayuda-contrasena">Mínimo 12 caracteres. Puedes usar una frase fácil de recordar.</p>
+        <p class="texto-ayuda" id="ayuda-contrasena">Mínimo 15 caracteres; se permiten espacios. Usa una frase propia y evita contraseñas comunes.</p>
         <% if (errores.contrasena) { %><p class="texto-error" id="error-contrasena"><%= errores.contrasena %></p><% } %>
       </div>
 

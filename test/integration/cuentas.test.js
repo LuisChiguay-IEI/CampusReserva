@@ -68,7 +68,7 @@ describe('RF-01 Registrar usuario', () => {
     });
     assert.equal(r.estado, 422);
     assert.match(r.html, /entre 3 y 80 caracteres/);
-    assert.match(r.html, /entre 12 y 128 caracteres/);
+    assert.match(r.html, /entre 15 y 128 caracteres/);
     assert.equal(e.uno('SELECT COUNT(*) AS n FROM usuario WHERE correo = ?', 'nuevo.estudiante@campus.test').n, 0);
   });
 
@@ -119,6 +119,9 @@ describe('RF-01 Registrar usuario', () => {
       const login = await e.cliente().iniciarSesion('nuevo.estudiante@campus.test', NUEVA_CLAVE);
       assert.equal(login.estado, 401);
       assert.match(login.html, /generamos uno nuevo/);
+      // HU-01: la nueva emisión invalida la anterior; queda un solo enlace sin usar.
+      const usuarioId = e.uno('SELECT id FROM usuario WHERE correo = ?', 'nuevo.estudiante@campus.test').id;
+      assert.equal(e.uno('SELECT COUNT(*) AS n FROM token_confirmacion WHERE usuario_id = ? AND usado_en IS NULL', usuarioId).n, 1);
     } finally {
       e.fijarAhora('2026-11-16T13:00:00.000Z');
     }

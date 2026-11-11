@@ -1,6 +1,6 @@
 # Índice de capturas (generadas con `npm run capturas`)
 
-Fecha: 2026-11-11T03:24:02.089Z
+Fecha: 2026-11-11T03:56:25.124Z
 
 | Archivo | Descripción | Ruta |
 |---|---|---|
@@ -9,7 +9,7 @@ Fecha: 2026-11-11T03:24:02.089Z
 | 03-registro-pendiente.png | RF-01 Cuenta creada en estado pendiente de confirmación. | /registro/enviado |
 | 04-buzon-demostracion.png | RF-01 Buzón de demostración: correo simulado con enlace de confirmación (no se envían correos reales). | /demo/buzon |
 | 05-login-cuenta-pendiente.png | RF-01/RF-02 Una cuenta pendiente no puede iniciar sesión. | /login |
-| 06-confirmar-cuenta.png | RF-01 Confirmación de cuenta desde el enlace (requiere presionar el botón). | /confirmar?token=iPExwNIF1If1G1fi6sRuN7BO6QOrCi4k1jUemioYbKE |
+| 06-confirmar-cuenta.png | RF-01 Confirmación de cuenta desde el enlace (requiere presionar el botón). | /confirmar?token=kRmdSX5velaXqxxbRyYOyYoH5AKOp847V3PO3CCQeLE |
 | 07-cuenta-confirmada.png | RF-01 Cuenta activada: ya puede iniciar sesión. | /login |
 | 08-login-credenciales-invalidas.png | RF-02 Rechazo de credenciales inválidas con mensaje genérico. | /login |
 | 09-disponibilidad-resultados.png | RF-03 Disponibilidad por sede y fecha (excluye reservados, bloqueados y espacios deshabilitados). | /disponibilidad?sede=1&fecha=2026-11-12 |

@@ -19,7 +19,8 @@
     "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/**/*.js\" \"test/**/*.test.js\"",
     "metricas": "node scripts/carga-concurrente.js",
     "capturas": "node scripts/capturas.js",
-    "diagramas": "node scripts/diagramas.js"
+    "diagramas": "node scripts/diagramas.js",
+    "grafico": "node scripts/grafico-metricas.js"
   },
   "dependencies": {
     "cookie": "1.1.1",

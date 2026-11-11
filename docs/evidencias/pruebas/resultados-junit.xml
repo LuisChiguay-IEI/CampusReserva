@@ -1,118 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <testsuites>
-	<testsuite name="RF-06 Administrar espacios y horarios" time="1.329468" disabled="0" errors="0" tests="12" failures="0" skipped="0" timestamp="2026-11-11T03:20:41.669Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-06-01 solo el administrador accede: estudiante y docente reciben 403 y nada cambia" time="0.013504" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-02 registra un espacio válido y valida sede, nombre, tipo y capacidad" time="0.011473" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-03 impide nombres duplicados dentro de la misma sede (sin distinguir mayúsculas)" time="0.006138" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-04 edita un espacio existente y valida los cambios" time="0.007573" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-05 deshabilitar un espacio con reservas vigentes se rechaza indicando cuáles" time="0.010880" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-06 deshabilitar un espacio sin reservas vigentes lo quita de la disponibilidad; habilitar lo repone" time="0.009313" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-07 crea bloques válidos y rechaza superposiciones y configuraciones inválidas" time="0.014750" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-08 no modifica ni desactiva bloques con reservas vigentes (no afecta reservas en silencio)" time="0.006569" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-09 modifica y desactiva bloques sin reservas, validando superposición al editar" time="0.010394" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-10 bloquear un horario libre lo quita de la disponibilidad y quitar el bloqueo lo repone" time="0.021636" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-11 rechaza bloquear un horario con reserva confirmada o una fecha que no corresponde al día" time="0.006755" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
-		<testcase name="CP-06-12 el registro de auditoría es visible solo para el administrador" time="0.008263" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+	<testsuite name="RF-06 Administrar espacios y horarios" time="1.602592" disabled="0" errors="0" tests="12" failures="0" skipped="0" timestamp="2026-11-11T03:56:03.215Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-06-01 solo el administrador accede: estudiante y docente reciben 403 y nada cambia" time="0.024324" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-02 registra un espacio válido y valida sede, nombre, tipo y capacidad" time="0.012620" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-03 impide nombres duplicados dentro de la misma sede (sin distinguir mayúsculas)" time="0.006379" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-04 edita un espacio existente y valida los cambios" time="0.007625" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-05 deshabilitar un espacio con reservas vigentes se rechaza indicando cuáles" time="0.007832" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-06 deshabilitar un espacio sin reservas vigentes lo quita de la disponibilidad; habilitar lo repone" time="0.009524" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-07 crea bloques válidos y rechaza superposiciones y configuraciones inválidas" time="0.012543" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-08 no modifica ni desactiva bloques con reservas vigentes (no afecta reservas en silencio)" time="0.009584" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-09 modifica y desactiva bloques sin reservas, validando superposición al editar" time="0.010299" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-10 bloquear un horario libre lo quita de la disponibilidad y quitar el bloqueo lo repone" time="0.020297" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-11 rechaza bloquear un horario con reserva confirmada o una fecha que no corresponde al día" time="0.007376" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
+		<testcase name="CP-06-12 el registro de auditoría es visible solo para el administrador" time="0.006053" classname="RF-06 Administrar espacios y horarios" file="C:\Proyecto\CampusReserva\test\integration\administracion.test.js"/>
 	</testsuite>
-	<testsuite name="ADR-001 Concurrencia entre procesos sobre el mismo bloque" time="0.821342" disabled="0" errors="0" tests="2" failures="0" skipped="0" timestamp="2026-11-11T03:20:42.213Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-04-07 8 procesos usando el servicio real: exactamente 1 reserva confirmada" time="0.268287" classname="ADR-001 Concurrencia entre procesos sobre el mismo bloque" file="C:\Proyecto\CampusReserva\test\integration\concurrencia.test.js"/>
-		<testcase name="CP-04-08 8 procesos insertando sin verificar: el índice único de la base deja solo 1" time="0.223861" classname="ADR-001 Concurrencia entre procesos sobre el mismo bloque" file="C:\Proyecto\CampusReserva\test\integration\concurrencia.test.js"/>
+	<testsuite name="ADR-001 Concurrencia entre procesos sobre el mismo bloque" time="1.013040" disabled="0" errors="0" tests="2" failures="0" skipped="0" timestamp="2026-11-11T03:56:03.839Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-04-07 8 procesos usando el servicio real: exactamente 1 reserva confirmada" time="0.338451" classname="ADR-001 Concurrencia entre procesos sobre el mismo bloque" file="C:\Proyecto\CampusReserva\test\integration\concurrencia.test.js"/>
+		<testcase name="CP-04-08 8 procesos insertando sin verificar: el índice único de la base deja solo 1" time="0.232964" classname="ADR-001 Concurrencia entre procesos sobre el mismo bloque" file="C:\Proyecto\CampusReserva\test\integration\concurrencia.test.js"/>
 	</testsuite>
-	<testsuite name="RF-01 Registrar usuario" time="1.964910" disabled="0" errors="0" tests="8" failures="0" skipped="0" timestamp="2026-11-11T03:20:41.700Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-01-01 registra un correo autorizado como cuenta PENDIENTE con el rol del listado y contraseña con hash" time="0.353844" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-02 rechaza un correo ya registrado" time="0.008299" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-03 rechaza correos fuera del listado institucional o de otro dominio" time="0.011016" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-04 no permite elegir el rol: un campo &amp;quot;rol=ADMINISTRADOR&amp;quot; se ignora" time="0.257021" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-05 rechaza datos inválidos con mensajes por campo y sin crear la cuenta" time="0.057738" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-06 la cuenta pendiente no puede iniciar sesión hasta confirmar el correo" time="0.255234" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-07 el enlace válido activa la cuenta y luego permite iniciar sesión" time="0.241449" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-01-08 rechaza enlaces inexistentes o expirados" time="0.448790" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+	<testsuite name="RF-01 Registrar usuario" time="2.250771" disabled="0" errors="0" tests="8" failures="0" skipped="0" timestamp="2026-11-11T03:56:03.291Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-01-01 registra un correo autorizado como cuenta PENDIENTE con el rol del listado y contraseña con hash" time="0.424387" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-02 rechaza un correo ya registrado" time="0.012119" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-03 rechaza correos fuera del listado institucional o de otro dominio" time="0.015103" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-04 no permite elegir el rol: un campo &amp;quot;rol=ADMINISTRADOR&amp;quot; se ignora" time="0.319288" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-05 rechaza datos inválidos con mensajes por campo y sin crear la cuenta" time="0.005364" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-06 la cuenta pendiente no puede iniciar sesión hasta confirmar el correo" time="0.322541" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-07 el enlace válido activa la cuenta y luego permite iniciar sesión" time="0.303580" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-01-08 rechaza enlaces inexistentes o expirados" time="0.494021" classname="RF-01 Registrar usuario" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
 	</testsuite>
-	<testsuite name="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" time="2.719256" disabled="0" errors="0" tests="9" failures="0" skipped="0" timestamp="2026-11-11T03:20:43.665Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-02-01 cada rol inicia sesión y es dirigido a sus funciones" time="0.680125" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-02 rechaza contraseña incorrecta y correo inexistente con el mismo mensaje genérico" time="0.639243" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-03 rechaza la cuenta pendiente de confirmación (seed)" time="0.216587" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-04 emite un nuevo identificador de sesión al autenticarse (anti fijación)" time="0.226298" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-05 cerrar sesión invalida la sesión en el servidor (la cookie antigua deja de servir)" time="0.233574" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-06 la sesión expira tras 30 minutos de inactividad" time="0.236161" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-07 rechaza formularios sin token CSRF válido" time="0.005791" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-08 envía cabeceras de seguridad y cookie HttpOnly + SameSite" time="0.002778" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
-		<testcase name="CP-02-09 guarda solo el hash del identificador de sesión en la base" time="0.235429" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+	<testsuite name="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" time="3.313919" disabled="0" errors="0" tests="9" failures="0" skipped="0" timestamp="2026-11-11T03:56:05.498Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-02-01 cada rol inicia sesión y es dirigido a sus funciones" time="1.047897" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-02 rechaza contraseña incorrecta y correo inexistente con el mismo mensaje genérico" time="0.712433" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-03 rechaza la cuenta pendiente de confirmación (seed)" time="0.239043" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-04 emite un nuevo identificador de sesión al autenticarse (anti fijación)" time="0.284199" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-05 cerrar sesión invalida la sesión en el servidor (la cookie antigua deja de servir)" time="0.228151" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-06 la sesión expira tras 30 minutos de inactividad" time="0.242929" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-07 rechaza formularios sin token CSRF válido" time="0.006206" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-08 envía cabeceras de seguridad y cookie HttpOnly + SameSite" time="0.002591" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+		<testcase name="CP-02-09 guarda solo el hash del identificador de sesión en la base" time="0.238486" classname="RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
 	</testsuite>
-	<testsuite name="RF-02 Límite de intentos de inicio de sesión" time="0.935301" disabled="0" errors="0" tests="1" failures="0" skipped="0" timestamp="2026-11-11T03:20:46.361Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-02-10 bloquea temporalmente tras superar los intentos fallidos permitidos" time="0.682574" classname="RF-02 Límite de intentos de inicio de sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
+	<testsuite name="RF-02 Límite de intentos de inicio de sesión" time="0.944078" disabled="0" errors="0" tests="1" failures="0" skipped="0" timestamp="2026-11-11T03:56:08.787Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-02-10 bloquea temporalmente tras superar los intentos fallidos permitidos" time="0.696436" classname="RF-02 Límite de intentos de inicio de sesión" file="C:\Proyecto\CampusReserva\test\integration\cuentas.test.js"/>
 	</testsuite>
-	<testsuite name="RF-03 Consultar disponibilidad" time="1.022148" disabled="0" errors="0" tests="8" failures="0" skipped="0" timestamp="2026-11-11T03:20:46.365Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-03-01 muestra bloques libres de la sede y fecha y excluye los ya reservados" time="0.006374" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-02 excluye bloques bloqueados y espacios deshabilitados" time="0.003845" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-03 para el día de hoy no ofrece bloques que ya comenzaron" time="0.003291" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-04 aplica el filtro opcional por sala o laboratorio" time="0.007183" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-05 informa cuando la consulta no tiene resultados" time="0.002965" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-06 valida sede y fecha en el servidor" time="0.011966" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-07 la consulta no modifica reservas" time="0.006714" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-03-08 solo estudiantes y docentes consultan (administrador 403, anónimo al login)" time="0.307660" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+	<testsuite name="RF-03 Consultar disponibilidad" time="1.124846" disabled="0" errors="0" tests="8" failures="0" skipped="0" timestamp="2026-11-11T03:56:08.703Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-03-01 muestra bloques libres de la sede y fecha y excluye los ya reservados" time="0.008382" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-02 excluye bloques bloqueados y espacios deshabilitados" time="0.005793" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-03 para el día de hoy no ofrece bloques que ya comenzaron" time="0.004988" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-04 aplica el filtro opcional por sala o laboratorio" time="0.007926" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-05 informa cuando la consulta no tiene resultados" time="0.003618" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-06 valida sede y fecha en el servidor" time="0.013645" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-07 la consulta no modifica reservas" time="0.008519" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-03-08 solo estudiantes y docentes consultan (administrador 403, anónimo al login)" time="0.290632" classname="RF-03 Consultar disponibilidad" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
 	</testsuite>
-	<testsuite name="RF-04 Reservar espacio" time="1.066826" disabled="0" errors="0" tests="6" failures="0" skipped="0" timestamp="2026-11-11T03:20:46.322Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-04-01 revisar no guarda nada; confirmar crea la reserva con identificador asociado a la cuenta" time="0.010901" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-04-02 impide reservar un bloque ya reservado" time="0.002420" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-04-03 ante 20 solicitudes simultáneas para el mismo bloque confirma exactamente una" time="0.040786" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-04-04 rechaza bloques bloqueados, espacios deshabilitados y bloques ya iniciados" time="0.006307" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-04-05 rechaza selecciones manipuladas (otro día, otro espacio, fecha pasada o no numéricas)" time="0.006764" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-04-06 el administrador no puede reservar" time="0.239533" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+	<testsuite name="RF-04 Reservar espacio" time="1.214691" disabled="0" errors="0" tests="6" failures="0" skipped="0" timestamp="2026-11-11T03:56:08.613Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-04-01 revisar no guarda nada; confirmar crea la reserva con identificador asociado a la cuenta" time="0.010530" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-04-02 impide reservar un bloque ya reservado" time="0.002568" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-04-03 ante 20 solicitudes simultáneas para el mismo bloque confirma exactamente una" time="0.037822" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-04-04 rechaza bloques bloqueados, espacios deshabilitados y bloques ya iniciados" time="0.005825" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-04-05 rechaza selecciones manipuladas (otro día, otro espacio, fecha pasada o no numéricas)" time="0.006661" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-04-06 el administrador no puede reservar" time="0.267622" classname="RF-04 Reservar espacio" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
 	</testsuite>
-	<testsuite name="RF-05 Consultar y cancelar reservas propias" time="0.986438" disabled="0" errors="0" tests="5" failures="0" skipped="0" timestamp="2026-11-11T03:20:46.402Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-05-01 lista únicamente las reservas de la cuenta autenticada" time="0.003209" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-05-02 no permite ver ni cancelar reservas ajenas (responde 404 sin cambios)" time="0.005337" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-05-03 la cancelación pide confirmación antes de modificar la reserva" time="0.002407" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-05-04 cancelar conserva el historial y libera el horario para otra persona" time="0.011218" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
-		<testcase name="CP-05-05 no permite cancelar dos veces ni cancelar una reserva cuyo bloque ya comenzó" time="0.236568" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+	<testsuite name="RF-05 Consultar y cancelar reservas propias" time="1.266063" disabled="0" errors="0" tests="5" failures="0" skipped="0" timestamp="2026-11-11T03:56:08.561Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-05-01 lista únicamente las reservas de la cuenta autenticada" time="0.002525" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-05-02 no permite ver ni cancelar reservas ajenas (responde 404 sin cambios)" time="0.005102" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-05-03 la cancelación pide confirmación antes de modificar la reserva" time="0.001866" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-05-04 cancelar conserva el historial y libera el horario para otra persona" time="0.007986" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
+		<testcase name="CP-05-05 no permite cancelar dos veces ni cancelar una reserva cuyo bloque ya comenzó" time="0.348642" classname="RF-05 Consultar y cancelar reservas propias" file="C:\Proyecto\CampusReserva\test\integration\reservas.test.js"/>
 	</testsuite>
-	<testsuite name="Utilidades de fecha" time="0.014746" disabled="0" errors="0" tests="4" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.374Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-13 calcula fecha y hora en America/Santiago" time="0.013180" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
-		<testcase name="CP-U-14 obtiene el día ISO de la semana y suma días" time="0.000283" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
-		<testcase name="CP-U-15 detecta superposición de intervalos (los contiguos no se superponen)" time="0.000099" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
-		<testcase name="CP-U-16 valida fechas y horas reales" time="0.000221" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+	<testsuite name="Utilidades de fecha" time="0.020473" disabled="0" errors="0" tests="4" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.808Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-13 calcula fecha y hora en America/Santiago" time="0.017672" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+		<testcase name="CP-U-14 obtiene el día ISO de la semana y suma días" time="0.000395" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+		<testcase name="CP-U-15 detecta superposición de intervalos (los contiguos no se superponen)" time="0.000145" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+		<testcase name="CP-U-16 valida fechas y horas reales" time="0.000308" classname="Utilidades de fecha" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
 	</testsuite>
-	<testsuite name="Primitivas de seguridad" time="1.215422" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:20:46.173Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-17 el hash de contraseña usa scrypt con sal y no contiene la contraseña" time="0.491301" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
-		<testcase name="CP-U-18 verifica la contraseña correcta y rechaza la incorrecta o un hash corrupto" time="0.723128" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
-		<testcase name="CP-U-19 genera tokens aleatorios de 256 bits y compara en tiempo constante" time="0.000687" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+	<testsuite name="Primitivas de seguridad" time="1.357773" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:56:08.471Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-17 el hash de contraseña usa scrypt con sal y no contiene la contraseña" time="0.517787" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+		<testcase name="CP-U-18 verifica la contraseña correcta y rechaza la incorrecta o un hash corrupto" time="0.838898" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
+		<testcase name="CP-U-19 genera tokens aleatorios de 256 bits y compara en tiempo constante" time="0.000634" classname="Primitivas de seguridad" file="C:\Proyecto\CampusReserva\test\unit\fechas-seguridad.test.js"/>
 	</testsuite>
-	<testsuite name="Cálculo de disponibilidad (RF-03)" time="0.003004" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.385Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-20 excluye bloques reservados y bloqueados" time="0.001619" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
-		<testcase name="CP-U-21 si la fecha es hoy, excluye bloques que ya comenzaron" time="0.000185" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
-		<testcase name="CP-U-22 devuelve lista vacía cuando no hay disponibilidad" time="0.000104" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+	<testsuite name="Consistencia de la persistencia (RNF-05 de la Sumativa 2)" time="0.004992" disabled="0" errors="0" tests="1" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.824Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-28 ante un fallo dentro de la transacción no queda ningún estado parcial (ROLLBACK)" time="0.003405" classname="Consistencia de la persistencia (RNF-05 de la Sumativa 2)" file="C:\Proyecto\CampusReserva\test\unit\persistencia.test.js"/>
 	</testsuite>
-	<testsuite name="Presentación y reglas de cancelación de reservas (RF-05)" time="0.000988" disabled="0" errors="0" tests="4" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.388Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-23 una reserva futura confirmada es próxima y cancelable" time="0.000215" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
-		<testcase name="CP-U-24 una reserva en curso no es cancelable y una terminada pasa al historial" time="0.000130" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
-		<testcase name="CP-U-25 una reserva cancelada no es cancelable ni próxima" time="0.000087" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
-		<testcase name="CP-U-26 describe reservas afectadas con código y fecha, resumiendo sobre 5" time="0.000383" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+	<testsuite name="Cálculo de disponibilidad (RF-03)" time="0.003678" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.825Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-20 excluye bloques reservados y bloqueados" time="0.001579" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+		<testcase name="CP-U-21 si la fecha es hoy, excluye bloques que ya comenzaron" time="0.000293" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+		<testcase name="CP-U-22 devuelve lista vacía cuando no hay disponibilidad" time="0.000124" classname="Cálculo de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
 	</testsuite>
-	<testsuite name="Validación de registro (RF-01)" time="0.002770" disabled="0" errors="0" tests="6" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.387Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-01 acepta datos válidos y normaliza el correo a minúsculas" time="0.000963" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-02 rechaza correos de un dominio no institucional" time="0.000300" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-03 rechaza correo con formato inválido y nombre con caracteres no permitidos" time="0.000128" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-04 exige contraseña de 12 a 128 caracteres y confirmación coincidente" time="0.000108" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-05 rechaza una contraseña igual al correo" time="0.000088" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-06 ignora entradas que no son texto (p. ej. arreglos) sin lanzar excepciones" time="0.000096" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+	<testsuite name="Presentación y reglas de cancelación de reservas (RF-05)" time="0.001272" disabled="0" errors="0" tests="4" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.827Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-23 una reserva futura confirmada es próxima y cancelable" time="0.000232" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+		<testcase name="CP-U-24 una reserva en curso no es cancelable y una terminada pasa al historial" time="0.000160" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+		<testcase name="CP-U-25 una reserva cancelada no es cancelable ni próxima" time="0.000121" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
+		<testcase name="CP-U-26 describe reservas afectadas con código y fecha, resumiendo sobre 5" time="0.000531" classname="Presentación y reglas de cancelación de reservas (RF-05)" file="C:\Proyecto\CampusReserva\test\unit\reglas-negocio.test.js"/>
 	</testsuite>
-	<testsuite name="Validación de consulta de disponibilidad (RF-03)" time="0.002417" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.387Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-07 acepta sede y fecha válidas; el espacio es opcional" time="0.001729" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-08 rechaza fechas pasadas, inexistentes o fuera de la ventana de 30 días" time="0.000247" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-09 rechaza identificadores no numéricos (intento de inyección)" time="0.000245" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+	<testsuite name="Validación de registro (RF-01)" time="0.003942" disabled="0" errors="0" tests="7" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.825Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-01 acepta datos válidos y normaliza el correo a minúsculas" time="0.001313" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-02 rechaza correos de un dominio no institucional" time="0.000454" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-03 rechaza correo con formato inválido y nombre con caracteres no permitidos" time="0.000182" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-04 exige contraseña de 15 a 128 caracteres (HU-01) y confirmación coincidente" time="0.000154" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-05 rechaza una contraseña igual al correo" time="0.000133" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-27 rechaza contraseñas comunes o predecibles y permite frases con espacios (HU-01)" time="0.000226" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-06 ignora entradas que no son texto (p. ej. arreglos) sin lanzar excepciones" time="0.000111" classname="Validación de registro (RF-01)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
 	</testsuite>
-	<testsuite name="Validación de espacios y horarios (RF-06)" time="0.001169" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:20:47.388Z" hostname="GST-JCHIGUAYN">
-		<testcase name="CP-U-10 valida sede, nombre, tipo y capacidad de un espacio" time="0.000588" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-11 valida día, formato de hora, orden, rango 07:00–23:00 y duración 30–240 min" time="0.000243" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
-		<testcase name="CP-U-12 valida bloqueos: horario, fecha no pasada y motivo" time="0.000191" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+	<testsuite name="Validación de consulta de disponibilidad (RF-03)" time="0.003389" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.825Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-07 acepta sede y fecha válidas; el espacio es opcional" time="0.002625" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-08 rechaza fechas pasadas, inexistentes o fuera de la ventana de 30 días" time="0.000278" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-09 rechaza identificadores no numéricos (intento de inyección)" time="0.000240" classname="Validación de consulta de disponibilidad (RF-03)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
 	</testsuite>
-	<!-- tests 77 -->
-	<!-- suites 15 -->
-	<!-- pass 77 -->
+	<testsuite name="Validación de espacios y horarios (RF-06)" time="0.002432" disabled="0" errors="0" tests="3" failures="0" skipped="0" timestamp="2026-11-11T03:56:09.826Z" hostname="GST-JCHIGUAYN">
+		<testcase name="CP-U-10 valida sede, nombre, tipo y capacidad de un espacio" time="0.001427" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-11 valida día, formato de hora, orden, rango 07:00–23:00 y duración 30–240 min" time="0.000432" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+		<testcase name="CP-U-12 valida bloqueos: horario, fecha no pasada y motivo" time="0.000338" classname="Validación de espacios y horarios (RF-06)" file="C:\Proyecto\CampusReserva\test\unit\validaciones.test.js"/>
+	</testsuite>
+	<!-- tests 79 -->
+	<!-- suites 16 -->
+	<!-- pass 79 -->
 	<!-- fail 0 -->
 	<!-- cancelled 0 -->
 	<!-- skipped 0 -->
 	<!-- todo 0 -->
-	<!-- duration_ms 5821.4568 -->
+	<!-- duration_ms 6748.8707 -->
 </testsuites>

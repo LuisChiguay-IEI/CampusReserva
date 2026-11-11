@@ -66,7 +66,7 @@ function cargarConfig(env = process.env, sobrescribir = {}) {
     limiteLogin: { ventanaMs: 15 * 60 * 1000, maximo: aEntero(env.LOGIN_MAX_INTENTOS, 10) },
     buzonDemo: aBooleano(env.DEMO_MAILBOX, !esProduccion),
     seedDemo: aBooleano(env.SEED_DEMO, !esProduccion),
-    passwordDemo: env.DEMO_PASSWORD || 'CampusDemo2026',
+    passwordDemo: env.DEMO_PASSWORD || 'Demo Campus 2026',
     confiarEnProxy: aBooleano(env.TRUST_PROXY, false),
     /** Reloj inyectable: permite pruebas deterministas sobre fechas y horas. */
     ahora: () => new Date(),

@@ -38,6 +38,8 @@ function crearServicioAutenticacion({ db, repos, config, reloj }) {
   function emitirEnlaceConfirmacion(usuario) {
     const token = tokenAleatorio(32);
     const expira = new Date(reloj.ahoraMs() + config.horasValidezEnlace * 3600 * 1000).toISOString();
+    // HU-01: una nueva emisión invalida el enlace anterior.
+    repos.usuarios.invalidarTokens(usuario.id, reloj.ahoraIso());
     repos.usuarios.insertarToken(usuario.id, sha256(token), expira);
     const enlace = `${config.urlBase}/confirmar?token=${encodeURIComponent(token)}`;
     repos.usuarios.insertarCorreo({

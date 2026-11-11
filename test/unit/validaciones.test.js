@@ -33,7 +33,7 @@ describe('Validación de registro (RF-01)', () => {
     assert.ok(r.errores.nombre);
   });
 
-  it('CP-U-04 exige contraseña de 12 a 128 caracteres y confirmación coincidente', () => {
+  it('CP-U-04 exige contraseña de 15 a 128 caracteres (HU-01) y confirmación coincidente', () => {
     assert.ok(v.validarRegistro({ ...registroValido, contrasena: 'corta', confirmacion: 'corta' }, OPC).errores.contrasena);
     assert.ok(v.validarRegistro({ ...registroValido, contrasena: 'x'.repeat(129), confirmacion: 'x'.repeat(129) }, OPC).errores.contrasena);
     assert.ok(v.validarRegistro({ ...registroValido, confirmacion: 'otra frase distinta' }, OPC).errores.confirmacion);
@@ -43,6 +43,16 @@ describe('Validación de registro (RF-01)', () => {
     const correo = 'camila.estudiante@campus.test';
     const r = v.validarRegistro({ ...registroValido, correo, contrasena: correo, confirmacion: correo }, OPC);
     assert.ok(r.errores.contrasena);
+  });
+
+  it('CP-U-27 rechaza contraseñas comunes o predecibles y permite frases con espacios (HU-01)', () => {
+    for (const comun of ['123456789012345', 'Password 1234567', 'aaaaaaaaaaaaaaaa', 'Contraseña Segura', '999999999999999999']) {
+      const r = v.validarRegistro({ ...registroValido, contrasena: comun, confirmacion: comun }, OPC);
+      assert.match(r.errores.contrasena || '', /común o predecible/, comun);
+    }
+    const frase = 'mi sala favorita es la 101';
+    assert.equal(v.validarRegistro({ ...registroValido, contrasena: frase, confirmacion: frase }, OPC).ok, true);
+    assert.equal(v.esContrasenaComun(frase), false);
   });
 
   it('CP-U-06 ignora entradas que no son texto (p. ej. arreglos) sin lanzar excepciones', () => {

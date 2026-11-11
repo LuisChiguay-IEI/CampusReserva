@@ -19,7 +19,7 @@ const RAIZ = path.join(__dirname, '..');
 const DESTINO = path.join(RAIZ, 'docs', 'evidencias', 'capturas');
 const PUERTO = Number(process.env.CAPTURAS_PUERTO || 3300);
 const URL_BASE = `http://127.0.0.1:${PUERTO}`;
-const PASSWORD = 'CampusDemo2026';
+const PASSWORD = 'Demo Campus 2026';
 const C = {
   ana: 'ana.estudiante@campus.test',
   diego: 'diego.docente@campus.test',
