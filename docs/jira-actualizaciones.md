@@ -17,7 +17,7 @@ enlace el commit indicado y adjunte o enlace la evidencia (captura, salida de pr
 
 | Clave | Historia | Comentario sugerido (evidencia) | Commit |
 |---|---|---|---|
-| KAN-1 | RF-01 — Registrar usuario | Implementado: listado institucional, rol asignado, contraseña 15–128 con rechazo de comunes, enlace de un uso (24 h) en Buzón de demostración. Pruebas CP-01-01 a CP-01-08, CP-U-01 a CP-U-06 y CP-U-27. Capturas 02–07 | a0edf81 y commit de alineación ES2 |
+| KAN-1 | RF-01 — Registrar usuario | Implementado: listado institucional, rol asignado, contraseña 15–128 con rechazo de comunes, enlace de un uso (24 h) en Buzón de demostración. Pruebas CP-01-01 a CP-01-08, CP-U-01 a CP-U-06 y CP-U-27. Capturas 02–07 | a0edf81, 14bec2a |
 | KAN-2 | RF-02 — Iniciar sesión | Implementado con sesión del servidor, regeneración, expiración, límite de intentos y funciones por rol; cierre de sesión. Pruebas CP-02-01 a CP-02-10. Capturas 01, 08, 18 | a0edf81 |
 | KAN-5 | RF-03 — Consultar disponibilidad | Implementado: sede y fecha obligatorias, espacio opcional, exclusiones, sin resultados, sin modificar datos. Pruebas CP-03-01 a CP-03-08. Capturas 09, 10 | a0edf81 |
 | KAN-6 | RF-04 — Reservar espacio | Implementado: revisión, confirmación, transacción + índice único (ADR-001), código CR-000000. Pruebas CP-04-01 a CP-04-08; carga: 0 duplicados, p95 119,2 ms. Capturas 11–13 | a0edf81, 9ec4281 |
@@ -38,7 +38,7 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 | Revalidar ADR-001 con mediciones reales | KAN-43 | Finalizado | docs/evidencias/metricas (9ec4281) |
 | Capturas reales y diagramas UML de la implementación | KAN-43 | Finalizado | docs/evidencias/capturas, docs/diagramas (f9c8bf1) |
 | Investigación normativa chilena y OWASP Top 10:2025 | Entrega ES3 | Finalizado | docs/investigacion-normativa.md |
-| Alinear implementación con HU-01 de la ES2 (contraseña 15+, enlaces) | KAN-42 Requisitos | Finalizado | CP-U-27, CP-01-08 |
+| Alinear implementación con HU-01 de la ES2 (contraseña 15+, enlaces) | KAN-42 Requisitos | Finalizado | CP-U-27, CP-01-08 (14bec2a) |
 | Informe final ES3 (Word) | Entrega ES3 | **En revisión** | dist/Informe_Final_CampusReserva_ES3_Luis_Chiguay.docx |
 | Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | **En curso** (acción del estudiante) | URL del repositorio |
 | Pruebas de usuario (UAT) | KAN-38 Validación | **Por hacer** | docs/pruebas-usuario.md |
