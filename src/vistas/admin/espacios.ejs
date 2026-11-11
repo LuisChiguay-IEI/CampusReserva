@@ -33,7 +33,7 @@
           <tr class="<%= e.habilitado ? '' : 'fila-inactiva' %>">
             <td data-etiqueta="Espacio"><strong><%= e.nombre %></strong></td>
             <td data-etiqueta="Sede"><%= e.sede_nombre %></td>
-            <td data-etiqueta="Tipo"><%= e.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %></td>
+            <td data-etiqueta="Tipo"><%= tipoLegible(e.tipo) %></td>
             <td data-etiqueta="Capacidad"><%= e.capacidad %></td>
             <td data-etiqueta="Bloques activos"><%= e.bloques_activos %></td>
             <td data-etiqueta="Estado">

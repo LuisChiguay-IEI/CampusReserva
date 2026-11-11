@@ -2,9 +2,16 @@
 <div class="encabezado-pagina">
   <div>
     <h1>Consultar disponibilidad</h1>
-    <p class="subtitulo">Elige sede y fecha. Si buscas una sala o laboratorio en particular, selecciónalo (opcional).</p>
+    <p class="subtitulo">Elige sede y fecha. Si buscas un espacio en particular, selecciónalo (opcional).</p>
   </div>
 </div>
+
+<% if (politica.esEstudiante) { %>
+  <div class="alerta alerta-info" role="note">
+    Como estudiante puedes reservar <strong>salas de estudio</strong>, hasta <%= politica.dias %> días antes y con un
+    máximo de <%= politica.limite %> reservas vigentes. Las salas de clases y los laboratorios los reservan los docentes.
+  </div>
+<% } %>
 
 <form method="get" action="/disponibilidad" class="tarjeta filtros" novalidate>
   <div class="grilla-filtros">
@@ -21,12 +28,13 @@
 
     <div class="campo <%= errores.fecha ? 'con-error' : '' %>">
       <label for="fecha">Fecha <span class="requerido" aria-hidden="true">*</span></label>
-      <input id="fecha" name="fecha" type="date" required value="<%= filtros.fecha %>" min="<%= hoy %>">
+      <input id="fecha" name="fecha" type="date" required value="<%= filtros.fecha %>" min="<%= hoy %>"
+             max="<%= new Date(Date.parse(hoy + 'T00:00:00Z') + politica.dias * 86400000).toISOString().slice(0, 10) %>">
       <% if (errores.fecha) { %><p class="texto-error"><%= errores.fecha %></p><% } %>
     </div>
 
     <div class="campo <%= errores.espacio ? 'con-error' : '' %>">
-      <label for="espacio">Sala o laboratorio (opcional)</label>
+      <label for="espacio">Espacio (opcional)</label>
       <select id="espacio" name="espacio">
         <option value="">Todos los espacios</option>
         <% espaciosPorSede.forEach((g) => { %>
@@ -67,9 +75,7 @@
           <article class="tarjeta tarjeta-espacio">
             <header class="tarjeta-espacio-cabecera">
               <h3><%= r.espacio.nombre %></h3>
-              <span class="insignia <%= r.espacio.tipo === 'SALA' ? 'insignia-sala' : 'insignia-lab' %>">
-                <%= r.espacio.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %>
-              </span>
+              <span class="insignia insignia-<%= r.espacio.tipo.toLowerCase() %>"><%= tipoLegible(r.espacio.tipo) %></span>
             </header>
             <p class="texto-suave">Capacidad: <%= r.espacio.capacidad %> personas</p>
             <ul class="lista-bloques">

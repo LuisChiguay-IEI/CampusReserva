@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS espacio (
   id             INTEGER PRIMARY KEY,
   sede_id        INTEGER NOT NULL REFERENCES sede(id),
   nombre         TEXT NOT NULL,
-  tipo           TEXT NOT NULL CHECK (tipo IN ('SALA', 'LABORATORIO')),
+  tipo           TEXT NOT NULL CHECK (tipo IN ('SALA', 'LABORATORIO', 'SALA_ESTUDIO')),
   capacidad      INTEGER NOT NULL CHECK (capacidad BETWEEN 1 AND 200),
   habilitado     INTEGER NOT NULL DEFAULT 1 CHECK (habilitado IN (0, 1)),
   creado_en      TEXT NOT NULL,

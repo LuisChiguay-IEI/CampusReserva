@@ -36,7 +36,7 @@ const DESTINO = ENSAYO_LOCAL
   ? path.join(__dirname, '..', '.tmp', 'ensayo-despliegue')
   : path.join(__dirname, '..', 'docs', 'evidencias', 'despliegue');
 const ZONA = 'America/Santiago';
-const CLAVE_NUEVA = 'Prueba Despliegue Render 2026';
+const CLAVE_NUEVA = 'Registro2026x';
 const CORREOS_LISTADO = ['nuevo.estudiante@campus.test', 'camila.estudiante@campus.test', 'nueva.docente@campus.test'];
 const RE_OFERTA = /href="\/reservas\/nueva\?espacio=(\d+)&amp;horario=(\d+)&amp;fecha=([\d-]+)&amp;sede=(\d+)"/g;
 
@@ -200,6 +200,7 @@ async function ejecutarPruebas() {
   });
 
   await iniciarSesion(diego, 'diego.docente@campus.test');
+  await iniciarSesion(admin, 'admin@campus.test');
 
   await prueba('DEP-09', 'RF-04 Un bloque ya reservado se rechaza al confirmar (409)', async () => {
     exigir(reservaAna, 'no se creó la reserva previa');
@@ -209,10 +210,10 @@ async function ejecutarPruebas() {
     return '409 Conflict';
   });
 
-  await prueba('DEP-10', 'RF-04 / ADR-001 10 solicitudes simultáneas de 2 usuarios por el mismo bloque confirman exactamente una', async () => {
+  await prueba('DEP-10', 'RF-04 / ADR-001 10 solicitudes simultáneas de 2 usuarios (docente y administración) por el mismo bloque confirman exactamente una', async () => {
     exigir(ofertas.length >= 2, 'no hay un segundo bloque disponible');
     const o = ofertas[1];
-    const clientes = Array.from({ length: 10 }, (_, i) => (i % 2 === 0 ? ana : diego));
+    const clientes = Array.from({ length: 10 }, (_, i) => (i % 2 === 0 ? diego : admin));
     const respuestas = await Promise.all(clientes.map((c) => c.post('/reservas', o)));
     const exitos = respuestas.map((r, i) => ({ r, c: clientes[i] })).filter(({ r }) => r.estado === 303);
     const conflictos = respuestas.filter((r) => r.estado === 409).length;
@@ -256,12 +257,10 @@ async function ejecutarPruebas() {
   });
 
   await prueba('DEP-15', 'RF-06 El administrador registra un espacio y se validan los datos', async () => {
-    const r0 = await iniciarSesion(admin, 'admin@campus.test');
-    exigir(r0.estado === 303, `el inicio de sesión del administrador respondió ${r0.estado}`);
     const invalido = await admin.post('/admin/espacios', { sede: '1', nombre: 'Sala inválida', tipo: 'SALA', capacidad: '0' });
     exigir(invalido.estado === 422, `una capacidad 0 respondió ${invalido.estado}`);
     const hora = fechaHoraEnZona(new Date(), ZONA).hora.replace(':', '');
-    const nombre = `Sala E-${hora}`;
+    const nombre = `Sala D-${hora}`;
     const r = await admin.post('/admin/espacios', { sede: '1', nombre, tipo: 'SALA', capacidad: '12' });
     exigir(r.estado === 303 && /^\/admin\/espacios\/\d+\/horarios$/.test(r.ubicacion || ''), `respondió ${r.estado} → ${r.ubicacion}`);
     exigir((await admin.get('/admin/espacios')).html.includes(nombre), 'el espacio no aparece en la lista');
@@ -293,10 +292,25 @@ async function ejecutarPruebas() {
     return `${correoRegistrado} activada; el enlace apunta a ${URL_BASE}`;
   });
 
+  await prueba('DEP-17', 'Reglas por rol: el estudiante solo ve salas de estudio y no puede reservar una sala de clases (403)', async () => {
+    const vistaEstudiante = await ana.get(`/disponibilidad?sede=1&fecha=${fecha}`);
+    exigir(/Como estudiante puedes reservar/.test(vistaEstudiante.html), 'no se muestra la regla del estudiante');
+    exigir(!/insignia-sala"/.test(vistaEstudiante.html) && !/insignia-laboratorio"/.test(vistaEstudiante.html), 'al estudiante se le ofrecen salas de clases o laboratorios');
+    const vistaDocente = await diego.get(`/disponibilidad?sede=1&fecha=${fecha}`);
+    const espaciosEstudiante = new Set([...vistaEstudiante.html.matchAll(RE_OFERTA)].map((m) => m[1]));
+    const sala = [...vistaDocente.html.matchAll(RE_OFERTA)]
+      .map((m) => ({ espacio: m[1], horario: m[2], fecha: m[3] }))
+      .find((o) => !espaciosEstudiante.has(o.espacio));
+    exigir(sala, 'el docente no tiene salas de clases disponibles para comparar');
+    const r = await ana.post('/reservas', sala);
+    exigir(r.estado === 403 && /solo puedes reservar salas de estudio/.test(r.html), `respondió ${r.estado}`);
+    return '403: solo salas de estudio';
+  });
+
   // Limpieza (antes de cerrar sesión): se cancela la reserva ganada en la prueba de concurrencia.
   if (ganador) await ganador.cliente.post(`/reservas/${ganador.id}/cancelar`);
 
-  await prueba('DEP-17', 'Cierre de sesión: la sesión se destruye en el servidor', async () => {
+  await prueba('DEP-18', 'Cierre de sesión: la sesión se destruye en el servidor', async () => {
     const r = await ana.post('/logout');
     exigir(r.estado === 303, `respondió ${r.estado}`);
     const despues = await ana.get('/mis-reservas');

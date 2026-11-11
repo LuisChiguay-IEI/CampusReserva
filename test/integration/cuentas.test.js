@@ -9,7 +9,7 @@ const { describe, it, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const { crearEntorno, Cliente, CORREOS, PASSWORD } = require('../ayudante');
 
-const NUEVA_CLAVE = 'mi frase de prueba 2026';
+const NUEVA_CLAVE = 'MiClave2026x';
 
 describe('RF-01 Registrar usuario', () => {
   let e;
@@ -68,7 +68,7 @@ describe('RF-01 Registrar usuario', () => {
     });
     assert.equal(r.estado, 422);
     assert.match(r.html, /entre 3 y 80 caracteres/);
-    assert.match(r.html, /entre 15 y 128 caracteres/);
+    assert.match(r.html, /entre 8 y 64 caracteres/);
     assert.equal(e.uno('SELECT COUNT(*) AS n FROM usuario WHERE correo = ?', 'nuevo.estudiante@campus.test').n, 0);
   });
 

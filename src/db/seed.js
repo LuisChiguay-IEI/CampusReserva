@@ -40,6 +40,10 @@ const ESPACIOS = [
   { clave: 'b105', sede: 'maipu', nombre: 'Sala B-105', tipo: 'SALA', capacidad: 35, deshabilitado: true },
   { clave: 'c301', sede: 'centro', nombre: 'Sala C-301', tipo: 'SALA', capacidad: 45 },
   { clave: 'cl1', sede: 'centro', nombre: 'Laboratorio C-L1', tipo: 'LABORATORIO', capacidad: 20 },
+  // Salas de estudio: las únicas que pueden reservar los estudiantes.
+  { clave: 'e01', sede: 'maipu', nombre: 'Sala de estudio E-01', tipo: 'SALA_ESTUDIO', capacidad: 6 },
+  { clave: 'e02', sede: 'maipu', nombre: 'Sala de estudio E-02', tipo: 'SALA_ESTUDIO', capacidad: 8 },
+  { clave: 'ce1', sede: 'centro', nombre: 'Sala de estudio CE-1', tipo: 'SALA_ESTUDIO', capacidad: 6 },
 ];
 
 /**
@@ -169,11 +173,14 @@ async function sembrar(db, config) {
     let pasada = sumarDias(hoy, -7);
     while (diaSemana(pasada) > 5) pasada = sumarDias(pasada, -1);
 
-    reservar('ana', 'a101', dia1, '10:15');
-    reservar('ana', 'l201', dia2, '14:30');
-    reservar('ana', 'a102', dia1, '08:30', 'CANCELADA');
-    reservar('ana', 'a101', pasada, '08:30');
+    // Estudiante: solo salas de estudio (una vigente, una cancelada y una ya realizada).
+    reservar('ana', 'e01', dia1, '10:15');
+    reservar('ana', 'e02', dia1, '08:30', 'CANCELADA');
+    reservar('ana', 'e01', pasada, '08:30');
+    // Docente: salas de clases y laboratorios para sus clases.
     reservar('diego', 'a101', dia1, '08:30');
+    reservar('diego', 'a101', dia1, '10:15');
+    reservar('diego', 'l201', dia2, '14:30');
     reservar('diego', 'l202', dia1, '19:00');
 
     const horarioBloqueado = buscarHorario.get(ids.espacio.l202, diaSemana(dia1), '12:00');

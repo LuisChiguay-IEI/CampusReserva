@@ -60,7 +60,9 @@ function requiereRol({ repos, reloj }, ...roles) {
       accion: 'ACCESO_DENEGADO',
       detalle: `${req.method} ${req.originalUrl.split('?')[0]}`,
     });
-    return next(new ErrorPermiso('Tu rol no tiene permiso para acceder a esta sección.'));
+    const error = new ErrorPermiso('Tu rol no tiene permiso para acceder a esta sección.');
+    error.auditado = true; // el manejador central no lo vuelve a registrar
+    return next(error);
   };
 }
 

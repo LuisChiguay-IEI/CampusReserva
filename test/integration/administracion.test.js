@@ -2,7 +2,7 @@
 
 /**
  * Pruebas de integración de RF-06 (administrar espacios y horarios) y de las restricciones por rol.
- * Reloj fijo: lunes 16-11-2026 10:00. Reservas vigentes del seed en Sala A-101 (martes 08:30 y 10:15).
+ * Reloj fijo: lunes 16-11-2026 10:00. Reservas vigentes del seed (del docente) en Sala A-101 (martes 08:30 y 10:15).
  */
 
 const { describe, it, before, after } = require('node:test');
@@ -59,11 +59,14 @@ describe('RF-06 Administrar espacios y horarios', () => {
     const creado = e.uno('SELECT * FROM espacio WHERE nombre = ?', 'Sala D-210');
     assert.equal(creado.habilitado, 1);
     assert.equal(creado.capacidad, 28);
+    const estudio = await admin.post('/admin/espacios', { sede: '1', nombre: 'Sala de estudio E-03', tipo: 'SALA_ESTUDIO', capacidad: '6' });
+    assert.equal(estudio.estado, 303);
+    assert.equal(e.uno('SELECT tipo FROM espacio WHERE nombre = ?', 'Sala de estudio E-03').tipo, 'SALA_ESTUDIO');
 
     const malo = await admin.post('/admin/espacios', { sede: '999', nombre: 'X', tipo: 'AUDITORIO', capacidad: '0' });
     assert.equal(malo.estado, 422);
     assert.match(malo.html, /entre 3 y 60 caracteres/);
-    assert.match(malo.html, /sala o laboratorio/);
+    assert.match(malo.html, /sala de clases, laboratorio o sala de estudio/);
     assert.match(malo.html, /entre 1 y 200/);
     const sedeInexistente = await admin.post('/admin/espacios', { sede: '999', nombre: 'Sala Fantasma', tipo: 'SALA', capacidad: '10' });
     assert.equal(sedeInexistente.estado, 422);
@@ -100,7 +103,7 @@ describe('RF-06 Administrar espacios y horarios', () => {
   it('CP-06-06 deshabilitar un espacio sin reservas vigentes lo quita de la disponibilidad; habilitar lo repone', async () => {
     await admin.post(`/admin/espacios/${ids.a102}/estado`, { accion: 'deshabilitar' });
     assert.equal(espacio(ids.a102).habilitado, 0);
-    const sin = await ana.get(`/disponibilidad?sede=1&fecha=${FECHAS.dia1}&espacio=${ids.a102}`);
+    const sin = await diego.get(`/disponibilidad?sede=1&fecha=${FECHAS.dia1}&espacio=${ids.a102}`);
     assert.match(sin.html, /No hay espacios disponibles/);
     await admin.post(`/admin/espacios/${ids.a102}/estado`, { accion: 'habilitar' });
     assert.equal(espacio(ids.a102).habilitado, 1);
@@ -145,13 +148,13 @@ describe('RF-06 Administrar espacios y horarios', () => {
 
   it('CP-06-10 bloquear un horario libre lo quita de la disponibilidad y quitar el bloqueo lo repone', async () => {
     const ofrece = async () =>
-      new RegExp(`horario=${ids.a101_1200_mar}&amp;`).test((await ana.get(`/disponibilidad?sede=1&fecha=${FECHAS.dia1}`)).html);
+      new RegExp(`horario=${ids.a101_1200_mar}&amp;`).test((await diego.get(`/disponibilidad?sede=1&fecha=${FECHAS.dia1}`)).html);
     assert.equal(await ofrece(), true);
 
     const r = await admin.post(`/admin/espacios/${ids.a101}/bloqueos`, { horario: ids.a101_1200_mar, fecha: FECHAS.dia1, motivo: 'Evento institucional' });
     assert.equal(r.estado, 303);
     assert.equal(await ofrece(), false);
-    const reservar = await ana.post('/reservas', { espacio: ids.a101, horario: ids.a101_1200_mar, fecha: FECHAS.dia1 });
+    const reservar = await diego.post('/reservas', { espacio: ids.a101, horario: ids.a101_1200_mar, fecha: FECHAS.dia1 });
     assert.equal(reservar.estado, 409);
 
     const bloqueo = e.uno('SELECT id FROM bloqueo WHERE horario_id = ? AND fecha = ?', ids.a101_1200_mar, FECHAS.dia1);

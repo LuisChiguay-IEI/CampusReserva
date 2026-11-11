@@ -61,6 +61,11 @@ function crearRepositorioReservas(db) {
     contarConfirmadas: db.prepare(
       `SELECT COUNT(*) AS total FROM reserva WHERE horario_id = ? AND fecha = ? AND estado = 'CONFIRMADA'`,
     ),
+    contarVigentesDeUsuario: db.prepare(
+      `SELECT COUNT(*) AS total FROM reserva
+       WHERE usuario_id = ?1 AND estado = 'CONFIRMADA'
+         AND (fecha > ?2 OR (fecha = ?2 AND hora_fin > ?3))`,
+    ),
   };
 
   return {
@@ -88,6 +93,9 @@ function crearRepositorioReservas(db) {
     futurasDeHorario: (horarioId, hoy, hora) => sql.futurasDeHorario.all(horarioId, hoy, hora),
     confirmadaEnHorarioYFecha: (horarioId, fecha) => sql.confirmadaEnHorarioYFecha.get(horarioId, fecha),
     contarConfirmadas: (horarioId, fecha) => Number(sql.contarConfirmadas.get(horarioId, fecha).total),
+    /** Reservas confirmadas del usuario que aún no terminan (vigentes). */
+    contarVigentesDeUsuario: (usuarioId, hoy, hora) =>
+      Number(sql.contarVigentesDeUsuario.get(usuarioId, hoy, hora).total),
   };
 }
 

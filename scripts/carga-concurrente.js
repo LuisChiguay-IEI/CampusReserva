@@ -2,7 +2,8 @@
  * Medición de rendimiento y concurrencia (RNF de rendimiento y revalidación del ADR-001).
  *
  * Procedimiento:
- *  1. Crea una base temporal con los datos de demostración y 50 cuentas ficticias de estudiante.
+ *  1. Crea una base temporal con los datos de demostración y 50 cuentas ficticias de docente
+ *     (las salas de clases solo las reservan docentes y administración).
  *  2. Levanta N procesos del servidor (por defecto 4) que comparten el mismo archivo SQLite,
  *     como lo harían varias instancias detrás de un balanceador.
  *  3. Inicia sesión con los 50 usuarios (mide la latencia del login con scrypt).
@@ -36,7 +37,7 @@ const RONDAS = Number(process.env.CARGA_RONDAS || 5);
 const CONSULTAS = 200;
 const CONCURRENCIA_CONSULTAS = 20;
 const PUERTO_BASE = Number(process.env.CARGA_PUERTO || 3400);
-const CONTRASENA = 'clave de carga 2026';
+const CONTRASENA = 'CargaClave2026';
 const RAIZ = path.join(__dirname, '..');
 const DESTINO = path.join(RAIZ, 'docs', 'evidencias', 'metricas');
 
@@ -104,7 +105,7 @@ async function main() {
     const correo = `carga.${String(i).padStart(3, '0')}@${config.dominioInstitucional}`;
     db.prepare(
       `INSERT INTO usuario (nombre, correo, password_hash, rol, estado, creado_en, confirmado_en)
-       VALUES (?, ?, ?, 'ESTUDIANTE', 'ACTIVA', ?, ?)`,
+       VALUES (?, ?, ?, 'DOCENTE', 'ACTIVA', ?, ?)`,
     ).run(`Usuario Carga ${i}`, correo, hash, ahoraIso, ahoraIso);
     correos.push(correo);
   }

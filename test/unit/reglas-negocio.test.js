@@ -56,7 +56,11 @@ describe('Presentación y reglas de cancelación de reservas (RF-05)', () => {
     assert.equal(r.cancelable, true);
   });
 
-  it('CP-U-24 una reserva en curso no es cancelable y una terminada pasa al historial', () => {
+  it('CP-U-24 se cancela hasta 60 minutos antes; en curso no es cancelable y terminada pasa al historial', () => {
+    assert.equal(presentarReserva(base, { fecha: '2026-11-17', hora: '09:15' }).cancelable, true, 'faltan 60 minutos');
+    const faltan45 = presentarReserva(base, { fecha: '2026-11-17', hora: '09:30' });
+    assert.equal(faltan45.estadoVisible, 'Confirmada');
+    assert.equal(faltan45.cancelable, false, 'faltan 45 minutos');
     const enCurso = presentarReserva(base, { fecha: '2026-11-17', hora: '10:30' });
     assert.equal(enCurso.estadoVisible, 'En curso');
     assert.equal(enCurso.cancelable, false);

@@ -10,8 +10,15 @@
 'use strict';
 
 const { transaccion, esErrorUnico } = require('../db/conexion');
-const { validarSeleccionReserva, ROLES_RESERVA } = require('../lib/validaciones');
+const { validarSeleccionReserva } = require('../lib/validaciones');
 const { diaSemana, sumarDias } = require('../lib/fechas');
+const {
+  ROLES_RESERVA,
+  puedeReservarTipo,
+  diasAnticipacion,
+  limiteReservasVigentes,
+  esCancelable,
+} = require('../lib/politicas');
 const { codigoReserva } = require('../repositorios/reservas');
 const {
   ErrorValidacion,
@@ -28,8 +35,9 @@ const MENSAJE_OCUPADO =
  * Agrega a una reserva leída de la base los campos derivados que usa la interfaz.
  * @param {object} reserva Fila de la tabla reserva con datos de espacio y sede.
  * @param {{fecha:string, hora:string}} ahora Fecha y hora locales actuales.
+ * @param {number} [minutosLimite=60] Minutos antes del inicio hasta los que se puede cancelar.
  */
-function presentarReserva(reserva, ahora) {
+function presentarReserva(reserva, ahora, minutosLimite = 60) {
   const comenzo = reserva.fecha < ahora.fecha || (reserva.fecha === ahora.fecha && reserva.hora_inicio <= ahora.hora);
   const termino = reserva.fecha < ahora.fecha || (reserva.fecha === ahora.fecha && reserva.hora_fin <= ahora.hora);
   let estadoVisible = reserva.estado === 'CANCELADA' ? 'Cancelada' : 'Confirmada';
@@ -40,7 +48,7 @@ function presentarReserva(reserva, ahora) {
     codigo: codigoReserva(reserva.id),
     estadoVisible,
     esProxima: reserva.estado === 'CONFIRMADA' && !termino,
-    cancelable: reserva.estado === 'CONFIRMADA' && !comenzo,
+    cancelable: esCancelable(reserva, ahora, minutosLimite),
   };
 }
 
@@ -59,18 +67,22 @@ function crearServicioReservas({ db, repos, config, reloj }) {
    */
   function verificarReservable(usuario, entrada) {
     if (!ROLES_RESERVA.includes(usuario.rol)) {
-      throw new ErrorPermiso('Solo estudiantes y docentes pueden reservar espacios.');
+      throw new ErrorPermiso('Tu cuenta no tiene permiso para reservar espacios.');
     }
     const { ok, errores, datos } = validarSeleccionReserva(entrada);
     if (!ok) throw new ErrorValidacion(errores, 'La selección de reserva no es válida.');
 
     const ahora = reloj.local();
-    if (datos.fecha < ahora.fecha || datos.fecha > sumarDias(ahora.fecha, config.maxDiasAnticipacion)) {
-      throw new ErrorApp(422, `Solo se puede reservar desde hoy y hasta ${config.maxDiasAnticipacion} días después.`, 'FUERA_DE_RANGO');
+    const dias = diasAnticipacion(usuario.rol, config);
+    if (datos.fecha < ahora.fecha || datos.fecha > sumarDias(ahora.fecha, dias)) {
+      throw new ErrorApp(422, `Puedes reservar desde hoy y hasta ${dias} días después.`, 'FUERA_DE_RANGO');
     }
 
     const espacio = repos.espacios.buscarEspacio(datos.espacioId);
     if (!espacio) throw new ErrorNoEncontrado('El espacio seleccionado no existe.');
+    if (!puedeReservarTipo(usuario.rol, espacio.tipo)) {
+      throw new ErrorPermiso('Como estudiante solo puedes reservar salas de estudio.');
+    }
     if (!espacio.habilitado) throw new ErrorConflicto('El espacio seleccionado no está habilitado para reservas.', 'ESPACIO_DESHABILITADO');
 
     const horario = repos.espacios.buscarHorario(datos.horarioId);
@@ -88,6 +100,13 @@ function crearServicioReservas({ db, repos, config, reloj }) {
     }
     if (repos.reservas.estaOcupado(horario.id, datos.fecha)) {
       throw new ErrorConflicto(MENSAJE_OCUPADO, 'OCUPADO');
+    }
+    const limite = limiteReservasVigentes(usuario.rol, config);
+    if (limite !== null && repos.reservas.contarVigentesDeUsuario(usuario.id, ahora.fecha, ahora.hora) >= limite) {
+      throw new ErrorConflicto(
+        `Ya tienes ${limite} reservas vigentes, el máximo para estudiantes. Cancela una o espera a que termine para reservar otra.`,
+        'LIMITE_RESERVAS',
+      );
     }
     return { espacio, horario, fecha: datos.fecha };
   }
@@ -135,7 +154,9 @@ function crearServicioReservas({ db, repos, config, reloj }) {
    */
   function listarPropias(usuario) {
     const ahora = reloj.local();
-    const todas = repos.reservas.listarDeUsuario(usuario.id).map((r) => presentarReserva(r, ahora));
+    const todas = repos.reservas
+      .listarDeUsuario(usuario.id)
+      .map((r) => presentarReserva(r, ahora, config.minutosLimiteCancelacion));
     const proximas = todas.filter((r) => r.esProxima).reverse(); // la más cercana primero
     const historial = todas.filter((r) => !r.esProxima);
     return { proximas, historial };
@@ -149,11 +170,11 @@ function crearServicioReservas({ db, repos, config, reloj }) {
     const id = Number(reservaId);
     const reserva = Number.isInteger(id) && id > 0 ? repos.reservas.buscarDeUsuario(id, usuario.id) : undefined;
     if (!reserva) throw new ErrorNoEncontrado('La reserva no existe o no pertenece a tu cuenta.');
-    return presentarReserva(reserva, reloj.local());
+    return presentarReserva(reserva, reloj.local(), config.minutosLimiteCancelacion);
   }
 
   /**
-   * RF-05: cancela una reserva propia confirmada cuyo bloque aún no comienza.
+   * RF-05: cancela una reserva propia confirmada hasta 60 minutos antes del inicio del bloque.
    * La reserva se conserva con estado CANCELADA (historial) y el horario queda libre.
    */
   function cancelar(usuario, reservaId) {
@@ -163,7 +184,10 @@ function crearServicioReservas({ db, repos, config, reloj }) {
         throw new ErrorConflicto('La reserva ya se encuentra cancelada.', 'YA_CANCELADA');
       }
       if (!reserva.cancelable) {
-        throw new ErrorConflicto('Solo se pueden cancelar reservas cuyo bloque aún no ha comenzado.', 'NO_CANCELABLE');
+        throw new ErrorConflicto(
+          `Las reservas se pueden cancelar hasta ${config.minutosLimiteCancelacion} minutos antes del inicio del bloque.`,
+          'NO_CANCELABLE',
+        );
       }
       repos.reservas.cancelar(reserva.id, usuario.id, reloj.ahoraIso());
       repos.auditoria.registrar({

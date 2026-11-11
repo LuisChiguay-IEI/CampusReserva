@@ -10,38 +10,37 @@
 'use strict';
 
 const { esFechaValida, esHoraValida, aMinutos, sumarDias } = require('./fechas');
+const { ROLES_RESERVA, TIPOS_ESPACIO } = require('./politicas');
 
-const ROLES_RESERVA = Object.freeze(['ESTUDIANTE', 'DOCENTE']);
-const TIPOS_ESPACIO = Object.freeze(['SALA', 'LABORATORIO']);
-
-// HU-01 (Sumativa 2): contraseña de 15 a 128 caracteres, con espacios permitidos y
-// rechazo de contraseñas comunes o predecibles.
-const LARGO_MIN_CONTRASENA = 15;
-const LARGO_MAX_CONTRASENA = 128;
+// Contraseña (decisión D-15, ajusta la HU-01 de la Sumativa 2): entre 8 y 64 caracteres,
+// al menos una letra y un número, sin espacios y sin contraseñas comunes o predecibles.
+const LARGO_MIN_CONTRASENA = 8;
+const LARGO_MAX_CONTRASENA = 64;
+// Al iniciar sesión solo se acota el largo para no procesar entradas desmedidas.
+const LARGO_MAX_LOGIN = 128;
 
 /**
- * Lista local de contraseñas comunes (normalizadas: minúsculas y sin espacios).
+ * Lista local de contraseñas comunes (normalizadas en minúsculas).
  * Es una protección básica; la verificación contra bases de contraseñas filtradas
  * queda pendiente (requiere un servicio externo).
  */
 const CONTRASENAS_COMUNES = new Set([
-  '123456789012345', '1234567890123456', '123456789123456', '012345678901234',
-  'contraseña12345', 'contrasena12345', 'contraseñasegura', 'contrasenasegura',
-  'password1234567', 'passwordpassword', 'password12345678', 'qwertyuiopasdfg',
-  'qwerty123456789', 'abcdefghijklmno', 'abc123abc123abc', 'iloveyou1234567',
-  'administrador123', 'estudiante12345', 'docente12345678', 'inacap123456789',
-  'inacap2026inacap', 'campusreserva2026', 'campusreserva123', 'bienvenido12345',
+  'password1', 'password12', 'password123', 'password2026', 'passw0rd', 'qwerty123', 'qwerty1234',
+  'abc12345', 'abcd1234', 'abc123456', 'a1234567', 'a12345678', '1234abcd', '12345678a', '1q2w3e4r',
+  'contraseña1', 'contrasena1', 'contraseña123', 'contrasena123', 'clave123', 'clave1234',
+  'admin123', 'admin1234', 'administrador1', 'estudiante1', 'docente123', 'iloveyou1', 'bienvenido1',
+  'campus123', 'campus2026', 'campusreserva1', 'campusreserva2026', 'inacap123', 'inacap2026',
+  'chile123', 'chile2026', 'santiago1', 'universidad1',
 ]);
 
 /**
- * Indica si una contraseña es común o predecible (lista local, un solo carácter repetido
- * o solo dígitos).
+ * Indica si una contraseña es común o predecible (lista local o un solo carácter repetido).
  * @param {string} contrasena
  * @returns {boolean}
  */
 function esContrasenaComun(contrasena) {
-  const normalizada = contrasena.toLowerCase().replace(/\s+/g, '');
-  return CONTRASENAS_COMUNES.has(normalizada) || /^(.)\1+$/.test(normalizada) || /^\d+$/.test(normalizada);
+  const normalizada = contrasena.toLowerCase();
+  return CONTRASENAS_COMUNES.has(normalizada) || /^(.)\1+$/.test(normalizada);
 }
 const CAPACIDAD_MAXIMA = 200;
 const HORA_APERTURA = '07:00';
@@ -113,10 +112,14 @@ function validarRegistro(entrada, { dominioInstitucional }) {
 
   if (contrasena.length < LARGO_MIN_CONTRASENA || contrasena.length > LARGO_MAX_CONTRASENA) {
     errores.contrasena = `La contraseña debe tener entre ${LARGO_MIN_CONTRASENA} y ${LARGO_MAX_CONTRASENA} caracteres.`;
+  } else if (/\s/.test(contrasena)) {
+    errores.contrasena = 'La contraseña no puede contener espacios.';
+  } else if (!/\p{L}/u.test(contrasena) || !/\d/.test(contrasena)) {
+    errores.contrasena = 'La contraseña debe incluir al menos una letra y un número.';
   } else if (contrasena.toLowerCase() === correo || contrasena.toLowerCase() === correo.split('@')[0]) {
     errores.contrasena = 'La contraseña no puede ser igual a tu correo.';
   } else if (esContrasenaComun(contrasena)) {
-    errores.contrasena = 'Esa contraseña es demasiado común o predecible. Usa una frase propia.';
+    errores.contrasena = 'Esa contraseña es demasiado común. Elige otra.';
   }
 
   if (!errores.contrasena && confirmacion !== contrasena) {
@@ -136,7 +139,7 @@ function validarLogin(entrada) {
   const contrasena = typeof entrada.contrasena === 'string' ? entrada.contrasena : '';
   const errores = {};
   if (!correo || correo.length > 254) errores.correo = 'Ingresa tu correo.';
-  if (!contrasena || contrasena.length > LARGO_MAX_CONTRASENA) errores.contrasena = 'Ingresa tu contraseña.';
+  if (!contrasena || contrasena.length > LARGO_MAX_LOGIN) errores.contrasena = 'Ingresa tu contraseña.';
   return { ok: Object.keys(errores).length === 0, errores, datos: { correo, contrasena } };
 }
 
@@ -199,7 +202,7 @@ function validarEspacio(entrada, { exigirSede = true } = {}) {
   } else if (!REGEX_NOMBRE_ESPACIO.test(nombre)) {
     errores.nombre = 'El nombre solo admite letras, números, espacios y los signos . - ( ) /';
   }
-  if (!TIPOS_ESPACIO.includes(tipo)) errores.tipo = 'Selecciona si es sala o laboratorio.';
+  if (!TIPOS_ESPACIO.includes(tipo)) errores.tipo = 'Selecciona si es sala de clases, laboratorio o sala de estudio.';
   if (!capacidad || capacidad > CAPACIDAD_MAXIMA) {
     errores.capacidad = `La capacidad debe ser un número entero entre 1 y ${CAPACIDAD_MAXIMA}.`;
   }
@@ -261,6 +264,7 @@ module.exports = {
   ROLES_RESERVA,
   TIPOS_ESPACIO,
   LARGO_MIN_CONTRASENA,
+  LARGO_MAX_CONTRASENA,
   CAPACIDAD_MAXIMA,
   esContrasenaComun,
   texto,

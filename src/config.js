@@ -63,12 +63,16 @@ function cargarConfig(env = process.env, sobrescribir = {}) {
     minutosInactividadSesion: aEntero(env.SESSION_IDLE_MINUTES, 30),
     zonaHoraria: env.APP_TZ || 'America/Santiago',
     dominioInstitucional: (env.INSTITUTIONAL_DOMAIN || 'campus.test').toLowerCase(),
-    maxDiasAnticipacion: aEntero(env.MAX_DIAS_ANTICIPACION, 30),
+    // Políticas de reserva por rol (ver src/lib/politicas.js).
+    maxDiasAnticipacion: aEntero(env.MAX_DIAS_ANTICIPACION, 30), // docentes y administración
+    maxDiasAnticipacionEstudiante: aEntero(env.MAX_DIAS_ANTICIPACION_ESTUDIANTE, 7),
+    maxReservasVigentesEstudiante: aEntero(env.MAX_RESERVAS_ESTUDIANTE, 2),
+    minutosLimiteCancelacion: aEntero(env.MINUTOS_LIMITE_CANCELACION, 60),
     horasValidezEnlace: 24,
     limiteLogin: { ventanaMs: 15 * 60 * 1000, maximo: aEntero(env.LOGIN_MAX_INTENTOS, 10) },
     buzonDemo: aBooleano(env.DEMO_MAILBOX, !esProduccion),
     seedDemo: aBooleano(env.SEED_DEMO, !esProduccion),
-    passwordDemo: env.DEMO_PASSWORD || 'Demo Campus 2026',
+    passwordDemo: env.DEMO_PASSWORD || 'Reserva2026',
     confiarEnProxy: aBooleano(env.TRUST_PROXY, false),
     /** Reloj inyectable: permite pruebas deterministas sobre fechas y horas. */
     ahora: () => new Date(),

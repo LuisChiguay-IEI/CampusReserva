@@ -27,7 +27,7 @@ const FECHAS = Object.freeze({
   domingo: '2026-11-22',
   pasada: '2026-11-09',
 });
-const PASSWORD = 'Demo Campus 2026';
+const PASSWORD = 'Reserva2026';
 const CORREOS = Object.freeze({
   ana: 'ana.estudiante@campus.test',
   diego: 'diego.docente@campus.test',

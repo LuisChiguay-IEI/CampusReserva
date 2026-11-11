@@ -30,15 +30,15 @@
 
       <div class="campo <%= errores.contrasena ? 'con-error' : '' %>">
         <label for="contrasena">Contraseña</label>
-        <input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="15" maxlength="128"
+        <input id="contrasena" name="contrasena" type="password" autocomplete="new-password" required minlength="8" maxlength="64"
                aria-describedby="ayuda-contrasena error-contrasena">
-        <p class="texto-ayuda" id="ayuda-contrasena">Mínimo 15 caracteres; se permiten espacios. Usa una frase propia y evita contraseñas comunes.</p>
+        <p class="texto-ayuda" id="ayuda-contrasena">Entre 8 y 64 caracteres, con al menos una letra y un número, sin espacios.</p>
         <% if (errores.contrasena) { %><p class="texto-error" id="error-contrasena"><%= errores.contrasena %></p><% } %>
       </div>
 
       <div class="campo <%= errores.confirmacion ? 'con-error' : '' %>">
         <label for="confirmacion">Repite la contraseña</label>
-        <input id="confirmacion" name="confirmacion" type="password" autocomplete="new-password" required maxlength="128"
+        <input id="confirmacion" name="confirmacion" type="password" autocomplete="new-password" required maxlength="64"
                aria-describedby="error-confirmacion">
         <% if (errores.confirmacion) { %><p class="texto-error" id="error-confirmacion"><%= errores.confirmacion %></p><% } %>
       </div>

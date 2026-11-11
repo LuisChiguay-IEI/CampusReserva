@@ -90,6 +90,22 @@ function aMinutos(hora) {
 }
 
 /**
+ * Minutos que faltan desde `ahora` hasta la fecha y hora indicadas (negativo si ya pasó).
+ * Ambas en hora local de la sede.
+ * @param {string} fecha 'AAAA-MM-DD'
+ * @param {string} hora 'HH:MM'
+ * @param {{fecha: string, hora: string}} ahora
+ * @returns {number}
+ */
+function minutosHasta(fecha, hora, ahora) {
+  const dia = (f) => {
+    const [a, m, d] = f.split('-').map(Number);
+    return Date.UTC(a, m - 1, d) / 86400000;
+  };
+  return (dia(fecha) - dia(ahora.fecha)) * 1440 + aMinutos(hora) - aMinutos(ahora.hora);
+}
+
+/**
  * Indica si dos intervalos [inicio, fin) se superponen. Bloques contiguos (10:00-11:00 y
  * 11:00-12:00) no se consideran superpuestos.
  * @param {{inicio: string, fin: string}} a
@@ -119,6 +135,7 @@ module.exports = {
   diaSemana,
   sumarDias,
   aMinutos,
+  minutosHasta,
   haySuperposicion,
   formatearFecha,
 };

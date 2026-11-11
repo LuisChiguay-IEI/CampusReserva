@@ -7,6 +7,7 @@
 const express = require('express');
 const { ErrorValidacion, ErrorApp } = require('../lib/errores');
 const { requiereRol } = require('../middleware/autorizacion');
+const { tiposReservables, diasAnticipacion, limiteReservasVigentes } = require('../lib/politicas');
 
 /**
  * Construye la URL de regreso a la consulta con los mismos filtros.
@@ -25,28 +26,37 @@ function urlConsulta(sedeId, fecha) {
  * @param {{servicios: object, repos: object, reloj: object}} deps
  */
 function crearRutasReservas(deps) {
-  const { servicios, repos, reloj } = deps;
+  const { servicios, repos, reloj, config } = deps;
   const router = express.Router();
-  router.use(['/disponibilidad', '/reservas', '/mis-reservas'], requiereRol(deps, 'ESTUDIANTE', 'DOCENTE'));
+  router.use(['/disponibilidad', '/reservas', '/mis-reservas'], requiereRol(deps, 'ESTUDIANTE', 'DOCENTE', 'ADMINISTRADOR'));
 
   // ------------------------------------------------------------ RF-03 Consultar disponibilidad
 
   router.get('/disponibilidad', (req, res, next) => {
+    const tipos = tiposReservables(req.usuario.rol);
     const sedes = repos.espacios.listarSedes();
-    const espaciosPorSede = sedes.map((s) => ({ sede: s, espacios: repos.espacios.listarEspaciosDeSede(s.id) }));
+    const espaciosPorSede = sedes.map((s) => ({
+      sede: s,
+      espacios: repos.espacios.listarEspaciosDeSede(s.id).filter((e) => tipos.includes(e.tipo)),
+    }));
     const hoy = reloj.local().fecha;
     const filtros = {
       sede: typeof req.query.sede === 'string' ? req.query.sede : '',
       fecha: typeof req.query.fecha === 'string' ? req.query.fecha : hoy,
       espacio: typeof req.query.espacio === 'string' ? req.query.espacio : '',
     };
-    const vista = { titulo: 'Consultar disponibilidad', sedes, espaciosPorSede, filtros, hoy, errores: {}, consulta: null };
+    const politica = {
+      esEstudiante: req.usuario.rol === 'ESTUDIANTE',
+      dias: diasAnticipacion(req.usuario.rol, config),
+      limite: limiteReservasVigentes(req.usuario.rol, config),
+    };
+    const vista = { titulo: 'Consultar disponibilidad', sedes, espaciosPorSede, filtros, hoy, politica, errores: {}, consulta: null };
 
     // Sin sede todavía: solo se muestra el formulario.
     if (!filtros.sede) return res.render('reservas/disponibilidad', vista);
 
     try {
-      vista.consulta = servicios.disponibilidad.consultar(filtros);
+      vista.consulta = servicios.disponibilidad.consultar(req.usuario, filtros);
       res.render('reservas/disponibilidad', vista);
     } catch (error) {
       if (!(error instanceof ErrorValidacion)) return next(error);

@@ -19,7 +19,8 @@ const RAIZ = path.join(__dirname, '..');
 const DESTINO = path.join(RAIZ, 'docs', 'evidencias', 'capturas');
 const PUERTO = Number(process.env.CAPTURAS_PUERTO || 3300);
 const URL_BASE = `http://127.0.0.1:${PUERTO}`;
-const PASSWORD = 'Demo Campus 2026';
+const PASSWORD = 'Reserva2026';
+const CLAVE_NUEVA = 'MiClave2026x';
 const C = {
   ana: 'ana.estudiante@campus.test',
   diego: 'diego.docente@campus.test',
@@ -99,15 +100,15 @@ async function main() {
     await anonimo.goto(`${URL_BASE}/registro`);
     await anonimo.fill('#nombre', 'Camila Torres Vega');
     await anonimo.fill('#correo', 'camila.estudiante@campus.test');
-    await anonimo.fill('#contrasena', 'mi frase de prueba 2026');
-    await anonimo.fill('#confirmacion', 'mi frase de prueba 2026');
+    await anonimo.fill('#contrasena', CLAVE_NUEVA);
+    await anonimo.fill('#confirmacion', CLAVE_NUEVA);
     await anonimo.click('form[action="/registro"] button[type=submit]');
     await capturar(anonimo, '03-registro-pendiente', 'RF-01 Cuenta creada en estado pendiente de confirmación.');
 
     await anonimo.goto(`${URL_BASE}/demo/buzon`);
     await capturar(anonimo, '04-buzon-demostracion', 'RF-01 Buzón de demostración: correo simulado con enlace de confirmación (no se envían correos reales).');
 
-    await iniciarSesion(anonimo, 'camila.estudiante@campus.test', 'mi frase de prueba 2026');
+    await iniciarSesion(anonimo, 'camila.estudiante@campus.test', CLAVE_NUEVA);
     await capturar(anonimo, '05-login-cuenta-pendiente', 'RF-01/RF-02 Una cuenta pendiente no puede iniciar sesión.');
 
     await anonimo.goto(`${URL_BASE}/demo/buzon`);
@@ -127,16 +128,18 @@ async function main() {
     await iniciarSesion(ana, C.ana);
     await iniciarSesion(diego, C.diego);
 
+    await diego.goto(`${URL_BASE}/disponibilidad?sede=1&fecha=${dia1}`);
+    await capturar(diego, '09-disponibilidad-resultados', 'RF-03 Disponibilidad de un docente por sede y fecha (excluye reservados, bloqueados y espacios deshabilitados).');
+
     await ana.goto(`${URL_BASE}/disponibilidad?sede=1&fecha=${dia1}`);
-    await capturar(ana, '09-disponibilidad-resultados', 'RF-03 Disponibilidad por sede y fecha (excluye reservados, bloqueados y espacios deshabilitados).');
+    await capturar(ana, '28-disponibilidad-estudiante', 'RF-03 Disponibilidad de un estudiante: solo salas de estudio, hasta 7 días y máximo 2 reservas vigentes.');
 
     await ana.goto(`${URL_BASE}/disponibilidad?sede=2&fecha=${domingo}`);
     await capturar(ana, '10-disponibilidad-sin-resultados', 'RF-03 Consulta sin resultados.');
 
-    // Ana y Diego abren la revisión del mismo bloque; Ana confirma primero.
-    const a102 = 2;
-    await ana.goto(`${URL_BASE}/disponibilidad?sede=1&fecha=${dia1}&espacio=${a102}`);
-    const enlace = await ana.locator('a.bloque').filter({ hasText: '12:00' }).first().getAttribute('href');
+    // Ana y Diego abren la revisión del mismo bloque de una sala de estudio; Ana confirma primero.
+    await ana.goto(`${URL_BASE}/disponibilidad?sede=1&fecha=${dia1}`);
+    const enlace = await ana.locator('article:has-text("Sala de estudio E-01") a.bloque').filter({ hasText: '12:00' }).first().getAttribute('href');
     await ana.goto(URL_BASE + enlace);
     await diego.goto(URL_BASE + enlace);
     await capturar(ana, '11-revisar-reserva', 'RF-04 Revisión de la selección antes de confirmar.');

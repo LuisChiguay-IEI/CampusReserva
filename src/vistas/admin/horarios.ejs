@@ -3,7 +3,7 @@
   <div>
     <h1><%= espacio.nombre %></h1>
     <p class="subtitulo">
-      <%= espacio.sede_nombre %> · <%= espacio.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %> · <%= espacio.capacidad %> personas ·
+      <%= espacio.sede_nombre %> · <%= tipoLegible(espacio.tipo) %> · <%= espacio.capacidad %> personas ·
       <span class="insignia <%= espacio.habilitado ? 'insignia-ok' : 'insignia-cancelada' %>"><%= espacio.habilitado ? 'Habilitado' : 'Deshabilitado' %></span>
     </p>
   </div>

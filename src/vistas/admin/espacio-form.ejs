@@ -42,9 +42,11 @@
       <label for="tipo">Tipo</label>
       <select id="tipo" name="tipo" required>
         <option value="">Selecciona el tipo</option>
-        <option value="SALA" <%= valores.tipo === 'SALA' ? 'selected' : '' %>>Sala</option>
+        <option value="SALA" <%= valores.tipo === 'SALA' ? 'selected' : '' %>>Sala de clases</option>
         <option value="LABORATORIO" <%= valores.tipo === 'LABORATORIO' ? 'selected' : '' %>>Laboratorio</option>
+        <option value="SALA_ESTUDIO" <%= valores.tipo === 'SALA_ESTUDIO' ? 'selected' : '' %>>Sala de estudio</option>
       </select>
+      <p class="texto-suave">Los estudiantes solo pueden reservar salas de estudio; los docentes reservan cualquier tipo.</p>
       <% if (errores.tipo) { %><p class="texto-error"><%= errores.tipo %></p><% } %>
     </div>
 

@@ -20,7 +20,7 @@
       </form>
     <% } else { %>
       <div class="alerta alerta-error" role="alert">
-        Esta reserva no se puede cancelar: <%= reserva.estado === 'CANCELADA' ? 'ya fue cancelada.' : 'el bloque ya comenzó o terminó.' %>
+        Esta reserva no se puede cancelar: <%= reserva.estado === 'CANCELADA' ? 'ya fue cancelada.' : `solo se puede cancelar hasta ${minutosLimiteCancelacion} minutos antes del inicio del bloque.` %>
       </div>
       <a class="boton boton-secundario" href="/mis-reservas">Volver a mis reservas</a>
     <% } %>

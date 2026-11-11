@@ -5,6 +5,7 @@
 
 const { validarConsulta } = require('../lib/validaciones');
 const { diaSemana } = require('../lib/fechas');
+const { tiposReservables, diasAnticipacion } = require('../lib/politicas');
 const { ErrorValidacion } = require('../lib/errores');
 
 /**
@@ -46,11 +47,15 @@ function calcularDisponibilidad({ espacios, horarios, ocupados, bloqueados, hora
 function crearServicioDisponibilidad({ repos, config, reloj }) {
   /**
    * RF-03: consulta espacios y bloques disponibles por sede y fecha (espacio opcional).
+   * Solo muestra los tipos de espacio que el rol puede reservar y dentro de su ventana
+   * de anticipación (estudiantes: salas de estudio, 7 días; docentes y administración: todo, 30 días).
+   * @param {{rol: string}} usuario
    * @param {{sede?:string, fecha?:string, espacio?:string}} filtros
    */
-  function consultar(filtros) {
+  function consultar(usuario, filtros) {
     const { fecha: hoy, hora } = reloj.local();
-    const { ok, errores, datos } = validarConsulta(filtros, { hoy, maxDiasAnticipacion: config.maxDiasAnticipacion });
+    const tipos = tiposReservables(usuario.rol);
+    const { ok, errores, datos } = validarConsulta(filtros, { hoy, maxDiasAnticipacion: diasAnticipacion(usuario.rol, config) });
     if (!ok) throw new ErrorValidacion(errores);
 
     const sede = repos.espacios.buscarSede(datos.sedeId);
@@ -61,10 +66,13 @@ function crearServicioDisponibilidad({ repos, config, reloj }) {
       if (!espacio || espacio.sede_id !== sede.id) {
         throw new ErrorValidacion({ espacio: 'El espacio no pertenece a la sede seleccionada.' });
       }
+      if (!tipos.includes(espacio.tipo)) {
+        throw new ErrorValidacion({ espacio: 'Como estudiante solo puedes consultar y reservar salas de estudio.' });
+      }
     }
 
     const resultados = calcularDisponibilidad({
-      espacios: repos.espacios.listarHabilitadosDeSede(sede.id, datos.espacioId),
+      espacios: repos.espacios.listarHabilitadosDeSede(sede.id, datos.espacioId).filter((e) => tipos.includes(e.tipo)),
       horarios: repos.espacios.horariosActivosDeSedeYDia(sede.id, diaSemana(datos.fecha)),
       ocupados: repos.reservas.horariosOcupados(sede.id, datos.fecha),
       bloqueados: repos.espacios.horariosBloqueados(sede.id, datos.fecha),

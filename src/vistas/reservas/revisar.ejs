@@ -9,7 +9,7 @@
 <div class="tarjeta tarjeta-angosta">
   <dl class="resumen">
     <div><dt>Sede</dt><dd><%= espacio.sede_nombre %></dd></div>
-    <div><dt>Espacio</dt><dd><%= espacio.nombre %> (<%= espacio.tipo === 'SALA' ? 'Sala' : 'Laboratorio' %>, <%= espacio.capacidad %> personas)</dd></div>
+    <div><dt>Espacio</dt><dd><%= espacio.nombre %> (<%= tipoLegible(espacio.tipo) %>, <%= espacio.capacidad %> personas)</dd></div>
     <div><dt>Fecha</dt><dd><%= formatearFecha(fecha) %></dd></div>
     <div><dt>Horario</dt><dd><%= horario.hora_inicio %> – <%= horario.hora_fin %></dd></div>
     <div><dt>A nombre de</dt><dd><%= usuario.nombre %> (<%= usuario.correo %>)</dd></div>

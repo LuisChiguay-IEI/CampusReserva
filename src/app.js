@@ -25,6 +25,7 @@ const { crearRutasAdministracion } = require('./rutas/administracion');
 const { crearRutasDemo } = require('./rutas/demo');
 const { ErrorApp } = require('./lib/errores');
 const { formatearFecha, fechaHoraEnZona, NOMBRES_DIA } = require('./lib/fechas');
+const { NOMBRES_TIPO } = require('./lib/politicas');
 
 const ROLES_LEGIBLES = Object.freeze({
   ESTUDIANTE: 'Estudiante',
@@ -82,6 +83,8 @@ function crearApp({ db, config }) {
     };
     res.locals.nombresDia = NOMBRES_DIA;
     res.locals.rolLegible = (rol) => ROLES_LEGIBLES[rol] || rol;
+    res.locals.tipoLegible = (tipo) => NOMBRES_TIPO[tipo] || tipo;
+    res.locals.minutosLimiteCancelacion = config.minutosLimiteCancelacion;
     // Los mensajes flash se leen (y eliminan) solo cuando una vista los muestra.
     res.locals.tomarMensajes = () => {
       if (!req.sesion) return [];
@@ -130,6 +133,15 @@ function crearApp({ db, config }) {
       } catch {
         // Si la base no está disponible no se puede auditar; el error ya quedó en consola.
       }
+    } else if (estado === 403 && req.usuario && !error.auditado) {
+      // Permiso denegado por una regla de negocio (p. ej., un estudiante que intenta reservar una
+      // sala de clases manipulando la solicitud). Se audita aquí, fuera de la transacción revertida.
+      repos.auditoria.registrar({
+        fecha: reloj.ahoraIso(),
+        usuarioId: req.usuario.id,
+        accion: 'ACCESO_DENEGADO',
+        detalle: `${req.method} ${req.path}`,
+      });
     }
     if (res.headersSent) return;
     res.status(estado).render('error', {

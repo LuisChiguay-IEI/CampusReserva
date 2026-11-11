@@ -11,7 +11,7 @@
   <dl class="resumen">
     <div><dt>Estado</dt><dd><strong><%= reserva.estadoVisible %></strong></dd></div>
     <div><dt>Sede</dt><dd><%= reserva.sede_nombre %></dd></div>
-    <div><dt>Espacio</dt><dd><%= reserva.espacio_nombre %> (<%= reserva.espacio_tipo === 'SALA' ? 'Sala' : 'Laboratorio' %>)</dd></div>
+    <div><dt>Espacio</dt><dd><%= reserva.espacio_nombre %> (<%= tipoLegible(reserva.espacio_tipo) %>)</dd></div>
     <div><dt>Fecha</dt><dd><%= formatearFecha(reserva.fecha) %></dd></div>
     <div><dt>Horario</dt><dd><%= reserva.hora_inicio %> – <%= reserva.hora_fin %></dd></div>
     <div><dt>Registrada</dt><dd><%= formatearInstante(reserva.creado_en) %></dd></div>

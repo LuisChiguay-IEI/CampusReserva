@@ -21,7 +21,14 @@ const [, , rutaBaseDatos, modo, ahoraIso, usuarioId, rol, espacioId, horarioId, 
 
 const db = abrirBaseDatos(rutaBaseDatos);
 const repos = crearRepositorios(db);
-const config = { ahora: () => new Date(ahoraIso), zonaHoraria: 'America/Santiago', maxDiasAnticipacion: 30 };
+const config = {
+  ahora: () => new Date(ahoraIso),
+  zonaHoraria: 'America/Santiago',
+  maxDiasAnticipacion: 30,
+  maxDiasAnticipacionEstudiante: 7,
+  maxReservasVigentesEstudiante: 2,
+  minutosLimiteCancelacion: 60,
+};
 const reloj = crearReloj(config);
 const reservas = crearServicioReservas({ db, repos, config, reloj });
 

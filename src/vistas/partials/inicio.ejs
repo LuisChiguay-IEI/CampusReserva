@@ -23,6 +23,8 @@
           <a href="/registro" class="<%= rutaActual.startsWith('/registro') ? 'activo' : '' %>">Crear cuenta</a>
         <% } else if (usuario.rol === 'ADMINISTRADOR') { %>
           <a href="/admin/espacios" class="<%= rutaActual.startsWith('/admin/espacios') || rutaActual.startsWith('/admin/horarios') ? 'activo' : '' %>">Espacios y horarios</a>
+          <a href="/disponibilidad" class="<%= rutaActual === '/disponibilidad' || rutaActual === '/reservas/nueva' ? 'activo' : '' %>">Disponibilidad</a>
+          <a href="/mis-reservas" class="<%= rutaActual === '/mis-reservas' || /^\/reservas\/\d+/.test(rutaActual) ? 'activo' : '' %>">Mis reservas</a>
           <a href="/admin/auditoria" class="<%= rutaActual === '/admin/auditoria' ? 'activo' : '' %>">Auditoría</a>
         <% } else { %>
           <a href="/disponibilidad" class="<%= rutaActual === '/disponibilidad' || rutaActual === '/reservas/nueva' ? 'activo' : '' %>">Disponibilidad</a>

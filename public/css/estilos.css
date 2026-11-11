@@ -201,7 +201,8 @@ input:focus, select:focus { border-color: var(--primario); outline: 3px solid #c
 .insignia-neutra { background: #eef1f6; color: #3d4757; }
 .insignia-cancelada { background: var(--peligro-suave); color: var(--peligro); }
 .insignia-sala { background: var(--primario-suave); color: var(--primario); }
-.insignia-lab { background: #f1e9fd; color: #5b2a9e; }
+.insignia-laboratorio { background: #f1e9fd; color: #5b2a9e; }
+.insignia-sala_estudio { background: var(--acento-suave); color: #0b5a54; }
 
 /* ---------- Disponibilidad ---------- */
 .resultados { margin-top: 8px; }

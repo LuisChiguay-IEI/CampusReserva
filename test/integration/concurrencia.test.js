@@ -40,9 +40,10 @@ describe('ADR-001 Concurrencia entre procesos sobre el mismo bloque', () => {
   let usuarios;
   before(async () => {
     e = await crearEntorno();
-    const ana = e.uno('SELECT id, rol FROM usuario WHERE correo = ?', CORREOS.ana);
+    // Docente y administración pueden reservar salas de clases (los estudiantes, solo salas de estudio).
     const diego = e.uno('SELECT id, rol FROM usuario WHERE correo = ?', CORREOS.diego);
-    usuarios = Array.from({ length: PROCESOS }, (_, i) => (i % 2 === 0 ? ana : diego));
+    const admin = e.uno('SELECT id, rol FROM usuario WHERE correo = ?', CORREOS.admin);
+    usuarios = Array.from({ length: PROCESOS }, (_, i) => (i % 2 === 0 ? diego : admin));
   });
   after(async () => e.cerrar());
 
