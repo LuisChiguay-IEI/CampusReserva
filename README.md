@@ -5,7 +5,8 @@ Producto Mínimo Viable (MVP) desarrollado para la Evaluación Sumativa 3 de Ing
 
 - Autor: Luis Santiago Chiguay Espinoza (proyecto individual, gestión con Kanban en Jira, proyecto KAN).
 - Repositorio: https://github.com/LuisChiguay-IEI/CampusReserva
-- Estado: **MVP funcional ejecutado y probado en entorno local**. No está desplegado en la nube (la propuesta PaaS está documentada, no implementada).
+- **Demo en línea: https://campusreserva.onrender.com** (Render, plan gratuito; ver [Despliegue](#despliegue-en-render)).
+- Estado: **MVP funcional, probado en local (81 pruebas) y desplegado en Render como demostración** (17 pruebas de aceptación sobre el sitio).
 - Todos los datos son **ficticios** (dominio reservado `campus.test`).
 
 ## Antecedentes
@@ -88,21 +89,37 @@ El archivo `.env` está en `.gitignore`: **no se suben secretos al repositorio**
 
 | Comando | Qué hace |
 |---|---|
-| `npm test` | Ejecuta las 79 pruebas automatizadas (unitarias + integración + concurrencia) |
-| `npm run test:unit` | 28 pruebas unitarias de funciones puras |
+| `npm test` | Ejecuta las 81 pruebas automatizadas (unitarias + integración + concurrencia) |
+| `npm run test:unit` | 30 pruebas unitarias de funciones puras |
 | `npm run test:integration` | 51 pruebas de integración (49 HTTP y 2 de concurrencia entre procesos) con SQLite temporal |
 | `npm run test:coverage` | Pruebas con cobertura de código (instrumento integrado de Node.js) |
 | `npm run metricas` | Carga concurrente: 4 servidores, 50 usuarios, 5 rondas de reservas simultáneas |
 | `npm run capturas` | Regenera las capturas de pantalla reales con Edge |
 | `npm run diagramas` | Regenera los diagramas UML (SVG y PNG) |
 | `npm run grafico` | Regenera el gráfico de latencias a partir de la última medición |
+| `npm run pruebas:despliegue -- <URL>` | 17 pruebas de aceptación contra un despliegue HTTPS (flujos RF-01 a RF-06, seguridad y tiempos) |
 
 Último resultado registrado (11-11-2026, Windows 11, Node.js 24.21.0):
-**79/79 pruebas aprobadas**; cobertura **96,58 % de líneas, 87,20 % de ramas, 93,48 % de funciones**;
-reservas concurrentes: **0 duplicados** en 250 solicitudes, p95 = 119,2 ms. Ver [docs/evidencias](docs/evidencias).
+**81/81 pruebas aprobadas**; cobertura **96,79 % de líneas, 88,27 % de ramas, 93,48 % de funciones**;
+reservas concurrentes: **0 duplicados** en 250 solicitudes, p95 = 119,2 ms.
+Sobre el despliegue en Render: **17/17 pruebas de aceptación aprobadas**, 0 respuestas 5xx. Ver [docs/evidencias](docs/evidencias).
 
 Las pruebas usan un reloj fijo (lunes 16-11-2026 10:00, hora de Chile) y una base temporal por archivo,
 por lo que son reproducibles en cualquier fecha.
+
+## Despliegue en Render
+
+La demo pública corre en **https://campusreserva.onrender.com** con las mismas cuentas de demostración.
+El servicio se define en [render.yaml](render.yaml) (Blueprint de Render): plan gratuito, Node.js 24, `NODE_ENV=production`,
+`SESSION_SECRET` generado por Render, `TRUST_PROXY=true`, buzón y datos de demostración activos.
+Cada `git push` a `main` vuelve a desplegar el servicio.
+
+- Render termina TLS: HTTP redirige a HTTPS, se envía HSTS y la cookie de sesión es `__Host-` con `Secure`.
+- `package-lock.json` registra el espejo de paquetes del equipo de desarrollo, al que Render no tiene acceso; por eso
+  Render instala desde el registro público de npm las mismas versiones exactas fijadas en `package.json`.
+- **Plan gratuito:** el servicio se suspende tras 15 min sin tráfico y la primera visita tarda cerca de un minuto en
+  despertar; el disco es efímero, así que la base vuelve a los datos ficticios en cada reinicio. Un inicio de sesión
+  tarda ≈ 3 s porque scrypt es costoso a propósito y el plan entrega solo una fracción de CPU.
 
 ## Estructura
 
@@ -118,7 +135,8 @@ src/
   db/           esquema SQL, conexión/transacciones y datos ficticios
 public/         CSS, JS de mejora progresiva y logo
 test/           unit/, integration/, fixtures/ y ayudante.js
-scripts/        init-db, métricas de carga, capturas y diagramas
+scripts/        init-db, métricas de carga, capturas, diagramas y pruebas sobre el despliegue
+render.yaml     definición del servicio en Render (sin secretos)
 docs/           plan de pruebas, decisiones, normativa, Jira, matriz de cumplimiento, diagramas y evidencias
 ```
 
@@ -143,8 +161,9 @@ mensajes de error sin detalles internos. Mapeo a OWASP Top 10:2025 en el informe
 ## Limitaciones conocidas
 
 - No se envían correos reales (buzón de demostración).
-- No está desplegado; solo se verificó en un equipo local con HTTP. HTTPS, HSTS y cookie `Secure` quedan activos
-  únicamente con `NODE_ENV=production` detrás de un proxy TLS (no probado).
+- El despliegue es una demostración en el plan gratuito de Render: se suspende sin tráfico, pierde los cambios al
+  reiniciar y no ofrece la disponibilidad de RNF-09 (no medida). Para producción se requiere un plan pagado y
+  PostgreSQL o disco persistente.
 - SQLite es adecuado para el MVP; con varias instancias en distintos servidores se recomienda migrar a PostgreSQL.
 - Las pruebas de usuario con personas reales están **pendientes** (procedimiento en [docs/pruebas-usuario.md](docs/pruebas-usuario.md)).
 - Las dependencias se instalaron desde el registro corporativo de paquetes aprobados; por eso sesión, cabeceras y

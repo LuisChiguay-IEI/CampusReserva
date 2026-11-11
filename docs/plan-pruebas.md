@@ -1,22 +1,25 @@
 # Plan de Pruebas Integral — CampusReserva (MVP)
 
-Versión 1.0 · 11-11-2026 · Responsable: Luis Santiago Chiguay Espinoza
+Versión 1.1 · 11-11-2026 · Responsable: Luis Santiago Chiguay Espinoza
+(1.1: se agregan CP-U-29/30, las pruebas de aceptación sobre el despliegue en Render y sus tiempos de respuesta)
 
 ## 1. Objetivo y alcance
 
 Verificar que los requerimientos RF-01 a RF-06, el cierre de sesión y los requerimientos no funcionales de
 seguridad, rendimiento y protección de datos se cumplen en el MVP, con evidencia reproducible.
 
-Fuera de alcance: pruebas en un entorno desplegado (no existe), pruebas de penetración externas, auditoría formal
-de accesibilidad y pruebas con usuarios reales (procedimiento preparado, ejecución **pendiente**).
+Fuera de alcance: pruebas de carga sobre el despliegue gratuito (se evitaron para no saturar el servicio), medición
+de disponibilidad, pruebas de penetración externas, auditoría formal de accesibilidad y pruebas con usuarios reales
+(procedimiento preparado, ejecución **pendiente**).
 
 ## 2. Estrategia
 
 | Nivel | Qué verifica | Herramienta | Cantidad | Estado |
 |---|---|---|---|---|
-| Unitarias | Funciones puras: validaciones, fechas, hash y tokens, cálculo de disponibilidad, reglas de cancelación, reversión de transacciones | `node:test` + `node:assert` | 28 | Ejecutadas: 28/28 aprobadas |
+| Unitarias | Funciones puras: validaciones, fechas, hash y tokens, cálculo de disponibilidad, reglas de cancelación, reversión de transacciones, configuración por entorno | `node:test` + `node:assert` | 30 | Ejecutadas: 30/30 aprobadas |
 | Integración | Recorridos HTTP completos contra una instancia real (Express + SQLite temporal): cuentas, sesión, roles, disponibilidad, reservas, administración | `node:test` + `fetch` nativo con cookies y CSRF | 49 | Ejecutadas: 49/49 aprobadas |
 | Concurrencia | 8 procesos independientes sobre el mismo archivo SQLite compiten por el mismo bloque | `child_process.fork` | 2 | Ejecutadas: 2/2 aprobadas |
+| Aceptación sobre el despliegue | Flujos RF-01 a RF-06 y cierre de sesión, HTTPS y redirección, cabeceras, cookie `__Host-`/Secure, CSRF, roles y 10 reservas simultáneas contra https://campusreserva.onrender.com | `scripts/pruebas-despliegue.js` | 17 | Ejecutadas: 17/17 aprobadas |
 | Carga / rendimiento | Latencia y errores con 4 servidores y 50 usuarios simultáneos; revalidación del ADR-001 | `scripts/carga-concurrente.js` | 1 corrida (5 rondas) | Ejecutada |
 | Cobertura de código | Líneas, ramas y funciones de `src/` ejercitadas por las pruebas | `--experimental-test-coverage` de Node.js | — | Ejecutada |
 | Interfaz (evidencia) | Recorridos visuales reales en Edge, incluida vista móvil | `scripts/capturas.js` (playwright-core) | 27 capturas | Generadas |
@@ -24,6 +27,10 @@ de accesibilidad y pruebas con usuarios reales (procedimiento preparado, ejecuci
 
 **Entorno de ejecución:** Windows 11 (10.0.26200), AMD Ryzen 9 8940HX (32 núcleos lógicos), 63 GB RAM,
 Node.js 24.21.0, SQLite 3.53.4, Microsoft Edge (capturas). Cliente y servidor en el mismo equipo (localhost).
+
+**Entorno desplegado:** Render (PaaS), plan gratuito, región Virginia (EE. UU.), Node.js 24, `NODE_ENV=production`,
+TLS en el proxy de Render, disco efímero (la base vuelve a los datos ficticios al reiniciar). Las pruebas sobre el
+despliegue se ejecutan desde el equipo de desarrollo en Chile, por lo que sus tiempos incluyen la latencia de red.
 
 **Datos de prueba:** datos ficticios del seed (`src/db/seed.js`): 2 sedes, 7 espacios (1 deshabilitado), 249 bloques
 horarios, 4 cuentas, 6 correos en el listado institucional, 6 reservas (1 cancelada, 1 pasada) y 1 bloqueo.
@@ -38,20 +45,28 @@ menos una prueba, cobertura de líneas ≥ 80 % y umbrales del ADR-001 cumplidos
 
 ```bash
 npm install
-npm test                    # 79 pruebas (unitarias + integración + concurrencia)
+npm test                    # 81 pruebas (unitarias + integración + concurrencia)
 npm run test:coverage       # mismas pruebas con informe de cobertura
 npm run metricas            # carga concurrente (≈ 15 s); guarda docs/evidencias/metricas/
 npm run capturas            # capturas reales (requiere Edge)
+npm run pruebas:despliegue -- https://campusreserva.onrender.com   # 17 pruebas sobre el despliegue
 ```
 
 Para guardar evidencia completa (como se hizo en esta entrega):
 
 ```bash
 node --test --experimental-test-coverage --test-coverage-include="src/**/*.js" \
-  --test-reporter=spec --test-reporter-destination=stdout \
+  --test-reporter=spec --test-reporter-destination=docs/evidencias/pruebas/salida-pruebas-cobertura.txt \
   --test-reporter=junit --test-reporter-destination=docs/evidencias/pruebas/resultados-junit.xml \
-  "test/**/*.test.js" > docs/evidencias/pruebas/salida-pruebas-cobertura.txt
+  "test/**/*.test.js"
 ```
+
+En el reporte JUnit se reemplazó el nombre del equipo (`hostname`) por `equipo-desarrollo` antes de publicarlo.
+
+**Pruebas sobre el despliegue:** el script reutiliza el cliente HTTP de las pruebas de integración (cookies y CSRF).
+Para no saturar el plan gratuito, la concurrencia usa solo 10 solicitudes, las muestras de tiempo son secuenciales,
+no se prueba el bloqueo por intentos fallidos y las reservas de prueba se cancelan al terminar. Deja un espacio
+"Sala Prueba Despliegue" y una cuenta de prueba activada, que desaparecen cuando el servicio se reinicia.
 
 ## 4. Criterios de aceptación por requerimiento
 
@@ -168,6 +183,37 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | CP-U-23 a CP-U-26 | `presentarReserva`, `describirReservas` | Estados Confirmada/En curso/Finalizada/Cancelada, cancelable, mensaje de reservas afectadas | Aprobados |
 | CP-U-27 | `validarRegistro`, `esContrasenaComun` | Rechazo de contraseñas comunes o predecibles y aceptación de frases con espacios (HU-01) | Aprobado |
 | CP-U-28 | `transaccion` | Un fallo simulado dentro de la transacción no deja estado parcial (ROLLBACK, RNF-05) | Aprobado |
+| CP-U-29 | `cargarConfig` | La URL pública usa `BASE_URL`, luego `RENDER_EXTERNAL_URL` (definida por Render) y por último localhost | Aprobado |
+| CP-U-30 | `cargarConfig` | En producción exige `SESSION_SECRET` y solo activa el buzón y los datos de demostración si se piden explícitamente | Aprobado |
+
+## 6.1 Pruebas de aceptación sobre el despliegue (Render)
+
+Ejecutadas el 11-11-2026 a las 02:17 (hora de Chile) contra https://campusreserva.onrender.com con
+`npm run pruebas:despliegue`. Evidencia: `docs/evidencias/despliegue/resultado-despliegue.md` y `.json`, y 5 capturas.
+Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pruebas con usuarios.
+
+| ID | Verifica | Resultado esperado | Obtenido | Estado |
+|---|---|---|---|---|
+| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 257 ms | Aprobado |
+| DEP-02 | Redirección de HTTP a HTTPS | 3xx hacia https:// | 301 → https://campusreserva.onrender.com/login | Aprobado |
+| DEP-03 | Cabeceras en producción | HSTS, CSP `default-src 'self'`, nosniff, DENY, no-store, sin X-Powered-By | Todas presentes; HSTS `max-age=31536000; includeSubDomains` | Aprobado |
+| DEP-04 | RF-02 inicio de sesión y cookie | 303 a /disponibilidad; cookie `__Host-cr_sesion` con Secure, HttpOnly, SameSite=Lax, Path=/ y sin Domain | Igual | Aprobado |
+| DEP-05 | RF-02 credenciales inválidas | Mismo mensaje genérico para contraseña errónea y correo inexistente | 401 y 401 con el mismo mensaje | Aprobado |
+| DEP-06 | RF-01 cuenta pendiente | No inicia sesión; "pendiente de confirmación" | 401 | Aprobado |
+| DEP-07 | RF-03 consulta por sede y fecha | 200 con bloques disponibles | 23 bloques (12-11-2026, Sede Maipú) | Aprobado |
+| DEP-08 | RF-04 reserva | Revisión 200; confirmación 303 con código; aparece en Mis reservas | CR-000009 | Aprobado |
+| DEP-09 | RF-04 bloque ocupado | 409 "acaba de ser reservado" | 409 | Aprobado |
+| DEP-10 | RF-04 / ADR-001 concurrencia | 10 solicitudes simultáneas de 2 usuarios: 1 confirmada y 9 con 409 | 1 y 9 | Aprobado |
+| DEP-11 | RF-05 reservas ajenas | 404 al ver y al cancelar; sin cambios | 404 y 404 | Aprobado |
+| DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000009 cancelada | Aprobado |
+| DEP-13 | OWASP A01 CSRF | Formulario sin token: 403 | 403 | Aprobado |
+| DEP-14 | RF-06 / OWASP A01 roles | Estudiante en /admin/espacios: 403 | 403 | Aprobado |
+| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala Prueba Despliegue 0216" registrado | Aprobado |
+| DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `camila.estudiante@campus.test` activada | Aprobado |
+| DEP-17 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
+
+Resumen: **17/17 aprobadas**, 99 solicitudes HTTP y 0 respuestas 5xx. DEP-07 mostró 23 bloques y no 24 porque
+quedó activa una reserva de una ejecución anterior (ver H-07).
 
 ## 7. Matriz de trazabilidad RF → criterio de aceptación → prueba
 
@@ -216,16 +262,16 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | RNF | Verificación | Estado |
 |---|---|---|
 | RNF-01 Seguridad de acceso (ES2) | CP-03-08, CP-04-06, CP-06-01, CP-06-12 | Cumple |
-| RNF-02 Protección de credenciales (ES2) | CP-U-17, CP-01-01 (HTTPS no verificable sin despliegue) | Parcial |
+| RNF-02 Protección de credenciales (ES2) | CP-U-17, CP-01-01; DEP-02, DEP-03 y DEP-04 (HTTPS, HSTS y cookie Secure en Render) | Cumple |
 | RNF-03 Privacidad de reservas (ES2) | CP-05-01, CP-05-02 | Cumple |
 | RNF-04 Integridad de reservas (ES2) | CP-04-03, CP-04-07, CP-04-08, carga | Cumple |
 | RNF-05 Consistencia (ES2) | CP-U-28, CP-04-07 | Cumple |
 | RNF-06 Claridad de interfaz (ES2) | CP-03-05, CP-05-03, capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (visual) |
-| RNF-07 Mantenibilidad (ES2) | Cobertura 96,58 % de líneas; capas separadas | Cumple |
-| RNF-08 Rendimiento | `npm run metricas` | Cumple |
-| RNF-09 Disponibilidad | Requiere despliegue | No verificado |
+| RNF-07 Mantenibilidad (ES2) | Cobertura 96,79 % de líneas; capas separadas | Cumple |
+| RNF-08 Rendimiento | `npm run metricas` (carga local); tiempos sobre el despliegue como referencia (8.4) | Cumple (local) |
+| RNF-09 Disponibilidad | El plan gratuito de Render suspende el servicio tras 15 min sin tráfico; no se monitoreó | No verificado |
 | RNF-10 Protección de datos | CP-02-08, CP-02-09 | Cumple |
-| RNF-11 Seguridad de sesión y entradas | CP-02-04 a CP-02-10, CP-U-09, CP-04-05 | Cumple |
+| RNF-11 Seguridad de sesión y entradas | CP-02-04 a CP-02-10, CP-U-09, CP-04-05, DEP-04, DEP-13 | Cumple |
 
 ## 8. Resultados
 
@@ -233,22 +279,22 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 
 | Indicador | Valor |
 |---|---|
-| Pruebas ejecutadas | 79 (28 unitarias, 49 de integración HTTP, 2 de concurrencia multiproceso) |
-| Aprobadas / fallidas / omitidas | 79 / 0 / 0 |
-| Duración total | ≈ 6 s |
+| Pruebas ejecutadas | 81 (30 unitarias, 49 de integración HTTP, 2 de concurrencia multiproceso) |
+| Aprobadas / fallidas / omitidas | 81 / 0 / 0 |
+| Duración total | ≈ 7 s |
+| Pruebas sobre el despliegue (Render) | 17 / 17 aprobadas; 0 respuestas 5xx |
 
 ### 8.2 Cobertura de código (`src/`, instrumento integrado de Node.js)
 
 | Métrica | Valor |
 |---|---|
-| Líneas | 96,58 % |
-| Ramas | 87,20 % |
+| Líneas | 96,79 % |
+| Ramas | 88,27 % |
 | Funciones | 93,48 % |
 
-Zonas no cubiertas relevantes: ramas de error interno inesperado del manejador central (`src/app.js` 122–133),
-la validación de `SESSION_SECRET` en producción (`src/config.js` 47–52) y algunos caminos de rechazo de
-administración por datos inexistentes (`src/rutas/administracion.js`). No se consideran críticos para el MVP;
-se registran como mejora.
+Zonas no cubiertas relevantes: ramas de error interno inesperado del manejador central (`src/app.js`) y algunos
+caminos de rechazo de administración por datos inexistentes (`src/rutas/administracion.js`). La validación de
+`SESSION_SECRET` en producción quedó cubierta por CP-U-30. No se consideran críticos para el MVP; se registran como mejora.
 
 ### 8.3 Rendimiento y concurrencia (`npm run metricas`, 11-11-2026)
 
@@ -262,6 +308,22 @@ Medición realizada sobre el commit 9ec4281; los cambios posteriores (regla de c
 **0 % de errores técnicos < 1 %**. Las cifras del Spike anterior eran didácticas; estas son mediciones reales en un
 entorno local que no representa producción. Detalle: `docs/evidencias/metricas/metricas-ultima.md`.
 
+### 8.4 Tiempos de respuesta sobre el despliegue (Render, 11-11-2026)
+
+Medidos desde el equipo de desarrollo en Chile hasta Render (Virginia, EE. UU.); incluyen la latencia de red.
+Las solicitudes son secuenciales, salvo las 10 simultáneas de DEP-10 incluidas en `POST /reservas`.
+
+| Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) |
+|---|---|---|---|---|
+| `GET /login` | 27 | 169,9 | 224,2 | 257,4 |
+| `GET /disponibilidad` (consulta) | 24 | 145,8 | 205,2 | 205,2 |
+| `POST /reservas` (confirmación) | 13 | 185,4 | 409,6 | 409,6 |
+| `POST /login` (inicio de sesión) | 12 | 2879,8 | 3074,8 | 3074,8 |
+
+La consulta y la confirmación de reserva quedan bajo los umbrales de RNF-08 (500 ms y 800 ms), aunque con otra
+carga que la del umbral. El inicio de sesión tarda ≈ 3 s porque el plan gratuito entrega una fracción de CPU y
+scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
+
 ## 9. Defectos y hallazgos registrados durante las pruebas
 
 | ID | Hallazgo | Tipo | Causa | Solución | Estado |
@@ -269,8 +331,11 @@ entorno local que no representa producción. Detalle: `docs/evidencias/metricas/
 | H-01 | 3 pruebas de reservas devolvían 403 en vez de 409 | Defecto del cliente de pruebas | El cliente no seguía la redirección tras el login y reutilizaba el token CSRF de la sesión anterior (el servidor lo invalida al regenerar la sesión, que es lo correcto) | El ayudante de pruebas sigue la redirección como un navegador | Cerrado |
 | H-02 | La captura "bloqueo rechazado" mostraba un bloqueo aceptado | Defecto del guion de capturas | El bloque elegido había sido liberado por una cancelación previa en el mismo recorrido | Se usa un bloque que sigue reservado y se verifican visualmente todas las capturas | Cerrado |
 | H-03 | 50 inicios de sesión simultáneos: p95 1,49 s | Observación de rendimiento | Costo deliberado de scrypt (128 MiB por verificación) y cola del pool de hilos | Aceptado: un login aislado tarda ≈ 230 ms; se propone monitorear y escalar horizontalmente | Aceptado |
-| H-04 | Ramas de error de producción sin cubrir | Brecha de cobertura | Requieren simular fallas internas o `NODE_ENV=production` | Registrado como mejora | Abierto |
+| H-04 | Ramas de error interno sin cubrir | Brecha de cobertura | Requieren simular fallas internas | La configuración de producción quedó cubierta por CP-U-30 y por las pruebas sobre el despliegue; el resto se registra como mejora | Abierto |
 | H-05 | La regla de contraseña implementada (12 caracteres) no coincidía con la HU-01 de la Sumativa 2 (15 a 128 caracteres y rechazo de comunes) | Inconsistencia de requisitos | Se tomó como base un borrador anterior del informe | Se alineó el código con la HU-01, se agregó CP-U-27 y se regeneraron las capturas | Cerrado |
+| H-06 | Render no podía instalar las dependencias desde `package-lock.json` | Problema de despliegue | El archivo registra el espejo de paquetes del equipo de desarrollo, al que Render no tiene acceso | Render instala desde el registro público de npm las mismas versiones exactas fijadas en `package.json` (`render.yaml`) | Cerrado |
+| H-07 | En la primera ejecución sobre el despliegue quedó activa una reserva de prueba | Defecto del script de pruebas | La reserva ganada en DEP-10 se cancelaba después de cerrar la sesión | La limpieza se movió antes del cierre de sesión y se repitió la ejecución completa (17/17); la reserva restante desaparece al reiniciarse el servicio | Cerrado |
+| H-08 | Inicio de sesión de ≈ 3 s en el despliegue | Observación de rendimiento | El plan gratuito entrega una fracción de CPU y scrypt (N=2^17) es costoso a propósito | Aceptado para la demostración; en producción, instancia con CPU dedicada | Aceptado |
 
 No se detectaron defectos funcionales en el código de la aplicación durante la ejecución final.
 

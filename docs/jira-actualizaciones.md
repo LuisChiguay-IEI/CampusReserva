@@ -34,13 +34,14 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 | Configurar repositorio Git y proyecto Node.js | KAN-43 Diseño transversal | Finalizado | README, package-lock.json (a0edf81) |
 | Implementar modelo de datos SQLite y datos ficticios | KAN-43 | Finalizado | src/db/schema.sql, diagrama 05 |
 | Implementar seguridad transversal (sesión, CSRF, cabeceras, auditoría) | KAN-43 | Finalizado | CP-02-07, CP-02-08, CP-U-17 a 19 |
-| Pruebas unitarias, de integración y de concurrencia | KAN-43 | Finalizado | 79/79 aprobadas, cobertura 96,58 % (docs/evidencias/pruebas) |
+| Pruebas unitarias, de integración y de concurrencia | KAN-43 | Finalizado | 81/81 aprobadas, cobertura 96,79 % (docs/evidencias/pruebas) |
 | Revalidar ADR-001 con mediciones reales | KAN-43 | Finalizado | docs/evidencias/metricas (9ec4281) |
 | Capturas reales y diagramas UML de la implementación | KAN-43 | Finalizado | docs/evidencias/capturas, docs/diagramas (f9c8bf1) |
 | Investigación normativa chilena y OWASP Top 10:2025 | Entrega ES3 | Finalizado | docs/investigacion-normativa.md |
 | Alinear implementación con HU-01 de la ES2 (contraseña 15+, enlaces) | KAN-42 Requisitos | Finalizado | CP-U-27, CP-01-08 (14bec2a) |
 | Informe final ES3 (Word) | Entrega ES3 | **En revisión** | dist/Informe_Final_CampusReserva_ES3_Luis_Chiguay.docx |
 | Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | Finalizado | https://github.com/LuisChiguay-IEI/CampusReserva |
+| Desplegar en Render (PaaS) y probar sobre el despliegue | KAN-43 | Finalizado | https://campusreserva.onrender.com; render.yaml y scripts/pruebas-despliegue.js (fc4332d); 17/17 en docs/evidencias/despliegue |
 | Pruebas de usuario (UAT) | KAN-38 Validación | **Por hacer** | docs/pruebas-usuario.md |
 | Firmar declaración de originalidad (Anexo D) | Entrega ES3 | Por hacer | Informe |
 | Entregar en Ambiente de Aprendizaje | Entrega ES3 | Por hacer | — |
@@ -54,9 +55,10 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 
 ## Backlog (fuera del alcance del MVP)
 
-- Despliegue en PaaS con HTTPS y disco persistente o PostgreSQL gestionado (completa RNF-02 y permite medir RNF-09).
+- Pasar el despliegue a un plan sin suspensión, con disco persistente o PostgreSQL gestionado, y monitorear la
+  disponibilidad (RNF-09).
 - Integración con un proveedor real de correo (reemplazar el Buzón de demostración).
 - Verificación de contraseñas contra bases de contraseñas filtradas.
 - Recuperación de contraseña; gestión de sedes y del listado institucional desde la interfaz.
 - Interfaz para derechos de acceso y rectificación de datos (Ley 19.628 art. 12; Ley 21.719 desde el 01-12-2026).
-- Cubrir las ramas de error de producción (hallazgo H-04).
+- Cubrir las ramas de error interno (hallazgo H-04).

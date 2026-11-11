@@ -60,19 +60,20 @@ ejecutada). RNF-08 y RNF-09 provienen del Spike/ADR. RNF-10 y RNF-11 se agregan 
 | ID | Origen | Atributo | Criterio verificable | Verificación ejecutada | Resultado |
 |---|---|---|---|---|---|
 | RNF-01 | ES2 | Seguridad de acceso | Toda operación protegida verifica sesión válida y permiso del rol en el servidor; ocultar opciones no reemplaza la autorización | CP-03-08, CP-04-06, CP-06-01, CP-06-12 | Cumple |
-| RNF-02 | ES2 | Protección de credenciales | Transmisión por HTTPS; contraseñas con hash y sal; nunca en texto legible ni en registros | CP-U-17, CP-01-01; revisión de la auditoría | **Parcial**: hash scrypt y registros sin credenciales cumplen; HTTPS solo se activa en un despliegue con TLS (no probado) |
+| RNF-02 | ES2 | Protección de credenciales | Transmisión por HTTPS; contraseñas con hash y sal; nunca en texto legible ni en registros | CP-U-17, CP-01-01; revisión de la auditoría; DEP-02 a DEP-04 en Render | Cumple: hash scrypt y registros sin credenciales; en el despliegue, HTTP redirige a HTTPS (301), HSTS activo y cookie `__Host-` con Secure |
 | RNF-03 | ES2 | Privacidad de reservas | Consulta y cancelación limitadas a la identidad autenticada; un identificador enviado por el cliente no da acceso a reservas ajenas | CP-05-01, CP-05-02 | Cumple |
 | RNF-04 | ES2 | Integridad de reservas | La comprobación final y el guardado impiden reservas confirmadas superpuestas aun ante solicitudes simultáneas | CP-04-03, CP-04-07, CP-04-08, `npm run metricas` | Cumple: 0 duplicados en 250 solicitudes |
 | RNF-05 | ES2 | Consistencia | Las modificaciones se completan o revierten sin estados parciales | CP-U-28 (fallo simulado), CP-04-07 | Cumple |
 | RNF-06 | ES2 | Claridad de interfaz | Distingue obligatorios y opcionales, errores de campo, ausencia de resultados y fallos técnicos; muestra resumen antes de reservar o cancelar; usable en 390 px | CP-03-05, CP-05-03; capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (verificación visual, sin UAT) |
-| RNF-07 | ES2 | Mantenibilidad | Presentación, negocio y persistencia separadas; la interfaz no accede a la base; cobertura de líneas ≥ 80 % | Estructura `src/`; `npm run test:coverage` | Cumple: 96,58 % |
+| RNF-07 | ES2 | Mantenibilidad | Presentación, negocio y persistencia separadas; la interfaz no accede a la base; cobertura de líneas ≥ 80 % | Estructura `src/`; `npm run test:coverage` | Cumple: 96,79 % |
 | RNF-08 | Spike RNF1 + nuevo | Rendimiento | Confirmación de reserva: p95 ≤ 800 ms con 50 solicitudes simultáneas y errores técnicos < 1 %. Consulta de disponibilidad: p95 ≤ 500 ms con 20 concurrentes | `npm run metricas` | Cumple: 119,2 ms y 0 %; 164,4 ms |
-| RNF-09 | Spike RNF2 | Disponibilidad | ≥ 99,5 % durante el período académico | Requiere despliegue y monitoreo | **No verificado** (no desplegado) |
+| RNF-09 | Spike RNF2 | Disponibilidad | ≥ 99,5 % durante el período académico | Requiere monitoreo continuo en un plan sin suspensión | **No verificado**: el despliegue de demostración usa el plan gratuito, que se suspende tras 15 min sin tráfico |
 | RNF-10 | Nuevo | Protección de datos personales | Minimización (nombre, correo, rol); sin IP en auditoría; tokens y sesiones guardados como hash; páginas `no-store`; datos de demostración ficticios | CP-02-08, CP-02-09; revisión del esquema | Cumple |
 | RNF-11 | Spike RNF3 + nuevo | Seguridad de sesión y entradas | Sesión de 256 bits regenerada al autenticar; expira a los 30 min de inactividad y 8 h absolutas; CSRF en todo formulario; validación en servidor; SQL parametrizado; ≤ 10 intentos fallidos por IP en 15 min; secretos fuera del código | CP-02-04 a CP-02-10, CP-U-09, CP-04-05 | Cumple |
 
 Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 1,49 s por el costo deliberado de scrypt
-(≈ 230 ms por verificación aislada); compromiso aceptado entre seguridad y rendimiento.
+(≈ 230 ms por verificación aislada); compromiso aceptado entre seguridad y rendimiento. En el despliegue gratuito de
+Render un inicio de sesión tarda ≈ 3 s (p95 3,07 s), porque el plan entrega solo una fracción de CPU.
 
 ## 5. Riesgos iniciales
 
@@ -87,6 +88,7 @@ Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 
 | R7 | Paquetes no aprobados en el registro corporativo (express-session, helmet, supertest) | Ocurrió | Medio | Implementación propia y probada de sesión, cabeceras y CSRF; pruebas con `fetch` nativo | Resuelto |
 | R8 | Cambios administrativos que alteren reservas confirmadas | Media | Alto | Regla de rechazo con detalle de reservas afectadas | Mitigado y verificado |
 | R9 | Reglas institucionales sin validar (plazos de cancelación, listado, inhabilitación) | Alta | Medio | Se implementan como propuestas explícitas y configurables; validación con la institución pendiente | Abierto |
+| R10 | El despliegue gratuito está suspendido o se reinicia durante una revisión | Alta | Bajo | Abrir el enlace un minuto antes; los datos ficticios se recargan solos; el MVP también corre en local con `npm start` | Aceptado |
 
 ## 6. Reglas y decisiones
 
@@ -119,12 +121,15 @@ Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 
 | D-11 | La sede de un espacio no se edita después de crearlo | Evita mover reservas existentes a otra sede |
 | D-12 | Registro de auditoría de eventos de seguridad, visible solo para el administrador | Trazabilidad y detección (OWASP A09) |
 | D-13 | Las reservas ajenas responden 404 (no 403) | No revelar la existencia de reservas de otras personas |
+| D-14 | Despliegue de demostración en Render (PaaS, plan gratuito) definido en `render.yaml`, con `DEMO_MAILBOX=true` y datos ficticios que se restablecen al reiniciar | Permite revisar el MVP desde un enlace público y verificar HTTPS; el buzón se mantiene porque no hay servicio de correo |
 
 ## 7. Alcance y limitaciones del MVP
 
-**Incluido:** los seis RF, cierre de sesión, auditoría, datos ficticios, pruebas automatizadas, métricas, capturas y diagramas.
+**Incluido:** los seis RF, cierre de sesión, auditoría, datos ficticios, pruebas automatizadas, métricas, capturas, diagramas
+y un despliegue de demostración en Render (https://campusreserva.onrender.com) probado con 17 pruebas de aceptación.
 
-**Fuera de alcance / limitaciones:** envío real de correos; despliegue en la nube (solo propuesta PaaS) y por lo tanto
-HTTPS no verificado (RNF-02 parcial) y disponibilidad no medida (RNF-09); notificaciones; reportes; gestión de sedes y del
+**Fuera de alcance / limitaciones:** envío real de correos; despliegue productivo (el de demostración usa el plan gratuito:
+se suspende tras 15 min sin tráfico, tarda en despertar y pierde los cambios al reiniciar) y por lo tanto disponibilidad
+no medida (RNF-09); notificaciones; reportes; gestión de sedes y del
 listado institucional desde la interfaz; recuperación de contraseña; verificación contra contraseñas filtradas; pruebas de
 usuario con personas reales (pendientes); validación institucional de las reglas propuestas (pendiente desde la ES2).

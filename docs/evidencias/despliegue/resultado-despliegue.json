@@ -1,0 +1,247 @@
+{
+  "url": "https://campusreserva.onrender.com",
+  "fecha": "2026-11-11T05:17:13.606Z",
+  "cliente": {
+    "node": "v24.21.0",
+    "descripcion": "equipo de desarrollo en Chile, Node.js v24.21.0"
+  },
+  "resumen": {
+    "pruebas": 17,
+    "aprobadas": 17,
+    "fallidas": 0,
+    "solicitudes": 99,
+    "errores5xx": 0
+  },
+  "resultados": [
+    {
+      "id": "DEP-01",
+      "descripcion": "El servicio responde por HTTPS (la primera solicitud puede incluir el arranque en frío)",
+      "resultado": "Aprobada",
+      "detalle": "200 en 257 ms"
+    },
+    {
+      "id": "DEP-02",
+      "descripcion": "Las solicitudes HTTP se redirigen a HTTPS",
+      "resultado": "Aprobada",
+      "detalle": "301 → https://campusreserva.onrender.com/login"
+    },
+    {
+      "id": "DEP-03",
+      "descripcion": "Cabeceras de seguridad en producción (HSTS, CSP, nosniff, DENY, no-store)",
+      "resultado": "Aprobada",
+      "detalle": "HSTS: max-age=31536000; includeSubDomains"
+    },
+    {
+      "id": "DEP-04",
+      "descripcion": "RF-02 Inicio de sesión de estudiante con cookie segura (__Host-, Secure, HttpOnly, SameSite=Lax)",
+      "resultado": "Aprobada",
+      "detalle": "Max-Age, Path, HttpOnly, Secure, SameSite"
+    },
+    {
+      "id": "DEP-05",
+      "descripcion": "RF-02 Contraseña incorrecta y correo inexistente reciben el mismo mensaje genérico",
+      "resultado": "Aprobada",
+      "detalle": "ambas responden 401 con el mismo mensaje"
+    },
+    {
+      "id": "DEP-06",
+      "descripcion": "RF-01 Una cuenta pendiente de confirmación no puede iniciar sesión",
+      "resultado": "Aprobada",
+      "detalle": "respondió 401"
+    },
+    {
+      "id": "DEP-07",
+      "descripcion": "RF-03 Consulta de disponibilidad por sede y fecha (2026-11-12)",
+      "resultado": "Aprobada",
+      "detalle": "23 bloques disponibles"
+    },
+    {
+      "id": "DEP-08",
+      "descripcion": "RF-04 Reserva con revisión previa, confirmación e identificador",
+      "resultado": "Aprobada",
+      "detalle": "código CR-000009"
+    },
+    {
+      "id": "DEP-09",
+      "descripcion": "RF-04 Un bloque ya reservado se rechaza al confirmar (409)",
+      "resultado": "Aprobada",
+      "detalle": "409 Conflict"
+    },
+    {
+      "id": "DEP-10",
+      "descripcion": "RF-04 / ADR-001 10 solicitudes simultáneas de 2 usuarios por el mismo bloque confirman exactamente una",
+      "resultado": "Aprobada",
+      "detalle": "1 confirmada y 9 rechazadas con 409"
+    },
+    {
+      "id": "DEP-11",
+      "descripcion": "RF-05 Un usuario no puede ver ni cancelar reservas ajenas (404 sin cambios)",
+      "resultado": "Aprobada",
+      "detalle": "404 en lectura y cancelación"
+    },
+    {
+      "id": "DEP-12",
+      "descripcion": "RF-05 Cancelación con confirmación; la reserva queda en el historial",
+      "resultado": "Aprobada",
+      "detalle": "CR-000009 cancelada"
+    },
+    {
+      "id": "DEP-13",
+      "descripcion": "OWASP A01 Un formulario sin token CSRF se rechaza (403)",
+      "resultado": "Aprobada",
+      "detalle": "403 Forbidden"
+    },
+    {
+      "id": "DEP-14",
+      "descripcion": "RF-06 / OWASP A01 Un estudiante no accede a la administración (403)",
+      "resultado": "Aprobada",
+      "detalle": "403 Forbidden"
+    },
+    {
+      "id": "DEP-15",
+      "descripcion": "RF-06 El administrador registra un espacio y se validan los datos",
+      "resultado": "Aprobada",
+      "detalle": "\"Sala Prueba Despliegue 0216\" registrado; capacidad 0 rechazada con 422"
+    },
+    {
+      "id": "DEP-16",
+      "descripcion": "RF-01 Registro con listado institucional, enlace en el buzón de demostración y activación",
+      "resultado": "Aprobada",
+      "detalle": "camila.estudiante@campus.test activada; el enlace apunta a https://campusreserva.onrender.com"
+    },
+    {
+      "id": "DEP-17",
+      "descripcion": "Cierre de sesión: la sesión se destruye en el servidor",
+      "resultado": "Aprobada",
+      "detalle": "Mis reservas redirige al inicio de sesión"
+    }
+  ],
+  "metricas": [
+    {
+      "operacion": "GET /login",
+      "n": 27,
+      "p50": 169.9,
+      "p95": 224.2,
+      "max": 257.4
+    },
+    {
+      "operacion": "GET /disponibilidad",
+      "n": 24,
+      "p50": 145.8,
+      "p95": 205.2,
+      "max": 205.2
+    },
+    {
+      "operacion": "POST /reservas",
+      "n": 13,
+      "p50": 185.4,
+      "p95": 409.6,
+      "max": 409.6
+    },
+    {
+      "operacion": "POST /login",
+      "n": 12,
+      "p50": 2879.8,
+      "p95": 3074.8,
+      "max": 3074.8
+    },
+    {
+      "operacion": "GET /reservas/:id",
+      "n": 3,
+      "p50": 144,
+      "p95": 205,
+      "max": 205
+    },
+    {
+      "operacion": "GET /mis-reservas",
+      "n": 3,
+      "p50": 164.7,
+      "p95": 193.8,
+      "max": 193.8
+    },
+    {
+      "operacion": "POST /reservas/:id/cancelar",
+      "n": 3,
+      "p50": 162.7,
+      "p95": 204.5,
+      "max": 204.5
+    },
+    {
+      "operacion": "GET /admin/espacios",
+      "n": 3,
+      "p50": 147.9,
+      "p95": 152.5,
+      "max": 152.5
+    },
+    {
+      "operacion": "POST /admin/espacios",
+      "n": 2,
+      "p50": 162.6,
+      "p95": 172.2,
+      "max": 172.2
+    },
+    {
+      "operacion": "POST /registro",
+      "n": 2,
+      "p50": 205.3,
+      "p95": 2867.1,
+      "max": 2867.1
+    },
+    {
+      "operacion": "GET /reservas/nueva",
+      "n": 1,
+      "p50": 170.4,
+      "p95": 170.4,
+      "max": 170.4
+    },
+    {
+      "operacion": "GET /reservas/:id/cancelar",
+      "n": 1,
+      "p50": 144.5,
+      "p95": 144.5,
+      "max": 144.5
+    },
+    {
+      "operacion": "GET /registro",
+      "n": 1,
+      "p50": 196.1,
+      "p95": 196.1,
+      "max": 196.1
+    },
+    {
+      "operacion": "GET /demo/buzon",
+      "n": 1,
+      "p50": 204.5,
+      "p95": 204.5,
+      "max": 204.5
+    },
+    {
+      "operacion": "GET /confirmar",
+      "n": 1,
+      "p50": 204.8,
+      "p95": 204.8,
+      "max": 204.8
+    },
+    {
+      "operacion": "POST /confirmar",
+      "n": 1,
+      "p50": 205.7,
+      "p95": 205.7,
+      "max": 205.7
+    },
+    {
+      "operacion": "POST /logout",
+      "n": 1,
+      "p50": 204.7,
+      "p95": 204.7,
+      "max": 204.7
+    }
+  ],
+  "capturas": [
+    "dep-01-login.png",
+    "dep-02-disponibilidad.png",
+    "dep-03-mis-reservas.png",
+    "dep-04-admin-espacios.png",
+    "dep-05-buzon-demo.png"
+  ]
+}

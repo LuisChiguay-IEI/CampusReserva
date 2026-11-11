@@ -293,6 +293,9 @@ async function ejecutarPruebas() {
     return `${correoRegistrado} activada; el enlace apunta a ${URL_BASE}`;
   });
 
+  // Limpieza (antes de cerrar sesión): se cancela la reserva ganada en la prueba de concurrencia.
+  if (ganador) await ganador.cliente.post(`/reservas/${ganador.id}/cancelar`);
+
   await prueba('DEP-17', 'Cierre de sesión: la sesión se destruye en el servidor', async () => {
     const r = await ana.post('/logout');
     exigir(r.estado === 303, `respondió ${r.estado}`);
@@ -300,9 +303,6 @@ async function ejecutarPruebas() {
     exigir(despues.estado === 303 && despues.ubicacion === '/login', `tras cerrar sesión respondió ${despues.estado}`);
     return 'Mis reservas redirige al inicio de sesión';
   });
-
-  // Limpieza: se cancela la reserva ganada en la prueba de concurrencia.
-  if (ganador) await ganador.cliente.post(`/reservas/${ganador.id}/cancelar`);
 
   // Muestras secuenciales para las métricas de tiempo de respuesta.
   for (let i = 0; i < 15; i += 1) await anonimo.get('/login');

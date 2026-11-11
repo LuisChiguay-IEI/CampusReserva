@@ -21,8 +21,10 @@ del perfil; la participación es voluntaria y puede interrumpirse en cualquier m
 
 ## 3. Preparación
 
-1. `npm run db:reset` y `npm start` en el equipo de prueba.
-2. Navegador en `http://localhost:3000`, ventana limpia.
+1. `npm run db:reset` y `npm start` en el equipo de prueba, **o** usar la demo en línea
+   https://campusreserva.onrender.com (abrirla un minuto antes: el plan gratuito se suspende sin tráfico y, al
+   reiniciarse, vuelve a los datos ficticios iniciales; si varias personas prueban a la vez comparten los mismos datos).
+2. Navegador en `http://localhost:3000` o en la demo en línea, ventana limpia.
 3. Cronómetro y planilla de observación (sección 6).
 4. El facilitador lee cada tarea sin explicar la interfaz; observa y anota.
 

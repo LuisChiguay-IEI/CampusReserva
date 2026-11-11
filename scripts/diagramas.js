@@ -201,23 +201,27 @@ function diagramaDespliegue() {
   c += linea([[290, 300], [380, 220]], { marcador: null, ancho: 1.8 });
   c += etiqueta(335, 248, 'HTTP · localhost:3000');
 
-  c += nodo({ x: 380, y: 440, w: 560, h: 220, titulo: 'Plataforma PaaS (propuesta, NO desplegada)', estereotipo: 'cloud PaaS', punteado: true, color: COLOR.propuesto, lineas: ['Proveedor por definir (ej.: Render, Railway, Azure App Service)'] });
-  c += artefacto({ x: 405, y: 515, w: 250, h: 86, titulo: 'campusreserva', punteado: true, color: COLOR.propuesto, lineas: ['runtime Node.js administrado', 'NODE_ENV=production'] });
-  c += artefacto({ x: 670, y: 515, w: 250, h: 86, titulo: 'Disco persistente / BD', estereotipo: 'storage', punteado: true, color: COLOR.propuesto, lineas: ['SQLite en volumen o', 'PostgreSQL gestionado (futuro)'] });
-  c += t(405, 620, 'TLS en el proxy del proveedor · TRUST_PROXY=true · cookie __Host-, Secure · HSTS', { size: 12, fill: COLOR.suave });
-  c += t(405, 640, 'Secretos (SESSION_SECRET) en variables del proveedor · DEMO_MAILBOX=false', { size: 12, fill: COLOR.suave });
+  c += nodo({ x: 380, y: 440, w: 560, h: 220, titulo: 'Render (PaaS, plan gratuito) — desplegado y probado', estereotipo: 'cloud PaaS', lineas: ['https://campusreserva.onrender.com · región Virginia (EE. UU.)'] });
+  c += artefacto({ x: 405, y: 515, w: 250, h: 86, titulo: 'campusreserva', lineas: ['runtime Node.js 24 administrado', 'NODE_ENV=production'] });
+  c += artefacto({ x: 670, y: 515, w: 250, h: 86, titulo: 'campusreserva.db', estereotipo: 'file', lineas: ['SQLite en disco efímero: vuelve a', 'los datos ficticios al reiniciar'] });
+  c += t(405, 620, 'TLS en el proxy de Render · TRUST_PROXY=true · cookie __Host-, Secure · HSTS', { size: 12, fill: COLOR.suave });
+  c += t(405, 640, 'SESSION_SECRET generado por Render · DEMO_MAILBOX=true (demostración académica)', { size: 12, fill: COLOR.suave });
 
-  c += linea([[290, 360], [380, 520]], { marcador: null, punteada: true, color: COLOR.propuesto, ancho: 1.8 });
+  c += artefacto({ x: 965, y: 515, w: 225, h: 86, titulo: 'PostgreSQL gestionado', estereotipo: 'database', punteado: true, color: COLOR.propuesto, lineas: ['persistencia entre reinicios', '(mejora futura)'] });
+
+  c += linea([[290, 360], [380, 520]], { marcador: null, ancho: 1.8 });
   c += etiqueta(330, 460, 'HTTPS (443)');
+  c += linea([[800, 370], [800, 428]], { ancho: 1.4 });
+  c += etiqueta(800, 404, 'git push → GitHub → despliegue automático');
 
   c += `<rect x="900" y="80" width="290" height="120" rx="8" fill="#fbfcfe" stroke="#d9dfe8"/>`;
   c += t(915, 104, 'Convenciones', { weight: 700 });
   c += linea([[915, 128], [965, 128]], { marcador: null, ancho: 1.8 });
-  c += t(975, 132, 'Implementado y probado', { size: 12 });
+  c += t(975, 132, 'Desplegado y probado', { size: 12 });
   c += linea([[915, 158], [965, 158]], { marcador: null, punteada: true, color: COLOR.propuesto, ancho: 1.8 });
-  c += t(975, 162, 'Propuesto, no desplegado', { size: 12 });
+  c += t(975, 162, 'Mejora futura (no implementada)', { size: 12 });
   c += t(915, 188, 'Modelo cloud seleccionado: PaaS', { size: 12, weight: 600, fill: COLOR.acento });
-  return documento(1210, 690, 'Diagrama de despliegue — entorno verificado y propuesta PaaS', c);
+  return documento(1210, 690, 'Diagrama de despliegue — entorno local y despliegue PaaS en Render', c);
 }
 
 // ------------------------------------------------------------------ 3. Secuencia
