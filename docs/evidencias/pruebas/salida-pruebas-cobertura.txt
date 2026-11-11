@@ -1,0 +1,155 @@
+▶ RF-06 Administrar espacios y horarios
+  ✔ CP-06-01 solo el administrador accede: estudiante y docente reciben 403 y nada cambia (13.5044ms)
+  ✔ CP-06-02 registra un espacio válido y valida sede, nombre, tipo y capacidad (11.4734ms)
+  ✔ CP-06-03 impide nombres duplicados dentro de la misma sede (sin distinguir mayúsculas) (6.1384ms)
+  ✔ CP-06-04 edita un espacio existente y valida los cambios (7.5727ms)
+  ✔ CP-06-05 deshabilitar un espacio con reservas vigentes se rechaza indicando cuáles (10.8795ms)
+  ✔ CP-06-06 deshabilitar un espacio sin reservas vigentes lo quita de la disponibilidad; habilitar lo repone (9.3129ms)
+  ✔ CP-06-07 crea bloques válidos y rechaza superposiciones y configuraciones inválidas (14.75ms)
+  ✔ CP-06-08 no modifica ni desactiva bloques con reservas vigentes (no afecta reservas en silencio) (6.5686ms)
+  ✔ CP-06-09 modifica y desactiva bloques sin reservas, validando superposición al editar (10.3939ms)
+  ✔ CP-06-10 bloquear un horario libre lo quita de la disponibilidad y quitar el bloqueo lo repone (21.6359ms)
+  ✔ CP-06-11 rechaza bloquear un horario con reserva confirmada o una fecha que no corresponde al día (6.7554ms)
+  ✔ CP-06-12 el registro de auditoría es visible solo para el administrador (8.2629ms)
+✔ RF-06 Administrar espacios y horarios (1329.4684ms)
+▶ ADR-001 Concurrencia entre procesos sobre el mismo bloque
+  ✔ CP-04-07 8 procesos usando el servicio real: exactamente 1 reserva confirmada (268.2868ms)
+  ✔ CP-04-08 8 procesos insertando sin verificar: el índice único de la base deja solo 1 (223.8607ms)
+✔ ADR-001 Concurrencia entre procesos sobre el mismo bloque (821.3419ms)
+▶ RF-01 Registrar usuario
+  ✔ CP-01-01 registra un correo autorizado como cuenta PENDIENTE con el rol del listado y contraseña con hash (353.8443ms)
+  ✔ CP-01-02 rechaza un correo ya registrado (8.2995ms)
+  ✔ CP-01-03 rechaza correos fuera del listado institucional o de otro dominio (11.0157ms)
+  ✔ CP-01-04 no permite elegir el rol: un campo "rol=ADMINISTRADOR" se ignora (257.0212ms)
+  ✔ CP-01-05 rechaza datos inválidos con mensajes por campo y sin crear la cuenta (57.7379ms)
+  ✔ CP-01-06 la cuenta pendiente no puede iniciar sesión hasta confirmar el correo (255.2342ms)
+  ✔ CP-01-07 el enlace válido activa la cuenta y luego permite iniciar sesión (241.4489ms)
+  ✔ CP-01-08 rechaza enlaces inexistentes o expirados (448.79ms)
+✔ RF-01 Registrar usuario (1964.9104ms)
+▶ RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión
+  ✔ CP-02-01 cada rol inicia sesión y es dirigido a sus funciones (680.1249ms)
+  ✔ CP-02-02 rechaza contraseña incorrecta y correo inexistente con el mismo mensaje genérico (639.2429ms)
+  ✔ CP-02-03 rechaza la cuenta pendiente de confirmación (seed) (216.587ms)
+  ✔ CP-02-04 emite un nuevo identificador de sesión al autenticarse (anti fijación) (226.2977ms)
+  ✔ CP-02-05 cerrar sesión invalida la sesión en el servidor (la cookie antigua deja de servir) (233.5744ms)
+  ✔ CP-02-06 la sesión expira tras 30 minutos de inactividad (236.161ms)
+  ✔ CP-02-07 rechaza formularios sin token CSRF válido (5.7914ms)
+  ✔ CP-02-08 envía cabeceras de seguridad y cookie HttpOnly + SameSite (2.7776ms)
+  ✔ CP-02-09 guarda solo el hash del identificador de sesión en la base (235.4286ms)
+✔ RF-02 Iniciar sesión, cierre de sesión y seguridad de la sesión (2719.2565ms)
+▶ RF-02 Límite de intentos de inicio de sesión
+  ✔ CP-02-10 bloquea temporalmente tras superar los intentos fallidos permitidos (682.5737ms)
+✔ RF-02 Límite de intentos de inicio de sesión (935.3007ms)
+▶ RF-03 Consultar disponibilidad
+  ✔ CP-03-01 muestra bloques libres de la sede y fecha y excluye los ya reservados (6.3741ms)
+  ✔ CP-03-02 excluye bloques bloqueados y espacios deshabilitados (3.8453ms)
+  ✔ CP-03-03 para el día de hoy no ofrece bloques que ya comenzaron (3.2914ms)
+  ✔ CP-03-04 aplica el filtro opcional por sala o laboratorio (7.1828ms)
+  ✔ CP-03-05 informa cuando la consulta no tiene resultados (2.965ms)
+  ✔ CP-03-06 valida sede y fecha en el servidor (11.9657ms)
+  ✔ CP-03-07 la consulta no modifica reservas (6.7137ms)
+  ✔ CP-03-08 solo estudiantes y docentes consultan (administrador 403, anónimo al login) (307.6597ms)
+✔ RF-03 Consultar disponibilidad (1022.1485ms)
+▶ RF-04 Reservar espacio
+  ✔ CP-04-01 revisar no guarda nada; confirmar crea la reserva con identificador asociado a la cuenta (10.9008ms)
+  ✔ CP-04-02 impide reservar un bloque ya reservado (2.4204ms)
+  ✔ CP-04-03 ante 20 solicitudes simultáneas para el mismo bloque confirma exactamente una (40.7861ms)
+  ✔ CP-04-04 rechaza bloques bloqueados, espacios deshabilitados y bloques ya iniciados (6.3069ms)
+  ✔ CP-04-05 rechaza selecciones manipuladas (otro día, otro espacio, fecha pasada o no numéricas) (6.7642ms)
+  ✔ CP-04-06 el administrador no puede reservar (239.5325ms)
+✔ RF-04 Reservar espacio (1066.8258ms)
+▶ RF-05 Consultar y cancelar reservas propias
+  ✔ CP-05-01 lista únicamente las reservas de la cuenta autenticada (3.2092ms)
+  ✔ CP-05-02 no permite ver ni cancelar reservas ajenas (responde 404 sin cambios) (5.3371ms)
+  ✔ CP-05-03 la cancelación pide confirmación antes de modificar la reserva (2.4068ms)
+  ✔ CP-05-04 cancelar conserva el historial y libera el horario para otra persona (11.2182ms)
+  ✔ CP-05-05 no permite cancelar dos veces ni cancelar una reserva cuyo bloque ya comenzó (236.5683ms)
+✔ RF-05 Consultar y cancelar reservas propias (986.4384ms)
+▶ Utilidades de fecha
+  ✔ CP-U-13 calcula fecha y hora en America/Santiago (13.1805ms)
+  ✔ CP-U-14 obtiene el día ISO de la semana y suma días (0.2832ms)
+  ✔ CP-U-15 detecta superposición de intervalos (los contiguos no se superponen) (0.0992ms)
+  ✔ CP-U-16 valida fechas y horas reales (0.2215ms)
+✔ Utilidades de fecha (14.746ms)
+▶ Primitivas de seguridad
+  ✔ CP-U-17 el hash de contraseña usa scrypt con sal y no contiene la contraseña (491.301ms)
+  ✔ CP-U-18 verifica la contraseña correcta y rechaza la incorrecta o un hash corrupto (723.1276ms)
+  ✔ CP-U-19 genera tokens aleatorios de 256 bits y compara en tiempo constante (0.6873ms)
+✔ Primitivas de seguridad (1215.4222ms)
+▶ Cálculo de disponibilidad (RF-03)
+  ✔ CP-U-20 excluye bloques reservados y bloqueados (1.6187ms)
+  ✔ CP-U-21 si la fecha es hoy, excluye bloques que ya comenzaron (0.1847ms)
+  ✔ CP-U-22 devuelve lista vacía cuando no hay disponibilidad (0.1045ms)
+✔ Cálculo de disponibilidad (RF-03) (3.0041ms)
+▶ Presentación y reglas de cancelación de reservas (RF-05)
+  ✔ CP-U-23 una reserva futura confirmada es próxima y cancelable (0.2151ms)
+  ✔ CP-U-24 una reserva en curso no es cancelable y una terminada pasa al historial (0.1301ms)
+  ✔ CP-U-25 una reserva cancelada no es cancelable ni próxima (0.0871ms)
+  ✔ CP-U-26 describe reservas afectadas con código y fecha, resumiendo sobre 5 (0.3826ms)
+✔ Presentación y reglas de cancelación de reservas (RF-05) (0.9882ms)
+▶ Validación de registro (RF-01)
+  ✔ CP-U-01 acepta datos válidos y normaliza el correo a minúsculas (0.9634ms)
+  ✔ CP-U-02 rechaza correos de un dominio no institucional (0.3003ms)
+  ✔ CP-U-03 rechaza correo con formato inválido y nombre con caracteres no permitidos (0.1283ms)
+  ✔ CP-U-04 exige contraseña de 12 a 128 caracteres y confirmación coincidente (0.1083ms)
+  ✔ CP-U-05 rechaza una contraseña igual al correo (0.0881ms)
+  ✔ CP-U-06 ignora entradas que no son texto (p. ej. arreglos) sin lanzar excepciones (0.0961ms)
+✔ Validación de registro (RF-01) (2.7703ms)
+▶ Validación de consulta de disponibilidad (RF-03)
+  ✔ CP-U-07 acepta sede y fecha válidas; el espacio es opcional (1.7285ms)
+  ✔ CP-U-08 rechaza fechas pasadas, inexistentes o fuera de la ventana de 30 días (0.2472ms)
+  ✔ CP-U-09 rechaza identificadores no numéricos (intento de inyección) (0.2452ms)
+✔ Validación de consulta de disponibilidad (RF-03) (2.4165ms)
+▶ Validación de espacios y horarios (RF-06)
+  ✔ CP-U-10 valida sede, nombre, tipo y capacidad de un espacio (0.5876ms)
+  ✔ CP-U-11 valida día, formato de hora, orden, rango 07:00–23:00 y duración 30–240 min (0.243ms)
+  ✔ CP-U-12 valida bloqueos: horario, fecha no pasada y motivo (0.1912ms)
+✔ Validación de espacios y horarios (RF-06) (1.1695ms)
+ℹ tests 77
+ℹ suites 15
+ℹ pass 77
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5821.4568
+ℹ start of coverage report
+ℹ --------------------------------------------------------------------------------------------
+ℹ file                | line % | branch % | funcs % | uncovered lines
+ℹ --------------------------------------------------------------------------------------------
+ℹ src                 |        |          |         | 
+ℹ  app.js             |  87.67 |    52.94 |   85.71 | 108-113 122-133
+ℹ  config.js          |  92.41 |    63.64 |   75.00 | 47-52
+ℹ  db                 |        |          |         | 
+ℹ   conexion.js       | 100.00 |   100.00 |  100.00 | 
+ℹ   seed.js           |  97.10 |    90.48 |   80.00 | 200-205
+ℹ  lib                |        |          |         | 
+ℹ   errores.js        | 100.00 |   100.00 |  100.00 | 
+ℹ   fechas.js         | 100.00 |    88.24 |  100.00 | 
+ℹ   seguridad.js      | 100.00 |    88.24 |  100.00 | 
+ℹ   validaciones.js   |  98.78 |    90.24 |  100.00 | 171-172 222
+ℹ  middleware         |        |          |         | 
+ℹ   autorizacion.js   |  97.01 |    93.75 |  100.00 | 32-33
+ℹ   seguridad.js      |  97.83 |    93.75 |  100.00 | 38-39
+ℹ   sesion.js         |  92.44 |    80.00 |   87.50 | 48-50 53-54 107-108 110-111
+ℹ  repositorios       |        |          |         | 
+ℹ   espacios.js       | 100.00 |    96.43 |  100.00 | 
+ℹ   index.js          | 100.00 |   100.00 |  100.00 | 
+ℹ   reservas.js       | 100.00 |   100.00 |   92.31 | 
+ℹ   soporte.js        | 100.00 |   100.00 |   88.89 | 
+ℹ   usuarios.js       | 100.00 |   100.00 |   91.67 | 
+ℹ  rutas              |        |          |         | 
+ℹ   administracion.js |  88.10 |    74.29 |   72.22 | 56-62 83-90 139-148
+ℹ   cuentas.js        |  97.20 |    65.00 |   80.00 | 20 59-60
+ℹ   demo.js           |  95.65 |   100.00 |   50.00 | 18
+ℹ   reservas.js       |  97.46 |    96.30 |  100.00 | 65-67
+ℹ  servicios          |        |          |         | 
+ℹ   administracion.js |  94.98 |    77.27 |  100.00 | 107-108 121-123 198-202 223-224 231-232
+ℹ   autenticacion.js  |  96.39 |    89.19 |  100.00 | 93-98
+ℹ   disponibilidad.js | 100.00 |   100.00 |  100.00 | 
+ℹ   reloj.js          | 100.00 |   100.00 |  100.00 | 
+ℹ   reservas.js       |  98.90 |    94.64 |  100.00 | 62-63
+ℹ --------------------------------------------------------------------------------------------
+ℹ all files           |  96.54 |    87.22 |   93.42 | 
+ℹ --------------------------------------------------------------------------------------------
+ℹ end of coverage report
