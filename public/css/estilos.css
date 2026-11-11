@@ -127,9 +127,6 @@ code { background: #eef1f6; padding: 0.05rem 0.35rem; border-radius: 4px; }
 /* ---------- Pantallas de autenticación ---------- */
 .auth { display: flex; gap: 24px; justify-content: center; align-items: flex-start; flex-wrap: wrap; }
 .tarjeta-auth { width: 100%; max-width: 460px; }
-.tarjeta-ayuda { width: 100%; max-width: 360px; background: var(--primario-suave); border-color: #cdd9f5; }
-.tarjeta-ayuda h2 { font-size: 1rem; }
-.auth .tarjeta + .tarjeta { margin-top: 0; }
 .icono-estado {
   width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
   font-size: 1.5rem; font-weight: 700; margin-bottom: 12px;

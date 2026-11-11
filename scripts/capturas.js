@@ -86,7 +86,7 @@ async function main() {
     // ---------------------------------------------------------------- RF-01 / RF-02
     const anonimo = await (await nuevoContexto()).newPage();
     await anonimo.goto(`${URL_BASE}/login`);
-    await capturar(anonimo, '01-login', 'RF-02 Pantalla de inicio de sesión (con cuentas ficticias de demostración).');
+    await capturar(anonimo, '01-login', 'RF-02 Pantalla de inicio de sesión con correo institucional y contraseña.');
 
     await anonimo.goto(`${URL_BASE}/registro`);
     await anonimo.fill('#nombre', 'A');
