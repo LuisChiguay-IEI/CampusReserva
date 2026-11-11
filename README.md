@@ -4,6 +4,7 @@ Aplicación web para **consultar disponibilidad y reservar salas y laboratorios 
 Producto Mínimo Viable (MVP) desarrollado para la Evaluación Sumativa 3 de Ingeniería de Software (TI3043, INACAP).
 
 - Autor: Luis Santiago Chiguay Espinoza (proyecto individual, gestión con Kanban en Jira, proyecto KAN).
+- Repositorio: https://github.com/LuisChiguay-IEI/CampusReserva
 - Estado: **MVP funcional ejecutado y probado en entorno local**. No está desplegado en la nube (la propuesta PaaS está documentada, no implementada).
 - Todos los datos son **ficticios** (dominio reservado `campus.test`).
 
