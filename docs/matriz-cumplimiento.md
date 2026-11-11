@@ -26,7 +26,7 @@ Estados: **Cubierto** (hay evidencia verificable), **Cubierto con limitaciones**
 
 | Requisito | Estado | Acción |
 |---|---|---|
-| Informe de documentación final | Generado (`dist/`) | Completar el enlace de GitHub resaltado en V.d, revisar y firmar el Anexo D |
+| Informe de documentación final | Generado (`dist/`), con el enlace de GitHub en V.d | Revisar y firmar el Anexo D |
 | Plataforma colaborativa con avance de actividades (Jira) | **Pendiente (manual)** | Aplicar `docs/jira-actualizaciones.md` |
-| Control de versiones en GitHub | **Pendiente (manual)** | Crear el repositorio remoto y hacer `git push -u origin main` |
+| Control de versiones en GitHub | Cumplido: https://github.com/LuisChiguay-IEI/CampusReserva (público, rama `main`) | Mantener sincronizado con `git push` |
 | Apartados obligatorios (requerimientos, arquitectura UML, tecnologías, funcionalidades, repositorio, pruebas, métricas, problemas) | Cubiertos en el Informe | — |

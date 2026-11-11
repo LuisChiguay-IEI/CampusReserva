@@ -40,7 +40,7 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 | Investigación normativa chilena y OWASP Top 10:2025 | Entrega ES3 | Finalizado | docs/investigacion-normativa.md |
 | Alinear implementación con HU-01 de la ES2 (contraseña 15+, enlaces) | KAN-42 Requisitos | Finalizado | CP-U-27, CP-01-08 (14bec2a) |
 | Informe final ES3 (Word) | Entrega ES3 | **En revisión** | dist/Informe_Final_CampusReserva_ES3_Luis_Chiguay.docx |
-| Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | **En curso** (acción del estudiante) | URL del repositorio |
+| Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | Finalizado | https://github.com/LuisChiguay-IEI/CampusReserva |
 | Pruebas de usuario (UAT) | KAN-38 Validación | **Por hacer** | docs/pruebas-usuario.md |
 | Firmar declaración de originalidad (Anexo D) | Entrega ES3 | Por hacer | Informe |
 | Entregar en Ambiente de Aprendizaje | Entrega ES3 | Por hacer | — |
