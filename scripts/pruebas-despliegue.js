@@ -261,7 +261,7 @@ async function ejecutarPruebas() {
     const invalido = await admin.post('/admin/espacios', { sede: '1', nombre: 'Sala inválida', tipo: 'SALA', capacidad: '0' });
     exigir(invalido.estado === 422, `una capacidad 0 respondió ${invalido.estado}`);
     const hora = fechaHoraEnZona(new Date(), ZONA).hora.replace(':', '');
-    const nombre = `Sala Prueba Despliegue ${hora}`;
+    const nombre = `Sala E-${hora}`;
     const r = await admin.post('/admin/espacios', { sede: '1', nombre, tipo: 'SALA', capacidad: '12' });
     exigir(r.estado === 303 && /^\/admin\/espacios\/\d+\/horarios$/.test(r.ubicacion || ''), `respondió ${r.estado} → ${r.ubicacion}`);
     exigir((await admin.get('/admin/espacios')).html.includes(nombre), 'el espacio no aparece en la lista');
@@ -272,7 +272,7 @@ async function ejecutarPruebas() {
     const c = nuevoCliente();
     await c.get('/registro');
     for (const correo of CORREOS_LISTADO) {
-      const r = await c.post('/registro', { nombre: 'Usuario Prueba Despliegue', correo, contrasena: CLAVE_NUEVA, confirmacion: CLAVE_NUEVA });
+      const r = await c.post('/registro', { nombre: 'Tomás Fuentes Rojas', correo, contrasena: CLAVE_NUEVA, confirmacion: CLAVE_NUEVA });
       if (r.estado === 303 && r.ubicacion === '/registro/enviado') {
         correoRegistrado = correo;
         break;

@@ -97,7 +97,7 @@ async function main() {
     await capturar(anonimo, '02-registro-validaciones', 'RF-01 Validación en servidor: nombre, dominio institucional y contraseña.');
 
     await anonimo.goto(`${URL_BASE}/registro`);
-    await anonimo.fill('#nombre', 'Camila Estudiante Demo');
+    await anonimo.fill('#nombre', 'Camila Torres Vega');
     await anonimo.fill('#correo', 'camila.estudiante@campus.test');
     await anonimo.fill('#contrasena', 'mi frase de prueba 2026');
     await anonimo.fill('#confirmacion', 'mi frase de prueba 2026');

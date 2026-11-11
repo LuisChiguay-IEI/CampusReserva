@@ -64,15 +64,6 @@ code { background: #eef1f6; padding: 0.05rem 0.35rem; border-radius: 4px; }
 .saltar:focus { left: 8px; top: 8px; }
 .solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* ---------- Franja de demostración ---------- */
-.franja-demo {
-  background: var(--aviso-suave);
-  color: var(--aviso);
-  font-size: 0.85rem;
-  padding: 6px 0;
-  border-bottom: 1px solid #f3dcb5;
-}
-.franja-demo a { color: var(--aviso); font-weight: 600; }
 
 /* ---------- Cabecera ---------- */
 .cabecera { background: var(--primario); color: #fff; }

@@ -47,10 +47,10 @@ const ESPACIOS = [
  * Pedro queda PENDIENTE para demostrar el bloqueo de cuentas sin confirmar.
  */
 const USUARIOS = [
-  { clave: 'ana', nombre: 'Ana Rivas Demo', local: 'ana.estudiante', rol: 'ESTUDIANTE', estado: 'ACTIVA' },
-  { clave: 'diego', nombre: 'Diego Soto Demo', local: 'diego.docente', rol: 'DOCENTE', estado: 'ACTIVA' },
+  { clave: 'ana', nombre: 'Ana Rivas Fuentes', local: 'ana.estudiante', rol: 'ESTUDIANTE', estado: 'ACTIVA' },
+  { clave: 'diego', nombre: 'Diego Soto Mella', local: 'diego.docente', rol: 'DOCENTE', estado: 'ACTIVA' },
   { clave: 'admin', nombre: 'Administración CampusReserva', local: 'admin', rol: 'ADMINISTRADOR', estado: 'ACTIVA' },
-  { clave: 'pedro', nombre: 'Pedro Pendiente Demo', local: 'pedro.pendiente', rol: 'ESTUDIANTE', estado: 'PENDIENTE' },
+  { clave: 'pedro', nombre: 'Pedro Lagos Vera', local: 'pedro.pendiente', rol: 'ESTUDIANTE', estado: 'PENDIENTE' },
 ];
 
 /** Listado institucional autorizado (incluye correos aún no registrados para probar RF-01). */
@@ -142,7 +142,7 @@ async function sembrar(db, config) {
     ).run(
       `pedro.pendiente@${dominio}`,
       'Confirma tu cuenta de CampusReserva',
-      'Hola Pedro Pendiente Demo: para activar tu cuenta abre el siguiente enlace. Es válido por 24 horas y se puede usar una sola vez.',
+      'Hola Pedro Lagos Vera: para activar tu cuenta abre el siguiente enlace. Es válido por 24 horas y se puede usar una sola vez.',
       `${config.urlBase}/confirmar?token=${token}`,
       ahoraIso,
     );
