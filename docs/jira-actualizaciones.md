@@ -17,11 +17,11 @@ enlace el commit indicado y adjunte o enlace la evidencia (captura, salida de pr
 
 | Clave | Historia | Comentario sugerido (evidencia) | Commit |
 |---|---|---|---|
-| KAN-1 | RF-01 — Registrar usuario | Implementado: listado institucional, rol asignado, contraseña 15–128 con rechazo de comunes, enlace de un uso (24 h) en Buzón de demostración. Pruebas CP-01-01 a CP-01-08, CP-U-01 a CP-U-06 y CP-U-27. Capturas 02–07 | a0edf81, 14bec2a |
+| KAN-1 | RF-01 — Registrar usuario | Implementado: listado institucional, rol asignado, contraseña de 8 a 64 con letra y número y sin comunes (D-15), enlace de un uso (24 h) en Buzón de demostración. Pruebas CP-01-01 a CP-01-08, CP-U-01 a CP-U-06 y CP-U-27. Capturas 02–07 | a0edf81, 14bec2a, da2cd56 |
 | KAN-2 | RF-02 — Iniciar sesión | Implementado con sesión del servidor, regeneración, expiración, límite de intentos y funciones por rol; cierre de sesión. Pruebas CP-02-01 a CP-02-10. Capturas 01, 08, 18 | a0edf81 |
 | KAN-5 | RF-03 — Consultar disponibilidad | Implementado: sede y fecha obligatorias, espacio opcional, exclusiones, sin resultados, sin modificar datos. Pruebas CP-03-01 a CP-03-08. Capturas 09, 10 | a0edf81 |
-| KAN-6 | RF-04 — Reservar espacio | Implementado: revisión, confirmación, transacción + índice único (ADR-001), código CR-000000. Pruebas CP-04-01 a CP-04-08; carga: 0 duplicados, p95 119,2 ms. Capturas 11–13 | a0edf81, 9ec4281 |
-| KAN-7 | RF-05 — Consultar reservas propias | Implementado: solo propias, 404 ante ajenas, confirmación, historial y liberación del bloque. Pruebas CP-05-01 a CP-05-05. Capturas 14–17 | a0edf81 |
+| KAN-6 | RF-04 — Reservar espacio | Implementado: revisión, confirmación, transacción + índice único (ADR-001), código CR-000000; estudiantes solo salas de estudio (máx. 2 vigentes, 7 días), docentes y administración cualquier espacio (30 días). Pruebas CP-04-01 a CP-04-10; carga: 0 duplicados, p95 116,7 ms. Capturas 11–13 y 28 | a0edf81, 9ec4281, da2cd56 |
+| KAN-7 | RF-05 — Consultar reservas propias | Implementado: solo propias, 404 ante ajenas, confirmación, cancelación hasta 60 minutos antes, historial y liberación del bloque. Pruebas CP-05-01 a CP-05-05. Capturas 14–17 | a0edf81, da2cd56 |
 | KAN-8 | RF-06 — Administración de espacios | Implementado: espacios, bloques horarios y bloqueos; superposición y cambios con reservas vigentes rechazados. Pruebas CP-06-01 a CP-06-12. Capturas 19–25 | a0edf81, 9ec4281 |
 
 Las subtareas abiertas de cada historia (por ejemplo, 1/3) deben cerrarse solo si su evidencia existe; si alguna
@@ -34,14 +34,15 @@ subtarea era de "validación con cliente", déjela abierta (sigue pendiente).
 | Configurar repositorio Git y proyecto Node.js | KAN-43 Diseño transversal | Finalizado | README, package-lock.json (a0edf81) |
 | Implementar modelo de datos SQLite y datos ficticios | KAN-43 | Finalizado | src/db/schema.sql, diagrama 05 |
 | Implementar seguridad transversal (sesión, CSRF, cabeceras, auditoría) | KAN-43 | Finalizado | CP-02-07, CP-02-08, CP-U-17 a 19 |
-| Pruebas unitarias, de integración y de concurrencia | KAN-43 | Finalizado | 81/81 aprobadas, cobertura 96,79 % (docs/evidencias/pruebas) |
+| Pruebas unitarias, de integración y de concurrencia | KAN-43 | Finalizado | 87/87 aprobadas, cobertura 97,07 % (docs/evidencias/pruebas) |
 | Revalidar ADR-001 con mediciones reales | KAN-43 | Finalizado | docs/evidencias/metricas (9ec4281) |
 | Capturas reales y diagramas UML de la implementación | KAN-43 | Finalizado | docs/evidencias/capturas, docs/diagramas (f9c8bf1) |
 | Investigación normativa chilena y OWASP Top 10:2025 | Entrega ES3 | Finalizado | docs/investigacion-normativa.md |
 | Alinear implementación con HU-01 de la ES2 (contraseña 15+, enlaces) | KAN-42 Requisitos | Finalizado | CP-U-27, CP-01-08 (14bec2a) |
+| Revisar coherencia de reglas: salas de estudio para estudiantes, administración que reserva, cancelación 60 min antes y contraseña 8–64 (D-07, D-08, D-15 a D-17) | KAN-42 Requisitos | Finalizado | CP-03-09, CP-04-06, CP-04-09, CP-04-10, CP-05-05, CP-U-31 a CP-U-33, DEP-17 (da2cd56) |
 | Informe final ES3 (Word) | Entrega ES3 | **En revisión** | dist/Informe_Final_CampusReserva_ES3_Luis_Chiguay.docx |
 | Publicar repositorio en GitHub y enlazarlo en el informe (V.d) | Entrega ES3 | Finalizado | https://github.com/LuisChiguay-IEI/CampusReserva |
-| Desplegar en Render (PaaS) y probar sobre el despliegue | KAN-43 | Finalizado | https://campusreserva.onrender.com; render.yaml y scripts/pruebas-despliegue.js (fc4332d); 17/17 en docs/evidencias/despliegue |
+| Desplegar en Render (PaaS) y probar sobre el despliegue | KAN-43 | Finalizado | https://campusreserva.onrender.com; render.yaml y scripts/pruebas-despliegue.js (fc4332d); 18/18 en docs/evidencias/despliegue |
 | Verificar las tareas de usuario T1 a T8 con pruebas automatizadas | KAN-38 Validación | Finalizado | docs/pruebas-usuario.md (8/8 completadas) |
 | Sesiones con usuarios reales (tiempos y satisfacción) | KAN-38 Validación | Por hacer (mejora futura) | docs/pruebas-usuario.md, sección 6 |
 | Firmar declaración de originalidad (Anexo D) | Entrega ES3 | Por hacer | Informe |

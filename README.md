@@ -6,7 +6,7 @@ Producto Mínimo Viable (MVP) desarrollado para la Evaluación Sumativa 3 de Ing
 - Autor: Luis Santiago Chiguay Espinoza (proyecto individual, gestión con Kanban en Jira, proyecto KAN).
 - Repositorio: https://github.com/LuisChiguay-IEI/CampusReserva
 - **Demo en línea: https://campusreserva.onrender.com** (Render, plan gratuito; ver [Despliegue](#despliegue-en-render)).
-- Estado: **MVP funcional, probado en local (81 pruebas) y desplegado en Render como demostración** (17 pruebas de aceptación sobre el sitio).
+- Estado: **MVP funcional, probado en local (87 pruebas) y desplegado en Render como demostración** (18 pruebas de aceptación sobre el sitio).
 - Todos los datos son **ficticios** (dominio reservado `campus.test`).
 
 ## Antecedentes
@@ -22,8 +22,8 @@ DET-01 a DET-22, modelados en Enterprise Architect) y el ADR-001 de la actividad
 | RF-01 | Registrar usuario (listado institucional, rol asignado, confirmación por enlace) | Implementado y probado. El correo se simula con un *Buzón de demostración* |
 | RF-02 | Iniciar sesión con funciones según rol | Implementado y probado |
 | RF-03 | Consultar disponibilidad por sede y fecha (espacio opcional) | Implementado y probado |
-| RF-04 | Reservar espacio (revisión, confirmación, sin duplicados concurrentes) | Implementado y probado |
-| RF-05 | Consultar y cancelar reservas propias (con historial) | Implementado y probado |
+| RF-04 | Reservar espacio (revisión, confirmación, sin duplicados concurrentes, reglas por rol) | Implementado y probado |
+| RF-05 | Consultar y cancelar reservas propias (con historial; cancelación hasta 60 min antes) | Implementado y probado |
 | RF-06 | Administrar espacios, horarios y bloqueos | Implementado y probado |
 | Apoyo | Cerrar sesión · registro de auditoría | Implementado y probado |
 
@@ -46,18 +46,31 @@ Para volver al estado inicial: `npm run db:reset`.
 
 ### Cuentas de demostración
 
-Contraseña de todas las cuentas: **`Demo Campus 2026`** (con espacios; configurable con `DEMO_PASSWORD`; solo para la demo local).
+Contraseña de todas las cuentas de ejemplo: **`Reserva2026`** (configurable con `DEMO_PASSWORD`).
 
 | Rol | Correo | Estado |
 |---|---|---|
-| Estudiante | `ana.estudiante@campus.test` | Activa, con reservas próximas, cancelada y finalizada |
-| Docente | `diego.docente@campus.test` | Activa, con reservas próximas |
+| Estudiante | `ana.estudiante@campus.test` | Activa, con reservas de salas de estudio (próxima, cancelada y finalizada) |
+| Docente | `diego.docente@campus.test` | Activa, con reservas próximas de salas de clases y laboratorios |
 | Administrador | `admin@campus.test` | Activa (creada fuera del registro público) |
 | Estudiante | `pedro.pendiente@campus.test` | **Pendiente** de confirmación (no puede iniciar sesión) |
 
 Correos del **listado institucional** disponibles para probar el registro: `nuevo.estudiante@campus.test`,
 `camila.estudiante@campus.test` (estudiantes) y `nueva.docente@campus.test` (docente).
 Cualquier otro correo es rechazado; ningún correo puede registrarse como Administrador.
+La contraseña de una cuenta nueva debe tener entre 8 y 64 caracteres, con al menos una letra y un número, sin espacios.
+
+### Reglas de reserva
+
+| Rol | Qué puede reservar | Anticipación | Límite |
+|---|---|---|---|
+| Estudiante | Solo **salas de estudio** | Hasta 7 días | 2 reservas vigentes |
+| Docente | Salas de clases, laboratorios y salas de estudio | Hasta 30 días | Sin límite |
+| Administración | Cualquier espacio (por ejemplo, para eventos), además de gestionar espacios y horarios | Hasta 30 días | Sin límite |
+
+Así un estudiante nunca deja sin sala de clases o laboratorio a un docente. Toda reserva se puede cancelar hasta
+**60 minutos antes** del inicio del bloque. Si después de actualizar tienes una base local anterior, ejecuta
+`npm run db:reset` para crear las salas de estudio.
 
 ### Buzón de demostración (limitación del correo)
 
@@ -78,7 +91,9 @@ Ver [.env.example](.env.example). Variables principales:
 | `SESSION_IDLE_MINUTES` | Expiración de sesión por inactividad | `30` |
 | `DB_PATH` | Archivo SQLite | `./data/campusreserva.db` |
 | `INSTITUTIONAL_DOMAIN` | Dominio aceptado en el registro | `campus.test` |
-| `MAX_DIAS_ANTICIPACION` | Ventana de reserva | `30` |
+| `MAX_DIAS_ANTICIPACION` / `MAX_DIAS_ANTICIPACION_ESTUDIANTE` | Días de anticipación (docentes y administración / estudiantes) | `30` / `7` |
+| `MAX_RESERVAS_ESTUDIANTE` | Reservas vigentes por estudiante | `2` |
+| `MINUTOS_LIMITE_CANCELACION` | Minutos antes del inicio hasta los que se puede cancelar | `60` |
 | `LOGIN_MAX_INTENTOS` | Intentos fallidos de login por IP cada 15 min | `10` |
 | `DEMO_MAILBOX` / `SEED_DEMO` | Buzón de demostración / datos ficticios | `true` en desarrollo |
 | `TRUST_PROXY` | `true` si corre detrás de un proxy HTTPS (PaaS) | `false` |
@@ -89,20 +104,20 @@ El archivo `.env` está en `.gitignore`: **no se suben secretos al repositorio**
 
 | Comando | Qué hace |
 |---|---|
-| `npm test` | Ejecuta las 81 pruebas automatizadas (unitarias + integración + concurrencia) |
-| `npm run test:unit` | 30 pruebas unitarias de funciones puras |
-| `npm run test:integration` | 51 pruebas de integración (49 HTTP y 2 de concurrencia entre procesos) con SQLite temporal |
+| `npm test` | Ejecuta las 87 pruebas automatizadas (unitarias + integración + concurrencia) |
+| `npm run test:unit` | 33 pruebas unitarias de funciones puras |
+| `npm run test:integration` | 54 pruebas de integración (52 HTTP y 2 de concurrencia entre procesos) con SQLite temporal |
 | `npm run test:coverage` | Pruebas con cobertura de código (instrumento integrado de Node.js) |
 | `npm run metricas` | Carga concurrente: 4 servidores, 50 usuarios, 5 rondas de reservas simultáneas |
 | `npm run capturas` | Regenera las capturas de pantalla reales con Edge |
 | `npm run diagramas` | Regenera los diagramas UML (SVG y PNG) |
 | `npm run grafico` | Regenera el gráfico de latencias a partir de la última medición |
-| `npm run pruebas:despliegue -- <URL>` | 17 pruebas de aceptación contra un despliegue HTTPS (flujos RF-01 a RF-06, seguridad y tiempos) |
+| `npm run pruebas:despliegue -- <URL>` | 18 pruebas de aceptación contra un despliegue HTTPS (flujos RF-01 a RF-06, reglas por rol, seguridad y tiempos) |
 
 Último resultado registrado (11-11-2026, Windows 11, Node.js 24.21.0):
-**81/81 pruebas aprobadas**; cobertura **96,79 % de líneas, 88,27 % de ramas, 93,48 % de funciones**;
-reservas concurrentes: **0 duplicados** en 250 solicitudes, p95 = 119,2 ms.
-Sobre el despliegue en Render: **17/17 pruebas de aceptación aprobadas**, 0 respuestas 5xx. Ver [docs/evidencias](docs/evidencias).
+**87/87 pruebas aprobadas**; cobertura **97,07 % de líneas, 88,60 % de ramas, 93,78 % de funciones**;
+reservas concurrentes: **0 duplicados** en 250 solicitudes, p95 = 116,7 ms.
+Sobre el despliegue en Render: **18/18 pruebas de aceptación aprobadas**, 0 respuestas 5xx. Ver [docs/evidencias](docs/evidencias).
 
 Las pruebas usan un reloj fijo (lunes 16-11-2026 10:00, hora de Chile) y una base temporal por archivo,
 por lo que son reproducibles en cualquier fecha.

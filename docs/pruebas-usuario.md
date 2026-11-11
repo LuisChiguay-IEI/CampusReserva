@@ -32,8 +32,8 @@ Todas las cuentas y los datos son ficticios (dominio reservado `campus.test`).
 | ID | Perfil | Tarea | Criterio de éxito | RF |
 |---|---|---|---|---|
 | T1 | Estudiante | Crear una cuenta con `nuevo.estudiante@campus.test` y activarla desde el Buzón de demostración | Cuenta activa e inicio de sesión exitoso | RF-01, RF-02 |
-| T2 | Estudiante | Buscar una sala libre en Sede Maipú para el próximo día hábil | Llega a la lista de bloques disponibles | RF-03 |
-| T3 | Estudiante | Reservar un bloque libre y obtener el código | Reserva confirmada con código | RF-04 |
+| T2 | Estudiante | Buscar una sala de estudio libre en Sede Maipú para el próximo día hábil | Llega a la lista de bloques disponibles | RF-03 |
+| T3 | Estudiante | Reservar un bloque libre de una sala de estudio y obtener el código | Reserva confirmada con código | RF-04 |
 | T4 | Estudiante | Encontrar la reserva y cancelarla | Reserva en estado Cancelada en el historial | RF-05 |
 | T5 | Docente | Buscar disponibilidad un domingo | El sistema informa que no hay bloques disponibles | RF-03 |
 | T6 | Administrador | Registrar un espacio y crear un bloque horario | Espacio y bloque creados; datos inválidos y superposiciones rechazados | RF-06 |
@@ -45,7 +45,7 @@ Todas las cuentas y los datos son ficticios (dominio reservado `campus.test`).
 | Tarea | Pruebas que la ejecutan (local) | Prueba sobre Render | Evidencia visual | Resultado |
 |---|---|---|---|---|
 | T1 | CP-01-01, CP-01-06, CP-01-07 | DEP-16 (registro, enlace con la URL pública, activación e inicio de sesión) | Capturas 02 a 07; dep-05 | Completada |
-| T2 | CP-03-01, CP-03-02 | DEP-07 | Captura 09; dep-02 | Completada |
+| T2 | CP-03-01, CP-03-09 | DEP-07, DEP-17 | Captura 28; dep-02 | Completada |
 | T3 | CP-04-01, CP-04-02 | DEP-08, DEP-09 | Capturas 11, 12 y 13 | Completada |
 | T4 | CP-05-01, CP-05-03, CP-05-04 | DEP-12 | Capturas 14, 15 y 16; dep-03 | Completada |
 | T5 | CP-03-05 | — | Captura 10 | Completada |
@@ -53,7 +53,7 @@ Todas las cuentas y los datos son ficticios (dominio reservado `campus.test`).
 | T7 | CP-06-10 | — | Captura 21 | Completada |
 | T8 | CP-06-05 | — | Captura 24 | Completada |
 
-**Tasa de éxito: 8 de 8 tareas completadas** en la ejecución automatizada (81/81 pruebas locales y 17/17 sobre Render).
+**Tasa de éxito: 8 de 8 tareas completadas** en la ejecución automatizada (87/87 pruebas locales y 18/18 sobre Render).
 Las capturas se tomaron con Microsoft Edge sobre la interfaz real; las del despliegue (`dep-*`) están en
 `docs/evidencias/despliegue/` y las locales en `docs/evidencias/capturas/`.
 

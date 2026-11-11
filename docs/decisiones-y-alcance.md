@@ -29,7 +29,7 @@ destinó a la implementación (ver `docs/jira-actualizaciones.md`).
 |---|---|---|
 | Roles y clases: retirar *gestionarHorarios* de Docente | Solo ADMINISTRADOR accede a RF-06; el servidor lo verifica en la ruta y en el servicio | CP-06-01, CP-04-06 |
 | Cuentas y verificación: estado pendiente, hash y datos del enlace | `usuario.estado` PENDIENTE/ACTIVA, `password_hash` scrypt, tabla `token_confirmacion` (hash SHA-256, vence a las 24 h, un solo uso; una nueva emisión invalida la anterior) | CP-01-01, CP-01-07, CP-01-08 |
-| Cancelación: plazo y condiciones | **Propuesta**: hasta antes del inicio del bloque (sigue pendiente de acuerdo institucional) | CP-05-05 |
+| Cancelación: plazo y condiciones | **Propuesta**: hasta 60 minutos antes del inicio del bloque (D-08; sigue pendiente de acuerdo institucional) | CP-05-05, CP-U-24 |
 | Inhabilitación de espacios con reservas futuras | **Propuesta**: se rechaza la operación e informa las reservas afectadas; no hay cancelación automática | CP-06-05 |
 | Actividad y filtro opcional | El filtro por sala o laboratorio es opcional en la interfaz y en el servidor | CP-03-04, captura 09 |
 | Concurrencia e historial | Transacción `BEGIN IMMEDIATE` + índice único parcial (solo reservas CONFIRMADAS): impide duplicados y conserva el historial de canceladas | CP-04-03, CP-04-07, CP-04-08 |
@@ -47,8 +47,8 @@ bloque se reutiliza cada semana y la multiplicidad Horario 1–0..1 Reserva se c
 | RF-01 | Estudiantes y docentes se registran con nombre, correo institucional y contraseña. Se validan los datos, se impiden correos duplicados, el rol se asigna desde el listado institucional autorizado (sin opción Administrador) y la cuenta queda pendiente hasta confirmar el correo con un enlace válido. | Alta | Sí. El envío de correo se reemplaza por el Buzón de demostración (limitación declarada) |
 | RF-02 | Estudiantes, docentes y administradores se autentican; el sistema valida la cuenta y habilita solo las funciones de su rol. Las cuentas administrativas se crean fuera del registro público. | Alta | Sí |
 | RF-03 | Estudiantes y docentes seleccionan sede y fecha (sala o laboratorio opcional) y ven espacios y horarios disponibles considerando reservas, bloqueos y espacios habilitados. La consulta no modifica datos. | Alta | Sí |
-| RF-04 | Estudiantes y docentes eligen espacio y horario, revisan y confirman. Al guardar se comprueba otra vez la disponibilidad y se impiden duplicados aun con solicitudes concurrentes. La reserva queda asociada a la cuenta y obtiene un identificador. | Alta | Sí |
-| RF-05 | Estudiantes y docentes consultan solo sus reservas y cancelan las propias que cumplan las condiciones. La cancelación requiere confirmación y conserva el historial. | Alta | Sí |
+| RF-04 | Estudiantes y docentes eligen espacio y horario, revisan y confirman. Al guardar se comprueba otra vez la disponibilidad y se impiden duplicados aun con solicitudes concurrentes. La reserva queda asociada a la cuenta y obtiene un identificador. | Alta | Sí. Estudiantes: solo salas de estudio (D-16); docentes y administración (D-17): cualquier espacio |
+| RF-05 | Estudiantes y docentes consultan solo sus reservas y cancelan las propias que cumplan las condiciones. La cancelación requiere confirmación y conserva el historial. | Alta | Sí; cancelación hasta 60 minutos antes (D-08) |
 | RF-06 | Solo el administrador registra y edita salas y laboratorios, los habilita o deshabilita y crea, modifica o bloquea horarios. Se validan sede, nombre, tipo, capacidad y configuración horaria, sin superposiciones ni efectos silenciosos sobre reservas confirmadas. | Alta | Sí |
 | Apoyo | Cerrar sesión (invalida la sesión en el servidor). | Media | Sí |
 
@@ -65,15 +65,15 @@ ejecutada). RNF-08 y RNF-09 provienen del Spike/ADR. RNF-10 y RNF-11 se agregan 
 | RNF-04 | ES2 | Integridad de reservas | La comprobación final y el guardado impiden reservas confirmadas superpuestas aun ante solicitudes simultáneas | CP-04-03, CP-04-07, CP-04-08, `npm run metricas` | Cumple: 0 duplicados en 250 solicitudes |
 | RNF-05 | ES2 | Consistencia | Las modificaciones se completan o revierten sin estados parciales | CP-U-28 (fallo simulado), CP-04-07 | Cumple |
 | RNF-06 | ES2 | Claridad de interfaz | Distingue obligatorios y opcionales, errores de campo, ausencia de resultados y fallos técnicos; muestra resumen antes de reservar o cancelar; usable en 390 px | CP-03-05, CP-05-03; capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (verificación visual y tareas de usuario automatizadas; sin sesiones con personas) |
-| RNF-07 | ES2 | Mantenibilidad | Presentación, negocio y persistencia separadas; la interfaz no accede a la base; cobertura de líneas ≥ 80 % | Estructura `src/`; `npm run test:coverage` | Cumple: 96,79 % |
-| RNF-08 | Spike RNF1 + nuevo | Rendimiento | Confirmación de reserva: p95 ≤ 800 ms con 50 solicitudes simultáneas y errores técnicos < 1 %. Consulta de disponibilidad: p95 ≤ 500 ms con 20 concurrentes | `npm run metricas` | Cumple: 119,2 ms y 0 %; 164,4 ms |
+| RNF-07 | ES2 | Mantenibilidad | Presentación, negocio y persistencia separadas; la interfaz no accede a la base; cobertura de líneas ≥ 80 % | Estructura `src/`; `npm run test:coverage` | Cumple: 97,07 % |
+| RNF-08 | Spike RNF1 + nuevo | Rendimiento | Confirmación de reserva: p95 ≤ 800 ms con 50 solicitudes simultáneas y errores técnicos < 1 %. Consulta de disponibilidad: p95 ≤ 500 ms con 20 concurrentes | `npm run metricas` | Cumple: 116,7 ms y 0 %; 234,0 ms |
 | RNF-09 | Spike RNF2 | Disponibilidad | ≥ 99,5 % durante el período académico | Requiere monitoreo continuo en un plan sin suspensión | **No verificado**: el despliegue de demostración usa el plan gratuito, que se suspende tras 15 min sin tráfico |
 | RNF-10 | Nuevo | Protección de datos personales | Minimización (nombre, correo, rol); sin IP en auditoría; tokens y sesiones guardados como hash; páginas `no-store`; datos de demostración ficticios | CP-02-08, CP-02-09; revisión del esquema | Cumple |
 | RNF-11 | Spike RNF3 + nuevo | Seguridad de sesión y entradas | Sesión de 256 bits regenerada al autenticar; expira a los 30 min de inactividad y 8 h absolutas; CSRF en todo formulario; validación en servidor; SQL parametrizado; ≤ 10 intentos fallidos por IP en 15 min; secretos fuera del código | CP-02-04 a CP-02-10, CP-U-09, CP-04-05 | Cumple |
 
-Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 1,49 s por el costo deliberado de scrypt
+Observación medida sin umbral: 50 inicios de sesión simultáneos tienen p95 = 1,36 s por el costo deliberado de scrypt
 (≈ 230 ms por verificación aislada); compromiso aceptado entre seguridad y rendimiento. En el despliegue gratuito de
-Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el plan entrega solo una fracción de CPU.
+Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,7 s), porque el plan entrega solo una fracción de CPU.
 
 ## 5. Riesgos iniciales
 
@@ -81,7 +81,7 @@ Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el p
 |---|---|---|---|---|---|
 | R1 | Dos usuarios reservan el mismo bloque al mismo tiempo | Alta | Alto | ADR-001: transacción + índice único parcial; pruebas multiproceso y de carga | Mitigado y verificado |
 | R2 | Acceso a funciones de otro rol o a reservas ajenas | Media | Alto | Autorización por rol en servidor; pertenencia verificada en SQL; 404 ante reservas ajenas | Mitigado y verificado |
-| R3 | Robo o adivinación de contraseñas | Media | Alto | scrypt, 15+ caracteres, rechazo de contraseñas comunes, mensaje genérico, límite de intentos | Mitigado y verificado |
+| R3 | Robo o adivinación de contraseñas | Media | Alto | scrypt, 8 a 64 caracteres con letra y número, rechazo de contraseñas comunes, mensaje genérico, límite de intentos | Mitigado y verificado |
 | R4 | Exposición de datos personales | Media | Alto | Minimización, hash de tokens y sesiones, auditoría sin datos sensibles, `no-store` | Mitigado (sin auditoría externa) |
 | R5 | No hay servicio de correo para confirmar cuentas | Alta | Medio | Buzón de demostración rotulado; enlace de un solo uso con vencimiento | Aceptado como limitación |
 | R6 | Plazo acotado y desarrollo individual | Alta | Medio | Kanban con WIP 1/1, alcance MVP, automatización de pruebas y evidencias | Gestionado |
@@ -89,6 +89,7 @@ Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el p
 | R8 | Cambios administrativos que alteren reservas confirmadas | Media | Alto | Regla de rechazo con detalle de reservas afectadas | Mitigado y verificado |
 | R9 | Reglas institucionales sin validar (plazos de cancelación, listado, inhabilitación) | Alta | Medio | Se implementan como propuestas explícitas y configurables; validación con la institución pendiente | Abierto |
 | R10 | El despliegue gratuito está suspendido o se reinicia durante una revisión | Alta | Bajo | Abrir el enlace un minuto antes; los datos ficticios se recargan solos; el MVP también corre en local con `npm start` | Aceptado |
+| R11 | Un estudiante ocupa una sala de clases o un laboratorio que un docente necesita | Alta | Alto | Estudiantes solo reservan salas de estudio, hasta 7 días antes y con 2 reservas vigentes como máximo (D-16) | Mitigado y verificado |
 
 ## 6. Reglas y decisiones
 
@@ -96,7 +97,8 @@ Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el p
 
 - Roles Estudiante, Docente y Administrador; cuentas administrativas creadas fuera del registro público (RF-02).
 - Rol asignado desde el listado institucional; cuenta pendiente hasta confirmar el correo (RF-01, HU-01).
-- Contraseña de **15 a 128 caracteres**, con espacios permitidos y rechazo de contraseñas comunes (HU-01).
+- Rechazo de contraseñas comunes (HU-01). La regla de largo de la HU-01 (15 a 128 caracteres con espacios) se
+  reemplazó por la decisión D-15 tras revisar la coherencia del prototipo.
 - Enlace de confirmación de **un solo uso, vigente 24 horas**; una nueva emisión invalida la anterior (HU-01).
 - La consulta no modifica reservas; considera habilitación, horarios, bloqueos y reservas confirmadas (RF-03).
 - Revisión del resumen, nueva comprobación al guardar e identificador de la reserva (RF-04, HU-04).
@@ -114,14 +116,17 @@ Render un inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s), porque el p
 | D-04 | Buzón de demostración en lugar de correo real, activable solo con `DEMO_MAILBOX=true` | No hay servicio de correo disponible |
 | D-05 | El enlace abre una página con botón; la activación ocurre por POST | Los escáneres de enlaces no consumen el token |
 | D-06 | Horario = bloque semanal recurrente entre 07:00 y 23:00, de 30 a 240 min (refina la clase *Horario* de la ES2) | Modelo simple, validable y reutilizable |
-| D-07 | Reservas desde hoy hasta 30 días; no se reservan bloques ya iniciados | Ventana acotada y coherente |
-| D-08 | Cancelación permitida hasta antes del inicio del bloque | La ES2 dejó el plazo abierto; se propone una condición verificable |
+| D-07 | Reservas desde hoy: docentes y administración hasta 30 días, estudiantes hasta 7; no se reservan bloques ya iniciados | Las clases se planifican primero; ventana acotada |
+| D-08 | Cancelación permitida hasta 60 minutos antes del inicio del bloque | La ES2 dejó el plazo abierto; evita liberar un espacio cuando ya no se puede reutilizar |
 | D-09 | Bloqueo = bloque horario en una fecha con motivo; se puede quitar | Mantenciones y eventos puntuales |
 | D-10 | Deshabilitar un espacio, modificar o desactivar un bloque o bloquear un horario con reservas vigentes se **rechaza** listando las reservas | La ES2 exigía no afectar reservas y no asumir cancelación automática |
 | D-11 | La sede de un espacio no se edita después de crearlo | Evita mover reservas existentes a otra sede |
 | D-12 | Registro de auditoría de eventos de seguridad, visible solo para el administrador | Trazabilidad y detección (OWASP A09) |
 | D-13 | Las reservas ajenas responden 404 (no 403) | No revelar la existencia de reservas de otras personas |
 | D-14 | Despliegue de demostración en Render (PaaS, plan gratuito) definido en `render.yaml`, con `DEMO_MAILBOX=true` y datos ficticios que se restablecen al reiniciar | Permite revisar el MVP desde un enlace público y verificar HTTPS; el buzón se mantiene porque no hay servicio de correo |
+| D-15 | Contraseña de 8 a 64 caracteres, con al menos una letra y un número, sin espacios y sin contraseñas comunes (reemplaza el largo de la HU-01) | Regla habitual para los usuarios; mínimo de 8 de OWASP ASVS, reforzado con letra, número y lista de comunes |
+| D-16 | Nuevo tipo de espacio «Sala de estudio». Los estudiantes solo reservan salas de estudio, con un máximo de 2 reservas vigentes | Un estudiante no puede dejar sin sala de clases o laboratorio a un docente que la necesita para una clase |
+| D-17 | La administración también puede reservar cualquier espacio (por ejemplo, para eventos) | Antes el administrador solo gestionaba espacios |
 
 ## 7. Alcance y limitaciones del MVP
 

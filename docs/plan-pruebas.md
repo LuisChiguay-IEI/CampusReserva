@@ -1,7 +1,9 @@
 # Plan de Pruebas Integral — CampusReserva (MVP)
 
-Versión 1.1 · 11-11-2026 · Responsable: Luis Santiago Chiguay Espinoza
-(1.1: se agregan CP-U-29/30, las pruebas de aceptación sobre el despliegue en Render y sus tiempos de respuesta)
+Versión 1.2 · 11-11-2026 · Responsable: Luis Santiago Chiguay Espinoza
+(1.1: CP-U-29/30, pruebas de aceptación sobre el despliegue en Render y sus tiempos de respuesta.
+1.2: reglas de reserva por rol, cancelación hasta 60 minutos antes y contraseña de 8 a 64 con letra y número
+(D-07, D-08, D-15 a D-17): CA-03.7, CA-04.6 a CA-04.8 y CA-05.5; CP-03-09, CP-04-09, CP-04-10, CP-U-31 a CP-U-33 y DEP-17)
 
 ## 1. Objetivo y alcance
 
@@ -16,13 +18,13 @@ de disponibilidad, pruebas de penetración externas, auditoría formal de accesi
 
 | Nivel | Qué verifica | Herramienta | Cantidad | Estado |
 |---|---|---|---|---|
-| Unitarias | Funciones puras: validaciones, fechas, hash y tokens, cálculo de disponibilidad, reglas de cancelación, reversión de transacciones, configuración por entorno | `node:test` + `node:assert` | 30 | Ejecutadas: 30/30 aprobadas |
-| Integración | Recorridos HTTP completos contra una instancia real (Express + SQLite temporal): cuentas, sesión, roles, disponibilidad, reservas, administración | `node:test` + `fetch` nativo con cookies y CSRF | 49 | Ejecutadas: 49/49 aprobadas |
+| Unitarias | Funciones puras: validaciones, fechas, hash y tokens, cálculo de disponibilidad, reglas de cancelación, políticas por rol, reversión de transacciones, configuración por entorno | `node:test` + `node:assert` | 33 | Ejecutadas: 33/33 aprobadas |
+| Integración | Recorridos HTTP completos contra una instancia real (Express + SQLite temporal): cuentas, sesión, roles, disponibilidad, reservas, administración | `node:test` + `fetch` nativo con cookies y CSRF | 52 | Ejecutadas: 52/52 aprobadas |
 | Concurrencia | 8 procesos independientes sobre el mismo archivo SQLite compiten por el mismo bloque | `child_process.fork` | 2 | Ejecutadas: 2/2 aprobadas |
-| Aceptación sobre el despliegue | Flujos RF-01 a RF-06 y cierre de sesión, HTTPS y redirección, cabeceras, cookie `__Host-`/Secure, CSRF, roles y 10 reservas simultáneas contra https://campusreserva.onrender.com | `scripts/pruebas-despliegue.js` | 17 | Ejecutadas: 17/17 aprobadas |
-| Carga / rendimiento | Latencia y errores con 4 servidores y 50 usuarios simultáneos; revalidación del ADR-001 | `scripts/carga-concurrente.js` | 1 corrida (5 rondas) | Ejecutada |
+| Aceptación sobre el despliegue | Flujos RF-01 a RF-06 y cierre de sesión, HTTPS y redirección, cabeceras, cookie `__Host-`/Secure, CSRF, roles, reglas por rol y 10 reservas simultáneas contra https://campusreserva.onrender.com | `scripts/pruebas-despliegue.js` | 18 | Ejecutadas: 18/18 aprobadas |
+| Carga / rendimiento | Latencia y errores con 4 servidores y 50 docentes simultáneos; revalidación del ADR-001 | `scripts/carga-concurrente.js` | 1 corrida (5 rondas) | Ejecutada |
 | Cobertura de código | Líneas, ramas y funciones de `src/` ejercitadas por las pruebas | `--experimental-test-coverage` de Node.js | — | Ejecutada |
-| Interfaz (evidencia) | Recorridos visuales reales en Edge, incluida vista móvil | `scripts/capturas.js` (playwright-core) | 27 capturas | Generadas |
+| Interfaz (evidencia) | Recorridos visuales reales en Edge, incluida vista móvil | `scripts/capturas.js` (playwright-core) | 28 capturas | Generadas |
 | Tareas de usuario | Las 8 tareas del guion (T1 a T8) de estudiante, docente y administrador, ejecutadas por las pruebas automatizadas locales y sobre Render, con capturas reales | `docs/pruebas-usuario.md` | 8 tareas | 8/8 completadas (automatizadas; sin sesiones con personas) |
 
 **Entorno de ejecución:** Windows 11 (10.0.26200), AMD Ryzen 9 8940HX (32 núcleos lógicos), 63 GB RAM,
@@ -32,8 +34,9 @@ Node.js 24.21.0, SQLite 3.53.4, Microsoft Edge (capturas). Cliente y servidor en
 TLS en el proxy de Render, disco efímero (la base vuelve a los datos ficticios al reiniciar). Las pruebas sobre el
 despliegue se ejecutan desde el equipo de desarrollo en Chile, por lo que sus tiempos incluyen la latencia de red.
 
-**Datos de prueba:** datos ficticios del seed (`src/db/seed.js`): 2 sedes, 7 espacios (1 deshabilitado), 249 bloques
-horarios, 4 cuentas, 6 correos en el listado institucional, 6 reservas (1 cancelada, 1 pasada) y 1 bloqueo.
+**Datos de prueba:** datos ficticios del seed (`src/db/seed.js`): 2 sedes, 10 espacios (3 salas de estudio y 1
+deshabilitado), 354 bloques horarios, 4 cuentas, 6 correos en el listado institucional, 7 reservas (1 cancelada,
+1 pasada; las de la estudiante en salas de estudio y las del docente en salas de clases y laboratorios) y 1 bloqueo.
 Las pruebas fijan el reloj en **lunes 16-11-2026 10:00 (America/Santiago)** y crean una base temporal por archivo,
 por lo que el resultado no depende del día en que se ejecuten.
 
@@ -45,11 +48,11 @@ menos una prueba, cobertura de líneas ≥ 80 % y umbrales del ADR-001 cumplidos
 
 ```bash
 npm install
-npm test                    # 81 pruebas (unitarias + integración + concurrencia)
+npm test                    # 87 pruebas (unitarias + integración + concurrencia)
 npm run test:coverage       # mismas pruebas con informe de cobertura
 npm run metricas            # carga concurrente (≈ 15 s); guarda docs/evidencias/metricas/
 npm run capturas            # capturas reales (requiere Edge)
-npm run pruebas:despliegue -- https://campusreserva.onrender.com   # 17 pruebas sobre el despliegue
+npm run pruebas:despliegue -- https://campusreserva.onrender.com   # 18 pruebas sobre el despliegue
 ```
 
 Para guardar evidencia completa (como se hizo en esta entrega):
@@ -66,7 +69,7 @@ En el reporte JUnit se reemplazó el nombre del equipo (`hostname`) por `equipo-
 **Pruebas sobre el despliegue:** el script reutiliza el cliente HTTP de las pruebas de integración (cookies y CSRF).
 Para no saturar el plan gratuito, la concurrencia usa solo 10 solicitudes, las muestras de tiempo son secuenciales,
 no se prueba el bloqueo por intentos fallidos y las reservas de prueba se cancelan al terminar. Deja un espacio
-espacio "Sala E-hhmm" y una cuenta registrada, que desaparecen cuando el servicio se reinicia.
+"Sala D-hhmm" y una cuenta registrada, que desaparecen cuando el servicio se reinicia.
 
 ## 4. Criterios de aceptación por requerimiento
 
@@ -78,7 +81,7 @@ Los criterios derivan de los escenarios Dado/Cuando/Entonces de las historias HU
 | | CA-01.2 | Un correo ya registrado es rechazado |
 | | CA-01.3 | Un correo fuera del listado o de otro dominio es rechazado |
 | | CA-01.4 | No es posible obtener el rol Administrador mediante el registro |
-| | CA-01.5 | Datos inválidos (incluida una contraseña de menos de 15 caracteres o común) se rechazan con un mensaje por campo y sin crear la cuenta |
+| | CA-01.5 | Datos inválidos (incluida una contraseña fuera de 8 a 64 caracteres, sin letra o sin número, con espacios o común) se rechazan con un mensaje por campo y sin crear la cuenta |
 | | CA-01.6 | Una cuenta pendiente no puede iniciar sesión |
 | | CA-01.7 | Un enlace válido activa la cuenta; uno inexistente, usado o expirado es rechazado; una nueva emisión invalida la anterior |
 | RF-02 (HU-02) | CA-02.1 | Con credenciales válidas cada rol accede solo a su página de inicio y funciones |
@@ -88,21 +91,24 @@ Los criterios derivan de los escenarios Dado/Cuando/Entonces de las historias HU
 | | CA-02.5 | Se exige token CSRF, se envían cabeceras de seguridad y se limitan los intentos fallidos |
 | RF-03 (HU-03) | CA-03.1 | Con sede y fecha se muestran los bloques libres de los espacios habilitados |
 | | CA-03.2 | Se excluyen bloques reservados, bloqueados, de espacios deshabilitados y ya iniciados |
-| | CA-03.3 | El filtro por sala o laboratorio es opcional y se valida contra la sede |
+| | CA-03.3 | El filtro por espacio es opcional y se valida contra la sede |
 | | CA-03.4 | Una consulta sin resultados lo informa claramente |
 | | CA-03.5 | Fechas pasadas, fuera de la ventana o sedes inválidas se rechazan |
 | | CA-03.6 | La consulta no modifica datos |
+| | CA-03.7 | Cada rol ve solo lo que puede reservar y dentro de su ventana: el estudiante, salas de estudio hasta 7 días; docentes y administración, todo hasta 30 días |
 | RF-04 (HU-04) | CA-04.1 | La revisión no escribe; la confirmación crea la reserva asociada a la cuenta con identificador |
 | | CA-04.2 | Un bloque ya reservado se rechaza (409) |
 | | CA-04.3 | Ante solicitudes simultáneas por el mismo bloque se confirma exactamente una |
 | | CA-04.4 | Bloques bloqueados, espacios deshabilitados y bloques iniciados se rechazan |
 | | CA-04.5 | Selecciones manipuladas (otro día, otro espacio, fechas pasadas, texto) se rechazan |
-| | CA-04.6 | El administrador no puede reservar |
+| | CA-04.6 | Un estudiante no reserva salas de clases ni laboratorios (403 auditado); la administración sí puede reservar |
+| | CA-04.7 | Un estudiante tiene como máximo 2 reservas vigentes |
+| | CA-04.8 | La anticipación depende del rol: estudiante hasta 7 días, docente y administración hasta 30 |
 | RF-05 (HU-05) | CA-05.1 | Solo se listan las reservas de la cuenta autenticada |
 | | CA-05.2 | Ver o cancelar una reserva ajena responde 404 y no cambia nada |
 | | CA-05.3 | La cancelación exige una confirmación explícita |
 | | CA-05.4 | Cancelar conserva el registro (historial) y libera el horario |
-| | CA-05.5 | No se cancela dos veces ni una reserva cuyo bloque ya comenzó |
+| | CA-05.5 | No se cancela dos veces ni con menos de 60 minutos de anticipación al inicio del bloque |
 | RF-06 (HU-06) | CA-06.1 | Solo el administrador accede a la administración |
 | | CA-06.2 | Registrar y editar espacios valida sede, nombre, tipo y capacidad; el nombre es único por sede |
 | | CA-06.3 | Habilitar/deshabilitar funciona; deshabilitar con reservas vigentes se rechaza indicando cuáles |
@@ -126,7 +132,7 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | CP-01-06 | RF-01 / CA-01.6 | Cuenta recién registrada (PENDIENTE) | Iniciar sesión | 401 "pendiente de confirmación" | Aprobado | Captura 05 |
 | CP-01-07 | RF-01 / CA-01.7 | Enlace del buzón | Abrir enlace (GET), confirmar (POST), iniciar sesión, reutilizar enlace | GET no activa; POST activa (303); login 303; reutilización 400 | Aprobado | Capturas 06, 07 |
 | CP-01-08 | RF-01 / CA-01.7 | Token inexistente; enlace de otra cuenta con reloj +25 h | Confirmar ambos; iniciar sesión con la cuenta expirada | 400 y 400; cuenta sigue PENDIENTE; el login emite un enlace nuevo | Aprobado | — |
-| CP-02-01 | RF-02 / CA-02.1 | Cuentas de estudiante, docente y administrador | Iniciar sesión con cada una y seguir la redirección | Estudiante/docente → /disponibilidad; administrador → /admin/espacios (200) | Aprobado | Capturas 09, 19 |
+| CP-02-01 | RF-02 / CA-02.1 | Cuentas de estudiante, docente y administrador | Iniciar sesión con cada una y seguir la redirección | Estudiante/docente → /disponibilidad; administrador → /admin/espacios (200) | Aprobado | Capturas 28, 09, 19 |
 | CP-02-02 | RF-02 / CA-02.2 | Contraseña errónea; correo inexistente | Iniciar sesión con ambos y acceder a /mis-reservas | 401 con el mismo mensaje genérico; sin sesión (303 a /login); eventos LOGIN_FALLIDO | Aprobado | Captura 08 |
 | CP-02-03 | RF-02 / CA-01.6 | `pedro.pendiente@campus.test` (seed) | Iniciar sesión | 401 "pendiente de confirmación" | Aprobado | — |
 | CP-02-04 | RF-02 / CA-02.4 | Cookie de sesión anónima previa | Iniciar sesión y comparar cookies | Identificador distinto tras autenticarse | Aprobado | — |
@@ -136,29 +142,32 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | CP-02-08 | RF-02 / CA-02.5 | — | GET /login | CSP, nosniff, DENY, no-store, sin X-Powered-By; cookie HttpOnly y SameSite=Lax | Aprobado | — |
 | CP-02-09 | RF-02 / CA-02.4 | Sesión de Ana | Buscar el valor de la cookie en la tabla `sesion` | No existe: solo se guarda su hash | Aprobado | — |
 | CP-02-10 | RF-02 / CA-02.5 | Límite configurado en 3 | 3 intentos fallidos y luego uno correcto | 401 ×3 y 429 "Demasiados intentos" | Aprobado | — |
-| CP-03-01 | RF-03 / CA-03.1, 03.2 | Martes 17-11, Sede Maipú | Consultar | 200; ofrece A-101 12:00; no ofrece A-101 08:30/10:15 (reservados); ofrece A-102 08:30 (reserva cancelada) | Aprobado | Captura 09 |
-| CP-03-02 | RF-03 / CA-03.2 | Bloqueo L-202 12:00; B-105 deshabilitada | Consultar | No ofrece L-202 12:00 ni 19:00 ni ningún bloque de B-105 | Aprobado | Captura 09 |
-| CP-03-03 | RF-03 / CA-03.2 | Hoy lunes 10:00 | Consultar hoy | No ofrece 08:30; sí 10:15 | Aprobado | — |
-| CP-03-04 | RF-03 / CA-03.3 | Espacio A-102 | Filtrar por A-102; luego A-102 con sede Centro | Solo bloques de A-102; con otra sede 422 | Aprobado | — |
+| CP-03-01 | RF-03 / CA-03.1, 03.2 | Docente; martes 17-11, Sede Maipú | Consultar | 200; ofrece A-101 12:00; no ofrece A-101 08:30 ni E-01 10:15 (reservados); ofrece E-02 08:30 (reserva cancelada) | Aprobado | Captura 09 |
+| CP-03-02 | RF-03 / CA-03.2 | Docente; bloqueo L-202 12:00; B-105 deshabilitada | Consultar | No ofrece L-202 12:00 ni 19:00 ni ningún bloque de B-105 | Aprobado | Captura 09 |
+| CP-03-03 | RF-03 / CA-03.2 | Docente; hoy lunes 10:00 | Consultar hoy | No ofrece 08:30; sí 10:15 | Aprobado | — |
+| CP-03-04 | RF-03 / CA-03.3 | Docente; espacio A-102 | Filtrar por A-102; luego A-102 con sede Centro | Solo bloques de A-102; con otra sede 422 | Aprobado | — |
 | CP-03-05 | RF-03 / CA-03.4 | Domingo 22-11, Sede Centro | Consultar | 200 "No hay espacios disponibles" | Aprobado | Captura 10 |
-| CP-03-06 | RF-03 / CA-03.5 | Fecha pasada, +44 días, sede 999, `1 OR 1=1` | Consultar cada una | 422 en todas | Aprobado | — |
+| CP-03-06 | RF-03 / CA-03.5 | Fecha pasada, +44 días (docente), sede 999, `1 OR 1=1` | Consultar cada una | 422 en todas | Aprobado | — |
 | CP-03-07 | RF-03 / CA-03.6 | Copia de la tabla `reserva` | Hacer dos consultas | Tabla idéntica antes y después | Aprobado | — |
-| CP-03-08 | RF-03 / CA-02.3 | Administrador; usuario anónimo | Acceder a /disponibilidad | 403; anónimo 303 a /login | Aprobado | — |
-| CP-04-01 | RF-04 / CA-04.1 | A-101 martes 12:00 libre | Abrir revisión; confirmar | Revisión 200 sin escribir; confirmación 303 a /reservas/:id; "Reserva CR-… confirmada"; asociada a Ana | Aprobado | Capturas 11, 12 |
+| CP-03-08 | RF-03 / CA-02.1 | Administrador; usuario anónimo | Acceder a /disponibilidad | Administrador 200; anónimo 303 a /login | Aprobado | — |
+| CP-03-09 | RF-03 / CA-03.7 | Estudiante y docente; miércoles 25-11 (9 días) | Consultar martes; filtrar por A-101; consultar el 25-11 | Al estudiante solo se le ofrecen salas de estudio y ve la regla; filtro A-101 422; el 25-11: estudiante 422, docente 200 | Aprobado | Captura 28 |
+| CP-04-01 | RF-04 / CA-04.1 | Ana; sala de estudio E-01 martes 12:00 libre | Abrir revisión; confirmar | Revisión 200 sin escribir; confirmación 303 a /reservas/:id; "Reserva CR-… confirmada"; asociada a Ana | Aprobado | Capturas 11, 12 |
 | CP-04-02 | RF-04 / CA-04.2 | Bloque reservado en CP-04-01 | Diego confirma el mismo bloque | 409 "acaba de ser reservado"; sigue 1 reserva | Aprobado | Captura 13 |
-| CP-04-03 | RF-04 / CA-04.3 | A-101 martes 14:30 libre | 20 confirmaciones HTTP simultáneas (Ana y Diego) | 1 × 303 y 19 × 409; 1 reserva en la base | Aprobado | — |
-| CP-04-04 | RF-04 / CA-04.4 | L-202 bloqueado; B-105 deshabilitada; lunes 08:30 iniciado | Confirmar cada uno | 409 con mensaje específico en los tres | Aprobado | — |
-| CP-04-05 | RF-04 / CA-04.5 | Horario de miércoles con fecha martes; horario de otro espacio; fecha pasada; `1' OR '1'='1` | Confirmar cada uno | 422, 404, 422 y 422 | Aprobado | — |
-| CP-04-06 | RF-04 / CA-04.6 | Sesión de administrador | Confirmar una reserva | 403; sin reserva; evento ACCESO_DENEGADO | Aprobado | — |
-| CP-04-07 | RF-04 / CA-04.3 | A-102 miércoles 08:30 libre | 8 procesos con conexión propia ejecutan el servicio real a la vez | 1 CONFIRMADA y 7 rechazadas; 1 en la base | Aprobado | — |
+| CP-04-03 | RF-04 / CA-04.3 | A-101 martes 14:30 libre | 20 confirmaciones HTTP simultáneas (docente y administración) | 1 × 303 y 19 × 409; 1 reserva en la base | Aprobado | — |
+| CP-04-04 | RF-04 / CA-04.4 | Docente; L-202 bloqueado; B-105 deshabilitada; lunes 08:30 iniciado | Confirmar cada uno | 409 con mensaje específico en los tres | Aprobado | — |
+| CP-04-05 | RF-04 / CA-04.5 | Docente; horario de miércoles con fecha martes; horario de otro espacio; fecha pasada; `1' OR '1'='1` | Confirmar cada uno | 422, 404, 422 y 422 | Aprobado | — |
+| CP-04-06 | RF-04 / CA-04.6 | Ana (estudiante); administración | Ana confirma A-102 y abre la revisión de L-202; la administración confirma A-102 | 403 y 403 auditados "solo puedes reservar salas de estudio"; la administración 303 | Aprobado | — |
+| CP-04-07 | RF-04 / CA-04.3 | A-102 miércoles 08:30 libre | 8 procesos (docente y administración) con conexión propia ejecutan el servicio real a la vez | 1 CONFIRMADA y 7 rechazadas; 1 en la base | Aprobado | — |
 | CP-04-08 | RF-04 / CA-04.3 | A-102 miércoles 10:15 libre | 8 procesos insertan **sin verificar** a la vez | El índice único deja solo 1 | Aprobado | — |
+| CP-04-09 | RF-04 / CA-04.7 | Ana con 2 reservas vigentes (seed y CP-04-01) | Reservar E-02 martes 12:00; cancelar una; reintentar | 409 "Ya tienes 2 reservas vigentes"; tras cancelar, 303 | Aprobado | — |
+| CP-04-10 | RF-04 / CA-04.8 | Miércoles 25-11 (9 días) | Ana confirma E-01; Diego confirma A-101 | Ana 422 "hasta 7 días"; Diego 303 | Aprobado | — |
 | CP-05-01 | RF-05 / CA-05.1 | Reservas de Ana y Diego | Ana abre Mis reservas | Ve sus códigos, no los de Diego; historial con Cancelada y Finalizada | Aprobado | Captura 14 |
 | CP-05-02 | RF-05 / CA-05.2 | Reserva de Diego | Ana abre el detalle, la confirmación y envía la cancelación | 404, 404 y 404; la reserva sigue CONFIRMADA | Aprobado | Captura 17 |
 | CP-05-03 | RF-05 / CA-05.3 | Reserva de Ana | Abrir /reservas/:id/cancelar | Página de confirmación; sin cambios | Aprobado | Captura 15 |
-| CP-05-04 | RF-05 / CA-05.4 | Reserva de Ana martes 10:15 | Confirmar cancelación; Diego consulta y reserva ese bloque | Estado CANCELADA con fecha; el bloque vuelve a ofrecerse y Diego lo reserva (303) | Aprobado | Captura 16 |
-| CP-05-05 | RF-05 / CA-05.5 | Reserva ya cancelada; reloj martes 08:45 | Cancelar de nuevo; Diego cancela su bloque de 08:30 | 409 y 409 "aún no ha comenzado"; sin cambios | Aprobado | — |
+| CP-05-04 | RF-05 / CA-05.4 | Reserva de Ana martes 10:15 (sala de estudio E-01) | Confirmar cancelación; Diego consulta y reserva ese bloque | Estado CANCELADA con fecha; el bloque vuelve a ofrecerse y Diego lo reserva (303) | Aprobado | Captura 16 |
+| CP-05-05 | RF-05 / CA-05.5 | Reserva ya cancelada; reloj martes 09:30; bloques de Diego 08:30 (iniciado) y 10:15 (faltan 45 min) | Cancelar de nuevo; Diego cancela ambos | 409, 409 y 409 "hasta 60 minutos antes del inicio"; sin cambios | Aprobado | — |
 | CP-06-01 | RF-06 / CA-06.1 | Estudiante, docente, anónimo | Acceder y enviar operaciones de administración | 403/403/303 a /login; sin cambios; ≥ 3 eventos ACCESO_DENEGADO | Aprobado | Captura 18 |
-| CP-06-02 | RF-06 / CA-06.2 | — | Registrar "Sala D-210"; registrar datos inválidos; sede 999 | 303 y espacio habilitado; 422 con mensajes; 422 "La sede no existe" | Aprobado | Captura 20 |
+| CP-06-02 | RF-06 / CA-06.2 | — | Registrar "Sala D-210" y "Sala de estudio E-03"; registrar datos inválidos; sede 999 | 303 y 303 (tipo SALA_ESTUDIO); 422 con mensajes; 422 "La sede no existe" | Aprobado | Captura 20 |
 | CP-06-03 | RF-06 / CA-06.2 | "Sala A-101" existe en Maipú | Registrar "sala a-101" en Maipú y "Sala A-101" en Centro | 422 duplicado; 303 en otra sede | Aprobado | — |
 | CP-06-04 | RF-06 / CA-06.2 | Sala A-102 | Editar nombre y capacidad; luego capacidad "muchos" | Cambios guardados; luego 422 sin cambios | Aprobado | — |
 | CP-06-05 | RF-06 / CA-06.3 | A-101 con reservas vigentes | Deshabilitar | Mensaje "No se puede deshabilitar" con código CR-…; sigue habilitado | Aprobado | Captura 24 |
@@ -166,7 +175,7 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | CP-06-07 | RF-06 / CA-06.4 | Bloques de A-101 los lunes | Crear 09:00–10:30, 18:00–17:00 y 22:15–23:00 | 409 superposición; 422 orden inválido; 303 bloque contiguo | Aprobado | Captura 22 |
 | CP-06-08 | RF-06 / CA-06.5 | A-101 martes 10:15 reservado | Modificar y desactivar el bloque | 409 "no cancela reservas automáticamente"; bloque sin cambios y activo | Aprobado | — |
 | CP-06-09 | RF-06 / CA-06.4 | A-101 jueves 16:15 sin reservas | Modificar a 15:30–17:00, luego a 16:15–18:00, luego desactivar | 409 superposición; 303 guardado; desactivado | Aprobado | — |
-| CP-06-10 | RF-06 / CA-06.6, CA-04.4 | A-101 martes 12:00 libre | Bloquear; Ana consulta y reserva; quitar bloqueo; consultar | Desaparece de la disponibilidad, reserva 409; reaparece al quitar el bloqueo | Aprobado | Captura 21 |
+| CP-06-10 | RF-06 / CA-06.6, CA-04.4 | A-101 martes 12:00 libre | Bloquear; el docente consulta y reserva; quitar bloqueo; consultar | Desaparece de la disponibilidad, reserva 409; reaparece al quitar el bloqueo | Aprobado | Captura 21 |
 | CP-06-11 | RF-06 / CA-06.6 | A-101 martes 10:15 reservado | Bloquear ese bloque; bloquear un bloque de martes con fecha miércoles | 409 "existe la reserva confirmada CR-…"; 422 día incorrecto | Aprobado | Captura 23 |
 | CP-06-12 | RF-06 / CA-06.1 | Eventos previos | Administrador y estudiante abren /admin/auditoria | 200 con ESPACIO_CREADO y ACCESO_DENEGADO; estudiante 403 | Aprobado | Captura 25 |
 
@@ -180,40 +189,44 @@ Precondición común: base con datos ficticios y reloj en lunes 16-11-2026 10:00
 | CP-U-13 a CP-U-16 | `fechas` | Zona horaria de Chile, día de semana, superposición (contiguos no se superponen), fechas reales | Aprobados |
 | CP-U-17 a CP-U-19 | `seguridad` | Hash scrypt con sal, verificación y hash corrupto, tokens de 256 bits, comparación en tiempo constante | Aprobados |
 | CP-U-20 a CP-U-22 | `calcularDisponibilidad` | Excluye reservados y bloqueados, bloques ya iniciados hoy, resultado vacío | Aprobados |
-| CP-U-23 a CP-U-26 | `presentarReserva`, `describirReservas` | Estados Confirmada/En curso/Finalizada/Cancelada, cancelable, mensaje de reservas afectadas | Aprobados |
-| CP-U-27 | `validarRegistro`, `esContrasenaComun` | Rechazo de contraseñas comunes o predecibles y aceptación de frases con espacios (HU-01) | Aprobado |
+| CP-U-23 a CP-U-26 | `presentarReserva`, `describirReservas` | Estados Confirmada/En curso/Finalizada/Cancelada, cancelable hasta 60 minutos antes, mensaje de reservas afectadas | Aprobados |
+| CP-U-27 | `validarRegistro`, `esContrasenaComun` | Rechazo de contraseñas comunes aunque cumplan el largo y tengan letra y número (D-15) | Aprobado |
 | CP-U-28 | `transaccion` | Un fallo simulado dentro de la transacción no deja estado parcial (ROLLBACK, RNF-05) | Aprobado |
 | CP-U-29 | `cargarConfig` | La URL pública usa `BASE_URL`, luego `RENDER_EXTERNAL_URL` (definida por Render) y por último localhost | Aprobado |
 | CP-U-30 | `cargarConfig` | En producción exige `SESSION_SECRET` y solo activa el buzón y los datos de demostración si se piden explícitamente | Aprobado |
+| CP-U-31 | `politicas` | El estudiante solo reserva salas de estudio; docente y administración reservan todos los tipos | Aprobado |
+| CP-U-32 | `politicas` | Anticipación (7 o 30 días) y límite de reservas vigentes (2 o sin límite) según el rol | Aprobado |
+| CP-U-33 | `minutosHasta`, `esCancelable` | Minutos hasta el inicio, también entre días; cancelable hasta 60 minutos antes | Aprobado |
 
 ## 6.1 Pruebas de aceptación sobre el despliegue (Render)
 
-Ejecutadas el 11-11-2026 a las 03:20 (hora de Chile) contra https://campusreserva.onrender.com (commit 4bc2f40) con
+Ejecutadas el 11-11-2026 a las 04:26 (hora de Chile) contra https://campusreserva.onrender.com (commit da2cd56) con
 `npm run pruebas:despliegue`. Evidencia: `docs/evidencias/despliegue/resultado-despliegue.md` y `.json`, y 5 capturas.
 Son pruebas automatizadas de sistema sobre el entorno desplegado; **no** son pruebas con usuarios.
 
 | ID | Verifica | Resultado esperado | Obtenido | Estado |
 |---|---|---|---|---|
-| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 203 ms | Aprobado |
+| DEP-01 | El servicio responde por HTTPS | 200 con el inicio de sesión | 200 en 252 ms | Aprobado |
 | DEP-02 | Redirección de HTTP a HTTPS | 3xx hacia https:// | 301 → https://campusreserva.onrender.com/login | Aprobado |
 | DEP-03 | Cabeceras en producción | HSTS, CSP `default-src 'self'`, nosniff, DENY, no-store, sin X-Powered-By | Todas presentes; HSTS `max-age=31536000; includeSubDomains` | Aprobado |
 | DEP-04 | RF-02 inicio de sesión y cookie | 303 a /disponibilidad; cookie `__Host-cr_sesion` con Secure, HttpOnly, SameSite=Lax, Path=/ y sin Domain | Igual | Aprobado |
 | DEP-05 | RF-02 credenciales inválidas | Mismo mensaje genérico para contraseña errónea y correo inexistente | 401 y 401 con el mismo mensaje | Aprobado |
 | DEP-06 | RF-01 cuenta pendiente | No inicia sesión; "pendiente de confirmación" | 401 | Aprobado |
-| DEP-07 | RF-03 consulta por sede y fecha | 200 con bloques disponibles | 24 bloques (12-11-2026, Sede Maipú) | Aprobado |
-| DEP-08 | RF-04 reserva | Revisión 200; confirmación 303 con código; aparece en Mis reservas | CR-000007 | Aprobado |
+| DEP-07 | RF-03 consulta del estudiante por sede y fecha | 200 con bloques disponibles de salas de estudio | 13 bloques (12-11-2026, Sede Maipú) | Aprobado |
+| DEP-08 | RF-04 reserva del estudiante | Revisión 200; confirmación 303 con código; aparece en Mis reservas | CR-000008 | Aprobado |
 | DEP-09 | RF-04 bloque ocupado | 409 "acaba de ser reservado" | 409 | Aprobado |
-| DEP-10 | RF-04 / ADR-001 concurrencia | 10 solicitudes simultáneas de 2 usuarios: 1 confirmada y 9 con 409 | 1 y 9 | Aprobado |
+| DEP-10 | RF-04 / ADR-001 concurrencia | 10 solicitudes simultáneas de docente y administración: 1 confirmada y 9 con 409 | 1 y 9 | Aprobado |
 | DEP-11 | RF-05 reservas ajenas | 404 al ver y al cancelar; sin cambios | 404 y 404 | Aprobado |
-| DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000007 cancelada | Aprobado |
+| DEP-12 | RF-05 cancelación | Confirmación previa; 303 a Mis reservas; queda en el historial | CR-000008 cancelada | Aprobado |
 | DEP-13 | OWASP A01 CSRF | Formulario sin token: 403 | 403 | Aprobado |
 | DEP-14 | RF-06 / OWASP A01 roles | Estudiante en /admin/espacios: 403 | 403 | Aprobado |
-| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala E-0320" registrado | Aprobado |
+| DEP-15 | RF-06 espacios | Capacidad 0 rechazada (422); espacio válido registrado y listado | 422; "Sala D-0425" registrado | Aprobado |
 | DEP-16 | RF-01 registro y confirmación | Correo del listado registrado; enlace del buzón con la URL pública; activación; inicio de sesión | `nuevo.estudiante@campus.test` activada | Aprobado |
-| DEP-17 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
+| DEP-17 | RF-03/RF-04 reglas por rol | El estudiante ve la regla y solo salas de estudio; al intentar una sala de clases del docente recibe 403 | Igual | Aprobado |
+| DEP-18 | Cierre de sesión | 303; luego Mis reservas redirige al login | Igual | Aprobado |
 
-Resumen: **17/17 aprobadas**, 98 solicitudes HTTP y 0 respuestas 5xx. Esta ejecución final se hizo sobre datos recién
-restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin textos de entorno de demostración.
+Resumen: **18/18 aprobadas**, 101 solicitudes HTTP y 0 respuestas 5xx. Esta ejecución final se hizo sobre datos recién
+restablecidos por el despliegue del commit da2cd56, que incorporó las reglas de reserva por rol.
 
 ## 7. Matriz de trazabilidad RF → criterio de aceptación → prueba
 
@@ -226,9 +239,9 @@ restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin te
 | RF-01 (HU-01) | CA-01.5 | CP-01-05, CP-U-03, CP-U-04, CP-U-05, CP-U-06, CP-U-27 | 02 | Sí |
 | RF-01 (HU-01) | CA-01.6 | CP-01-06, CP-02-03 | 05 | Sí |
 | RF-01 (HU-01) | CA-01.7 | CP-01-07, CP-01-08 | 06, 07 | Sí |
-| RF-02 (HU-02) | CA-02.1 | CP-02-01 | 09, 19 | Sí |
+| RF-02 (HU-02) | CA-02.1 | CP-02-01, CP-03-08 | 28, 09, 19 | Sí |
 | RF-02 (HU-02) | CA-02.2 | CP-02-02, CP-U-18 | 08 | Sí |
-| RF-02 (HU-02) | CA-02.3 | CP-03-08, CP-04-06, CP-06-01 | 18 | Sí |
+| RF-02 (HU-02) | CA-02.3 | CP-04-06, CP-06-01, DEP-14, DEP-17 | 18 | Sí |
 | RF-02 (HU-02) | CA-02.4 | CP-02-04, CP-02-05, CP-02-06, CP-02-09, CP-U-19 | — | Sí |
 | RF-02 (HU-02) | CA-02.5 | CP-02-07, CP-02-08, CP-02-10 | — | Sí |
 | RF-03 (HU-03) | CA-03.1 | CP-03-01 | 09 | Sí |
@@ -237,17 +250,20 @@ restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin te
 | RF-03 (HU-03) | CA-03.4 | CP-03-05, CP-U-22 | 10 | Sí |
 | RF-03 (HU-03) | CA-03.5 | CP-03-06, CP-U-08, CP-U-09 | — | Sí |
 | RF-03 (HU-03) | CA-03.6 | CP-03-07 | — | Sí |
+| RF-03 (HU-03) | CA-03.7 | CP-03-09, CP-U-31, CP-U-32, DEP-17 | 28 | Sí |
 | RF-04 (HU-04) | CA-04.1 | CP-04-01 | 11, 12 | Sí |
 | RF-04 (HU-04) | CA-04.2 | CP-04-02 | 13 | Sí |
 | RF-04 (HU-04) | CA-04.3 | CP-04-03, CP-04-07, CP-04-08, CP-U-28, métricas de carga | — | Sí |
 | RF-04 (HU-04) | CA-04.4 | CP-04-04, CP-06-10 | — | Sí |
 | RF-04 (HU-04) | CA-04.5 | CP-04-05 | — | Sí |
-| RF-04 (HU-04) | CA-04.6 | CP-04-06 | — | Sí |
+| RF-04 (HU-04) | CA-04.6 | CP-04-06, CP-U-31, DEP-10, DEP-17 | — | Sí |
+| RF-04 (HU-04) | CA-04.7 | CP-04-09, CP-U-32 | — | Sí |
+| RF-04 (HU-04) | CA-04.8 | CP-04-10, CP-U-32 | — | Sí |
 | RF-05 (HU-05) | CA-05.1 | CP-05-01 | 14, 27 | Sí |
 | RF-05 (HU-05) | CA-05.2 | CP-05-02 | 17 | Sí |
 | RF-05 (HU-05) | CA-05.3 | CP-05-03 | 15 | Sí |
 | RF-05 (HU-05) | CA-05.4 | CP-05-04 | 16 | Sí |
-| RF-05 (HU-05) | CA-05.5 | CP-05-05, CP-U-23, CP-U-24, CP-U-25 | — | Sí |
+| RF-05 (HU-05) | CA-05.5 | CP-05-05, CP-U-23, CP-U-24, CP-U-25, CP-U-33 | — | Sí |
 | RF-06 (HU-06) | CA-06.1 | CP-06-01, CP-06-12 | 18, 25 | Sí |
 | RF-06 (HU-06) | CA-06.2 | CP-06-02, CP-06-03, CP-06-04, CP-U-10 | 20 | Sí |
 | RF-06 (HU-06) | CA-06.3 | CP-06-05, CP-06-06 | 24 | Sí |
@@ -255,19 +271,19 @@ restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin te
 | RF-06 (HU-06) | CA-06.5 | CP-06-08, CP-U-26 | — | Sí |
 | RF-06 (HU-06) | CA-06.6 | CP-06-10, CP-06-11, CP-U-12 | 21, 23 | Sí |
 
-**Cobertura de requerimientos:** 35 de 35 criterios de aceptación (100 %) tienen al menos una prueba automatizada aprobada.
+**Cobertura de requerimientos:** 38 de 38 criterios de aceptación (100 %) tienen al menos una prueba automatizada aprobada.
 
 ### 7.1 Cobertura de los requerimientos no funcionales
 
 | RNF | Verificación | Estado |
 |---|---|---|
-| RNF-01 Seguridad de acceso (ES2) | CP-03-08, CP-04-06, CP-06-01, CP-06-12 | Cumple |
+| RNF-01 Seguridad de acceso (ES2) | CP-04-06, CP-06-01, CP-06-12, DEP-17 | Cumple |
 | RNF-02 Protección de credenciales (ES2) | CP-U-17, CP-01-01; DEP-02, DEP-03 y DEP-04 (HTTPS, HSTS y cookie Secure en Render) | Cumple |
 | RNF-03 Privacidad de reservas (ES2) | CP-05-01, CP-05-02 | Cumple |
 | RNF-04 Integridad de reservas (ES2) | CP-04-03, CP-04-07, CP-04-08, carga | Cumple |
 | RNF-05 Consistencia (ES2) | CP-U-28, CP-04-07 | Cumple |
-| RNF-06 Claridad de interfaz (ES2) | CP-03-05, CP-05-03, capturas 02, 10, 11, 13, 15, 26, 27 | Cumple (visual) |
-| RNF-07 Mantenibilidad (ES2) | Cobertura 96,79 % de líneas; capas separadas | Cumple |
+| RNF-06 Claridad de interfaz (ES2) | CP-03-05, CP-03-09, CP-05-03, capturas 02, 10, 11, 13, 15, 26, 27, 28 | Cumple (visual) |
+| RNF-07 Mantenibilidad (ES2) | Cobertura 97,07 % de líneas; capas separadas | Cumple |
 | RNF-08 Rendimiento | `npm run metricas` (carga local); tiempos sobre el despliegue como referencia (8.4) | Cumple (local) |
 | RNF-09 Disponibilidad | El plan gratuito de Render suspende el servicio tras 15 min sin tráfico; no se monitoreó | No verificado |
 | RNF-10 Protección de datos | CP-02-08, CP-02-09 | Cumple |
@@ -279,18 +295,18 @@ restablecidos por el despliegue del commit 4bc2f40, que dejó la interfaz sin te
 
 | Indicador | Valor |
 |---|---|
-| Pruebas ejecutadas | 81 (30 unitarias, 49 de integración HTTP, 2 de concurrencia multiproceso) |
-| Aprobadas / fallidas / omitidas | 81 / 0 / 0 |
+| Pruebas ejecutadas | 87 (33 unitarias, 52 de integración HTTP, 2 de concurrencia multiproceso) |
+| Aprobadas / fallidas / omitidas | 87 / 0 / 0 |
 | Duración total | ≈ 7 s |
-| Pruebas sobre el despliegue (Render) | 17 / 17 aprobadas; 0 respuestas 5xx |
+| Pruebas sobre el despliegue (Render) | 18 / 18 aprobadas; 0 respuestas 5xx |
 
 ### 8.2 Cobertura de código (`src/`, instrumento integrado de Node.js)
 
 | Métrica | Valor |
 |---|---|
-| Líneas | 96,79 % |
-| Ramas | 88,27 % |
-| Funciones | 93,48 % |
+| Líneas | 97,07 % |
+| Ramas | 88,60 % |
+| Funciones | 93,78 % |
 
 Zonas no cubiertas relevantes: ramas de error interno inesperado del manejador central (`src/app.js`) y algunos
 caminos de rechazo de administración por datos inexistentes (`src/rutas/administracion.js`). La validación de
@@ -300,11 +316,12 @@ caminos de rechazo de administración por datos inexistentes (`src/rutas/adminis
 
 | Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) | Errores |
 |---|---|---|---|---|---|
-| Inicio de sesión (50 simultáneos, scrypt N=2^17) | 50 | 1415,1 | 1491,3 | 1606,1 | 0 |
-| Consulta de disponibilidad (20 concurrentes) | 200 | 43,4 | 164,4 | 186,0 | 0 (0 %) |
-| Confirmación de reserva (50 simultáneas por bloque, 5 rondas) | 250 | 51,9 | 119,2 | 131,1 | 0 (0 %) |
+| Inicio de sesión (50 simultáneos, scrypt N=2^17) | 50 | 1254,4 | 1355,4 | 1531,8 | 0 |
+| Consulta de disponibilidad (20 concurrentes) | 200 | 41,2 | 234,0 | 274,6 | 0 (0 %) |
+| Confirmación de reserva (50 docentes simultáneos por bloque, 5 rondas) | 250 | 55,3 | 116,7 | 128,9 | 0 (0 %) |
 
-Medición realizada sobre el commit 9ec4281; los cambios posteriores (regla de contraseña e invalidación de enlaces) no modifican los flujos de consulta ni de reserva. Revalidación del ADR-001: **0 duplicados** (cada ronda: 1 confirmada, 49 conflictos controlados), **p95 119,2 ms ≤ 800 ms**,
+Medición repetida sobre la versión final, con las reglas por rol (los 50 usuarios de carga son docentes, porque las
+salas de clases no las reservan estudiantes). Revalidación del ADR-001: **0 duplicados** (cada ronda: 1 confirmada, 49 conflictos controlados), **p95 116,7 ms ≤ 800 ms**,
 **0 % de errores técnicos < 1 %**. Las cifras del Spike anterior eran didácticas; estas son mediciones reales en un
 entorno local que no representa producción. Detalle: `docs/evidencias/metricas/metricas-ultima.md`.
 
@@ -315,13 +332,13 @@ Las solicitudes son secuenciales, salvo las 10 simultáneas de DEP-10 incluidas 
 
 | Operación | n | p50 (ms) | p95 (ms) | Máx. (ms) |
 |---|---|---|---|---|
-| `GET /login` | 27 | 168,9 | 233,6 | 303,0 |
-| `GET /disponibilidad` (consulta) | 24 | 150,3 | 232,8 | 235,6 |
-| `POST /reservas` (confirmación) | 13 | 184,0 | 204,6 | 204,6 |
-| `POST /login` (inicio de sesión) | 12 | 2836,1 | 5635,8 | 5635,8 |
+| `GET /login` | 27 | 204,6 | 252,1 | 270,5 |
+| `GET /disponibilidad` (consulta) | 26 | 148,7 | 204,7 | 213,0 |
+| `POST /reservas` (confirmación) | 14 | 207,7 | 213,9 | 213,9 |
+| `POST /login` (inicio de sesión) | 12 | 2866,8 | 5702,3 | 5702,3 |
 
 La consulta y la confirmación de reserva quedan bajo los umbrales de RNF-08 (500 ms y 800 ms), aunque con otra
-carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,6 s) porque el plan gratuito entrega una
+carga que la del umbral. El inicio de sesión tarda ≈ 3 s en la mediana (p95 5,7 s) porque el plan gratuito entrega una
 fracción de CPU y scrypt es costoso a propósito (H-08). Detalle: `docs/evidencias/despliegue/resultado-despliegue.md`.
 
 ## 9. Defectos y hallazgos registrados durante las pruebas
@@ -330,12 +347,13 @@ fracción de CPU y scrypt es costoso a propósito (H-08). Detalle: `docs/evidenc
 |---|---|---|---|---|---|
 | H-01 | 3 pruebas de reservas devolvían 403 en vez de 409 | Defecto del cliente de pruebas | El cliente no seguía la redirección tras el login y reutilizaba el token CSRF de la sesión anterior (el servidor lo invalida al regenerar la sesión, que es lo correcto) | El ayudante de pruebas sigue la redirección como un navegador | Cerrado |
 | H-02 | La captura "bloqueo rechazado" mostraba un bloqueo aceptado | Defecto del guion de capturas | El bloque elegido había sido liberado por una cancelación previa en el mismo recorrido | Se usa un bloque que sigue reservado y se verifican visualmente todas las capturas | Cerrado |
-| H-03 | 50 inicios de sesión simultáneos: p95 1,49 s | Observación de rendimiento | Costo deliberado de scrypt (128 MiB por verificación) y cola del pool de hilos | Aceptado: un login aislado tarda ≈ 230 ms; se propone monitorear y escalar horizontalmente | Aceptado |
+| H-03 | 50 inicios de sesión simultáneos: p95 1,36 s | Observación de rendimiento | Costo deliberado de scrypt (128 MiB por verificación) y cola del pool de hilos | Aceptado: un login aislado tarda ≈ 230 ms; se propone monitorear y escalar horizontalmente | Aceptado |
 | H-04 | Ramas de error interno sin cubrir | Brecha de cobertura | Requieren simular fallas internas | La configuración de producción quedó cubierta por CP-U-30 y por las pruebas sobre el despliegue; el resto se registra como mejora | Abierto |
 | H-05 | La regla de contraseña implementada (12 caracteres) no coincidía con la HU-01 de la Sumativa 2 (15 a 128 caracteres y rechazo de comunes) | Inconsistencia de requisitos | Se tomó como base un borrador anterior del informe | Se alineó el código con la HU-01, se agregó CP-U-27 y se regeneraron las capturas | Cerrado |
 | H-06 | Render no podía instalar las dependencias desde `package-lock.json` | Problema de despliegue | El archivo registra el espejo de paquetes del equipo de desarrollo, al que Render no tiene acceso | Render instala desde el registro público de npm las mismas versiones exactas fijadas en `package.json` (`render.yaml`) | Cerrado |
 | H-07 | En la primera ejecución sobre el despliegue quedó activa una reserva de prueba | Defecto del script de pruebas | La reserva ganada en DEP-10 se cancelaba después de cerrar la sesión | La limpieza se movió antes del cierre de sesión y se repitió la ejecución completa (17/17); la reserva restante desapareció con el siguiente despliegue | Cerrado |
 | H-08 | Inicio de sesión de ≈ 3 s en el despliegue | Observación de rendimiento | El plan gratuito entrega una fracción de CPU y scrypt (N=2^17) es costoso a propósito | Aceptado para la demostración; en producción, instancia con CPU dedicada | Aceptado |
+| H-09 | Al usar la app como cada perfil, algunas reglas resultaban incoherentes: un estudiante podía ocupar una sala de clases o un laboratorio antes que un docente, la administración no podía reservar, se podía cancelar hasta el minuto de inicio y la contraseña de 15 caracteres con espacios resultaba extraña | Revisión de coherencia de las reglas | Las reglas heredadas no distinguían qué espacios reserva cada rol | Salas de estudio para estudiantes (máximo 2 vigentes, 7 días), administración que reserva, cancelación hasta 60 minutos antes y contraseña de 8 a 64 con letra y número (D-07, D-08, D-15 a D-17); 6 pruebas nuevas y DEP-17 | Cerrado |
 
 No se detectaron defectos funcionales en el código de la aplicación durante la ejecución final.
 
